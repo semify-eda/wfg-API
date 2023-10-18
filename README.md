@@ -1,6 +1,6 @@
 ## Python work environment setup
 
-_For the API specific funcionalities and requirements, please refer to the Design Specification document._
+_For the API specific funcionalities and requirements, please refer to the [Design Specification document]([url](https://github.com/semify-eda/wfg-API/blob/main/docs/PythonAPI%20-%20Design%20Specifications.md))._
 
 
 ### Requirements
