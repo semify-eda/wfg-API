@@ -1,9 +1,9 @@
-# SmartWave Debugging Python API
+## Python work environment setup
 
-This Python API is designed to simplify the process of debugging the SmartWave FPGA by offering features for 
-testing and analyzing the SmartWave's performance.
+_For the API specific funcionalities and requirements, please refer to the Design Specification document._
 
-## Requirements
+
+### Requirements
 
 To get started with this API, please ensure you follow these requirements:
 

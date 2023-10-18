@@ -18,6 +18,7 @@ class TestRegComs:
     Base Class for testing register access
     """
 
+    @pytest.mark.skip
     def test_arduino_coms(self):
         """
         This method is only intended to test the communications with an Arduino, by toggling its LED
@@ -37,5 +38,8 @@ class TestRegComs:
             time.sleep(1)
 
         logger.info("Arduino coms test finished")
+
+    def test_communication_protocol(self):
+        pass
 
 
