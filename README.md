@@ -14,6 +14,9 @@ collaboration a lot easier. If you are new to PyCharm or need assistance setting
 you can refer to this helpful guide: 
 [How to Manage Projects Hosted on GitHub with PyCharm](https://www.jetbrains.com/help/pycharm/manage-projects-hosted-on-github.html#clone-from-GitHub).
 
+   If you are having issues psuhing back to your remote branch, go to 
+`File -> Settings -> Version Control -> Git` and at the bottom, tick the **User credential helper**  
+
 
 2. **Virtual Environment Setup:** 
 It's essential to configure your virtual environment correctly within PyCharm. 
