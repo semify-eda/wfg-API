@@ -37,5 +37,5 @@ Once your virtual environment is set up, make sure to install all the required P
 4. **Formatting:**
 Follow the PEP-8 guidelines for code readability and consistency. Maintaining a consistent style across branches is 
 essential.
-Prior to merging your branch back to the master, make sure your code is free from Mypy and Pylint errors. This helps 
+Prior to merging your branch back to the master, make sure your code is free from **mypy** and **pylint** errors. This helps 
 maintain code quality and correctness.

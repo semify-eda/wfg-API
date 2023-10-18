@@ -29,11 +29,13 @@ class TestRegComs:
         logger.info("Connection was successful")
         board.pinMode(9, "OUTPUT")
 
-        while True:
+        for _ in range(10):
             logger.info("LED TOGGLE")
             board.digitalWrite(9, "LOW")
             time.sleep(1)
             board.digitalWrite(9, "HIGH")
             time.sleep(1)
+
+        logger.info("Arduino coms test finished")
 
 
