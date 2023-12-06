@@ -1,28 +1,24 @@
-import serial
-import serial.tools.list_ports
+from api import *
+import time
+
+smartWave_init()
+
+smartWave_reset()
+
+time.sleep(1)
+#smartWave_status()
+print('')
+#smartWave_write_address(0x20000, 0x12345679)
+
+#time.sleep(1)
+
+#print(hex(smartWave_read_address(0x20000)))
 
 
+i2c_id = setup_i2c(0xa1, 0xa2)
 
+print('')
 
+i2c_transaction(i2c_id, device_select = 0x12, datalen = 1, data = [0], read_not_write = 1)
 
-portlist = list(serial.tools.list_ports.comports())
-
-
-
-i = 0
-valid = 0
-for port in portlist:
-  #print(port)
-  #print("[{}] {} {} {}".format(i, port[0], port[1], port[2]))
-
-  if(port[2].startswith("USB VID:PID=2341:804F")): #Arduino MKR zero
-    print("matched Arduino MKR zero")
-    valid = 1
-    break
-
-  i+=1
-
-
-if valid:
-  with serial.Serial(portlist[i][0], 9600, timeout=1) as smartWave:
-    smartWave.write('test'.encode('ascii'))
+smartWave_close()
