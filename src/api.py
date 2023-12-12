@@ -11,6 +11,10 @@ __version__ = "0.0.1"
 
 import serial
 import serial.tools.list_ports
+import asyncio
+import serial_asyncio
+
+import time
 
 __SmartWave__ = None
 
@@ -163,28 +167,51 @@ def setup_i2c(sclpin, sdapin):
 
   #TODO check if pins are free
   smartWave_pin_config(sclpin, pullup = 1)
+  #time.sleep(1)
   smartWave_pin_config(sdapin, pullup = 1)
+  #time.sleep(1)
   smartWave_dpmatrix(DRIVER_TYPE_I2C, i2c_id, 0, sclpin, 0x3456, 3, name = 'scl')
+  #time.sleep(1)
   smartWave_dpmatrix(DRIVER_TYPE_I2C, i2c_id, 1, sdapin, 0x3456, 3, name = 'sda')
+  #time.sleep(1)
+  smartWave_drive_i2c(i2c_id, cdiv = 100)
+  #time.sleep(1)
   smartWave_sdmatrix(0, stim_id, DRIVER_TYPE_I2C, i2c_id)
-  smartWave_drive_i2c(i2c_id, cdiv = 1000)
-  smartWave_genconfig(syncdiv = 1, subcycles = 1, triggermode = 1, vddio = 330)
+  #time.sleep(1)
+  smartWave_genconfig(syncdiv = 1, subcycles = 0, triggermode = 0, vddio = 330)
+  #time.sleep(1)
 
 
   return i2c_id
 
 def i2c_transaction(i2c_id, device_select, datalen, data, read_not_write):
+  if not read_not_write and  len(data) != datalen:
+    raise RuntimeError("i2c write, but datalen does not match provided data")
+
   stim_id = __i2c__[i2c_id].stim_and_rec_assigned
 
   encoded_data = add_i2c_command_frame(datalen, device_select, data, read_not_write)
 
-  print(encoded_data)
+  print(encoded_data, flush=True)
   smartWave_stim_mem(id = stim_id, bitwidth = 32, repetition = 1, sample_count = (datalen+1), samples = encoded_data)
+
+
+  __SmartWave__.reset_input_buffer()
+
+  print(' ', flush=True)
+  #time.sleep(1)
   smartWave_trigger()
 
-  print(' ')
+  #print(' ', flush=True)
+  #time.sleep(1)
+  #smartWave_stop()
 
-  smartWave_stop()
+  __SmartWave__.flush()
+  print(' ', flush=True)
+
+
+  for _ in range(20):
+    print(__SmartWave__.read(1), flush=True)
 
 
 def add_i2c_command_frame(datalen, device_select, data, read_not_write):
@@ -242,33 +269,27 @@ def smartWave_close():
 
 
 
-def _smartWave_apply_command(send_bytes = [b'\x00'], response_bytes_number = 0):
+def _smartWave_apply_command(send_bytes = [b'\x00']):
   if __SmartWave__ is None:
     raise RuntimeError("There is no smartWave connected")
     return
 
-  __SmartWave__.flush()
-
-  print('sending')
+  #print('sending', flush=True)
   for byte in send_bytes:
-    print(byte)
-    print(bytes(byte).hex())
+    #print(byte, flush=True)
+    #print(bytes(byte).hex(), flush=True)
     __SmartWave__.write(byte)
-
-  return __SmartWave__.read(response_bytes_number)
-
-
+  __SmartWave__.flush()
 
 
 def smartWave_reset():
-  _smartWave_apply_command([COMMAND_RESET], response_bytes_number = 0)
+  _smartWave_apply_command([COMMAND_RESET])
 
 def smartWave_trigger():
-  _smartWave_apply_command([COMMAND_TRIGGER], response_bytes_number = 0)
+  _smartWave_apply_command([COMMAND_TRIGGER])
 
 def smartWave_stop():
-  _smartWave_apply_command([COMMAND_STOP], response_bytes_number = 0)
-
+  _smartWave_apply_command([COMMAND_STOP])
   #TODO evaluate response and read rest of data
   #after data is read see if another recorder sends data?
 
@@ -290,7 +311,7 @@ def smartWave_stim_mem(id = 0, bitwidth = 32, repetition = 1, sample_count = 1, 
 
   command.append(sample_count.to_bytes(2, 'big'))
 
-  response = _smartWave_apply_command(command + samples, response_bytes_number = 0)
+  response = _smartWave_apply_command(command + samples)
 
 
 def smartWave_drive_spi(id = 0, enable = 1, bitwidth = 32, msbfirst = 1, cpol = 0, cpha = 0, cdiv = 1):
@@ -303,7 +324,7 @@ def smartWave_drive_spi(id = 0, enable = 1, bitwidth = 32, msbfirst = 1, cpol = 
   command.append(cpha.to_bytes(1, 'big'))
   command.append(cdiv.to_bytes(2, 'big'))
 
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 
 def smartWave_drive_i2c(id = 0, enable = 1, cdiv = 1):
@@ -313,7 +334,7 @@ def smartWave_drive_i2c(id = 0, enable = 1, cdiv = 1):
   command.append(enable.to_bytes(1, 'big'))
   command.append(cdiv.to_bytes(2, 'big'))
 
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 def smartWave_drive_i2s(id = 0, enable = 1, cdiv = 1):
   command = [COMMAND_DRIVER]
@@ -322,7 +343,7 @@ def smartWave_drive_i2s(id = 0, enable = 1, cdiv = 1):
   command.append(enable.to_bytes(1, 'big'))
   command.append(cdiv.to_bytes(2, 'big'))
 
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 
 def smartWave_drive_uart(id = 0, enable = 1, bitwidth = 32, cdiv = 1):
@@ -333,7 +354,7 @@ def smartWave_drive_uart(id = 0, enable = 1, bitwidth = 32, cdiv = 1):
   command.append(cdiv.to_bytes(2, 'big'))
   command.append(bitwidth.to_bytes(1, 'big'))
 
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 
 def smartWave_pin_config(id = 0, pullup = 0):
@@ -343,7 +364,7 @@ def smartWave_pin_config(id = 0, pullup = 0):
   command.append(b'\x01')
   command.append(pullup.to_bytes(1, 'big'))
 
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 
 #connects stim AND rec to driver
@@ -354,7 +375,7 @@ def smartWave_sdmatrix(stimtype = 0xff, stimid = 0, drivertype = 0, driverid = 0
   command.append(drivertype.to_bytes(1, 'big'))
   command.append(driverid.to_bytes(1, 'big'))
 
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 
 def smartWave_dpmatrix(dtype, did, vpin, pin, color, namelen, name = 'noname'):
@@ -367,7 +388,7 @@ def smartWave_dpmatrix(dtype, did, vpin, pin, color, namelen, name = 'noname'):
   command.append(namelen.to_bytes(1, 'big'))
   command.append(name.encode('ascii'))
 
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 
 def smartWave_genconfig(syncdiv, subcycles, triggermode, vddio):
@@ -377,14 +398,16 @@ def smartWave_genconfig(syncdiv, subcycles, triggermode, vddio):
   command.append(triggermode.to_bytes(1, 'big'))
   command.append(vddio.to_bytes(2, 'big'))
 
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 
 
 def smartWave_status():
-  response = _smartWave_apply_command([COMMAND_INFO], response_bytes_number = 18)
-  print("status response:")
-  print(bytes(response).hex())
+  _smartWave_apply_command([COMMAND_INFO])
+
+  response = __SmartWave__.read(18)
+  print("status response:", flush=True)
+  print(bytes(response).hex(), flush=True)
 
 
 
@@ -392,18 +415,22 @@ def smartWave_write_address(address, data):
   command = [COMMAND_FPGAWRITE]
   command.append(address.to_bytes(3, 'big'))
   command.append(data.to_bytes(4, 'big'))
-  response = _smartWave_apply_command(command, response_bytes_number = 0)
+  response = _smartWave_apply_command(command)
 
 
 def smartWave_read_address(address):
   command = [COMMAND_FPGAREAD]
   command.append(address.to_bytes(3, 'big'))
-  response = _smartWave_apply_command(command, response_bytes_number = 5)
 
+  __SmartWave__.reset_input_buffer()
+
+  _smartWave_apply_command(command)
+
+  response = __SmartWave__.read(5)
   intresponse = int.from_bytes(response, byteorder='big')
 
-
   return intresponse & 0xffffffff
+
 
 
 
