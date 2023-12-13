@@ -210,16 +210,16 @@ def i2c_transaction(i2c_id, device_select, datalen, data, read_not_write):
   print(' ', flush=True)
 
 
-  for _ in range(20):
-    print(__SmartWave__.read(1), flush=True)
+  #for _ in range(20):
+  #  print(__SmartWave__.read(1), flush=True)
 
 
 def add_i2c_command_frame(datalen, device_select, data, read_not_write):
   command_frame = 0
   command_frame += datalen & 0xff
-  command_frame += 1<<16
+  command_frame += 1<<16 #use device select in frame
   command_frame += (device_select & 0xff) << 17
-  command_frame += read_not_write << 25
+  command_frame |= (read_not_write & 0x1) << 25
 
   retval = []
   retval.append(command_frame.to_bytes(4, 'big'))

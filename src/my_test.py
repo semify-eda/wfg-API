@@ -47,8 +47,8 @@ print_mem()
 print('', flush=True)
 print('i2c_transaction', flush=True)
 
-i2c_transaction(i2c_id, device_select = 0x20, datalen = 2, data = [0xee, 0xee], read_not_write = 0)
-#i2c_transaction(i2c_id, device_select = 0x20, datalen = 2, data = [0xff, 0xff], read_not_write = 0)
+#i2c_transaction(i2c_id, device_select = 0x20, datalen = 2, data = [0xee, 0xee], read_not_write = 0)
+i2c_transaction(i2c_id, device_select = 0x20, datalen = 2, data = [0xff, 0xff], read_not_write = 1)
 #print(hex(smartWave_read_address(0x46038)))
 
 print_mem()
