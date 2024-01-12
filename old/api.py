@@ -11,8 +11,6 @@ __version__ = "0.0.1"
 
 import serial
 import serial.tools.list_ports
-import asyncio
-import serial_asyncio
 
 import time
 
