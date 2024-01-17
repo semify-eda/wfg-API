@@ -12,3 +12,8 @@ class Statusbit(Enum):
     SingleAddressRead = 0x09
     PinsStatus = 0x0A
     FirmwareUpdateStatus = 0x0B
+
+
+class ErrorCodes(Enum):
+    FirmwareCorrupt = 0x00
+    FPGACorrupt = 0x01

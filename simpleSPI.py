@@ -14,6 +14,7 @@ def main():
         sw.trigger()
 
 
+    time.sleep(5)
     sw.disconnect()
 
 
