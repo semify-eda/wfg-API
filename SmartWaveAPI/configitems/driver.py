@@ -15,6 +15,9 @@ class Driver:
     def writePinConnectionsToDevice(self):
         raise NotImplementedError
 
+    def writePinsToDevice(self):
+        raise NotImplementedError
+
     def colorRGB565(self) -> int:
         r = int(self.color[1:3], 16)
         g = int(self.color[3:5], 16)

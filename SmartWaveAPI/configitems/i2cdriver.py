@@ -49,6 +49,11 @@ class I2CDriver(Driver):
                     len(pin),
                 ]) + bytes(pin, 'ASCII'))
 
+    def writePinsToDevice(self):
+        for pin in self.pins.keys():
+            if self.pins[pin]:
+                self.pins[pin].writeToDevice()
+
 
     def generateSamples(self, transactions: List[I2CTransaction]) -> List[int]:
         samples = []

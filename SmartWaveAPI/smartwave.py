@@ -3,7 +3,7 @@ import serial.tools.list_ports
 
 from typing import List
 
-from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, ConfigEntry
+from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, ConfigEntry, Command
 from SmartWaveAPI.definitions import I2CTransaction
 
 
@@ -70,7 +70,7 @@ class SmartWave:
 
         raise Exception("Could not find a suitable device to connect to")
 
-    def connect(self, portName: str = None):
+    def connect(self, portName: str = None, reset: bool = True):
         if portName is None:
             self.scanAndConnect()
             return
@@ -87,6 +87,10 @@ class SmartWave:
                     else:
                         self._serialPort.port = portName
 
+                    if reset:
+                        self.reset()
+
+
                     return
 
                 except Exception as e:
@@ -98,13 +102,35 @@ class SmartWave:
         if (self._serialPort is None):
             raise Exception("Not connected to a device")
 
-        print(data)
+        # print(list(data))
         self._serialPort.write(data)
+
+    def isConnected(self) -> bool:
+        return self._serialPort is not None
+
+    def disconnect(self):
+        self._serialPort.close()
+        self._serialPort = None
+
+    def trigger(self):
+        self.writeToDevice(bytes([
+            Command.Trigger.value
+       ]))
+
+    def reset(self):
+        self.writeToDevice(bytes([
+            Command.Reset.value
+        ]))
 
     def setupI2C(self, transactions: List[I2CTransaction]):
         driver = self._availableI2CDrivers.pop(0)
+
         driver.pins['SCL'] = self._availablePins.pop(0)
+        driver.pins['SCL'].pullup = True
+
         driver.pins['SDA'] = self._availablePins.pop(0)
+        driver.pins['SDA'].pullup = True
+
         stimulus = self._availableStimuli.pop(0)
 
         stimulus.sampleBitWidth = 32

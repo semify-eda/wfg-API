@@ -26,4 +26,5 @@ class ConfigEntry:
         self._driver.writeToDevice()
         self._stimulus.writeToDevice()
         self._driver.writePinConnectionsToDevice()
+        self._driver.writePinsToDevice()
         self.writeStimulusDriverConnectionToDevice()
