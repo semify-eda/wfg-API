@@ -5,7 +5,8 @@ import time
 def main():
     sw = SmartWave()
     sw.connect()
-    sw.setupI2C([
+    i2c = sw.createI2CConfig()
+    i2c.setTransactions([
         I2CTransaction(0x20, False, [1, 2, 3]),
     ])
 

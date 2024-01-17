@@ -2,13 +2,13 @@ from SmartWaveAPI.definitions import Command
 from SmartWaveAPI.configitems import Driver, Stimulus
 
 
-class ConfigEntry:
+class Config:
     _id_counter: int = 0
 
     def __init__(self, device, driver: Driver, stimulus: Stimulus):
         self._device = device
-        self._id: int = ConfigEntry._id_counter
-        ConfigEntry._id_counter += 1
+        self._id: int = Config._id_counter
+        Config._id_counter += 1
 
         self._driver: Driver = driver
         self._stimulus: Stimulus = stimulus

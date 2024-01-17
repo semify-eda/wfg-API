@@ -5,7 +5,8 @@ import time
 
 from typing import List
 
-from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, ConfigEntry
+from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config
+from SmartWaveAPI.configitems.i2cconfig import I2CConfig
 from SmartWaveAPI.definitions import I2CTransaction, Command, Statusbit, ErrorCodes
 
 
@@ -52,7 +53,7 @@ class SmartWave:
             Pin(self, "B", 10),
         ]
 
-        self.configEntries: List[ConfigEntry] = []
+        self.configEntries: List[Config] = []
 
         self._heartbeatThread = threading.Thread(target=self._heartbeat)
         self._readingThread = threading.Thread(target=self._readback)
@@ -225,25 +226,20 @@ class SmartWave:
             Command.Info.value
         ]))
 
-    def setupI2C(self, transactions: List[I2CTransaction]):
-        driver = self._availableI2CDrivers.pop(0)
+    def getNextAvailableI2CDriver(self) -> I2CDriver:
+        return self._availableI2CDrivers.pop(0)
 
-        driver.pins['SCL'] = self._availablePins.pop(0)
-        driver.pins['SCL'].pullup = True
+    def getNextAvailablePin(self) -> Pin:
+        return self._availablePins.pop(0)
 
-        driver.pins['SDA'] = self._availablePins.pop(0)
-        driver.pins['SDA'].pullup = True
+    def getNextAvailableStimulus(self) -> Stimulus:
+        return self._availableStimuli.pop(0)
 
-        stimulus = self._availableStimuli.pop(0)
+    def createI2CConfig(self) -> I2CConfig:
+        config: I2CConfig = I2CConfig(self)
+        self.configEntries.append(config)
 
-        stimulus.sampleBitWidth = 32
-        stimulus.samples = driver.generateSamples(transactions)
-
-        self.configEntries.append(
-            ConfigEntry(self, driver, stimulus)
-        )
-
-        self.configEntries[-1].writeToDevice()
+        return config
 
 
 
