@@ -1,6 +1,8 @@
 from enum import Enum
 
+
 class Statusbit(Enum):
+    """The first byte of a status frame sent by the device; specifies the meaning of the following bytes"""
     Idle = 0x01
     Running = 0x02
     Error = 0x03
@@ -15,5 +17,6 @@ class Statusbit(Enum):
 
 
 class ErrorCode(Enum):
+    """Specifies the type of error that occurred."""
     FirmwareCorrupt = 0x00
     FPGACorrupt = 0x01

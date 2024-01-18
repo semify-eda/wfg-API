@@ -6,10 +6,16 @@ from SmartWaveAPI.definitions import Command, DriverType, I2CRead, I2CWrite, I2C
 
 
 class I2CDriver(Driver):
+    """An hardware I2C driver on the SmartWave device"""
     driverType = DriverType.I2C
     color: str = '#a54be2'
 
     def __init__(self, device, id: int, clockSpeed: int = 400e3):
+        """Create a new I2C driver instance. Only to be called in SmartWave.__init__() function.
+
+        :param SmartWave device: The SmartWave device this driver belongs to
+        :param int id: The ID of this driver
+        :param int clockSpeed: The transmission clock speed in Hz"""
         super().__init__(device, id)
         self.clockSpeed: int = clockSpeed
         self.pins: Dict[str, Pin or None] = {
@@ -22,8 +28,9 @@ class I2CDriver(Driver):
         }
 
     def writeToDevice(self):
+        """Write the configuration parameters of this driver to the device."""
 
-        cdiv = int(self._device.FPGAClockSpeed / (self.clockSpeed * 6)) # TODO check clockspeed
+        cdiv = int(self._device.FPGAClockSpeed / (self.clockSpeed * 6))
 
         self._device.writeToDevice(bytes([
             Command.Driver.value,
@@ -34,8 +41,8 @@ class I2CDriver(Driver):
             cdiv & 0xff
         ]))
 
-
     def writePinConnectionsToDevice(self):
+        """Write the pin configuration (i.e. which pin does what) of this driver to the device."""
         for pin in self.pins.keys():
             if self.pins[pin]:
                 self._device.writeToDevice(bytes([
@@ -50,12 +57,18 @@ class I2CDriver(Driver):
                 ]) + bytes(pin, 'ASCII'))
 
     def writePinsToDevice(self):
+        """Write the configuration of each of this driver's pins to the device."""
         for pin in self.pins.keys():
             if self.pins[pin]:
                 self.pins[pin].writeToDevice()
 
 
     def generateSamples(self, transactions: List[I2CTransaction]) -> List[int]:
+        """Generate a stream of bytes for the SmartWave to interpret as I2C Transactions.
+
+        :param I2CTransaction transactions: List of I2C transactions
+        :return: List of samples for the SmartWave to interpret as I2C Transactions
+        :rtype: List[int]"""
         samples = []
         for transaction in transactions:
             length = len(transaction.data) if type(transaction) is I2CWrite else transaction.length

@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class Command(Enum):
+    """The first byte of a command frame to be sent to the device; specifies the meaning of the following bytes."""
     Reset = 0x00
     Trigger = 0x01
     Stop = 0x02

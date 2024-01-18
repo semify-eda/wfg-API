@@ -3,9 +3,14 @@ from typing import List
 
 
 class Stimulus(object):
+    """A hardware stimulus on the SmartWave device"""
     stimulusType: int = 0
 
     def __init__(self, device, id: int):
+        """Create a new Stimulus instance. Only to be called in SmartWave.__init__() function.
+
+        :param SmartWave device: the SmartWave device this stimulus belongs to
+        :param int id: the ID of this stimulus"""
         self._device = device
         self._id = id
         self.sampleBitWidth: int = 8
@@ -13,6 +18,7 @@ class Stimulus(object):
         self.samples: List[int] = [0xa, 0xb]
 
     def writeToDevice(self):
+        """Write the configuration parameters of this pin to the device."""
         shiftedSamples = []
 
         for sample in self.samples:
@@ -32,5 +38,9 @@ class Stimulus(object):
             len(self.samples) & 0xff
         ] + shiftedSamples))
 
-    def getId(self):
+    def getId(self) -> int:
+        """Get the ID of this stimulus.
+
+        :return: the ID of this stimulus
+        :rtype: int"""
         return self._id
