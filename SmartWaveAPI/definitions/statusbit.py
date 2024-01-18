@@ -14,6 +14,6 @@ class Statusbit(Enum):
     FirmwareUpdateStatus = 0x0B
 
 
-class ErrorCodes(Enum):
+class ErrorCode(Enum):
     FirmwareCorrupt = 0x00
     FPGACorrupt = 0x01

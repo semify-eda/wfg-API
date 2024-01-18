@@ -3,15 +3,14 @@ import serial.tools.list_ports
 import threading
 import time
 
-from typing import List
+from typing import List, Union, Callable
 
 from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config
 from SmartWaveAPI.configitems.i2cconfig import I2CConfig
-from SmartWaveAPI.definitions import I2CTransaction, Command, Statusbit, ErrorCodes
+from SmartWaveAPI.definitions import I2CTransaction, Command, Statusbit, ErrorCode
 
 
 class SmartWave:
-
     VID: int = 0x2341
     PID: int = 0x8071
     FPGAClockSpeed: int = 100e6
@@ -58,34 +57,59 @@ class SmartWave:
         self._heartbeatThread = threading.Thread(target=self._heartbeat)
         self._readingThread = threading.Thread(target=self._readback)
         self._serialLock = threading.Lock()
+        self.killWithParentThread = True
+        self._parentThread = threading.currentThread()
 
+        self.idleCallback: Union[Callable[[], None], None] = None
+        self.runningCallback: Union[Callable[[], None], None] = None
+        self.errorCallback: Union[Callable[[ErrorCode], None], None] = None
+        self.infoCallback: Union[Callable[[tuple, tuple, tuple, int], None], None] = None
+        self.debugCallback: Union[Callable[[str], None], None] = None
+        self.firmwareUpdateOKCallback: Union[Callable[[], None], None] = None
+        self.firmwareUpdateFailedCallback: Union[Callable[[], None], None] = None
+        self.readbackCallback: Union[Callable[[int, List[int]], None], None] = None
+        self.singleAddressReadCallback: Union[Callable[[int], None], None] = None
+        self.pinsStatusCallback: Union[Callable[[int, int], None], None] = None
+        self.firwareUpdateStatusCallback: Union[Callable[[bool, int], None], None] = None
 
     def _heartbeat(self):
-        while self._serialPort and self._serialPort.is_open:
+        while (self._serialPort and self._serialPort.is_open and
+               (self._parentThread.is_alive() or not self.killWithParentThread)):
             self.writeToDevice(bytes([
                 Command.Heartbeat.value
             ]))
             time.sleep(0.5)
 
     def _readback(self):
-        while self._serialPort and self._serialPort.is_open:
+        while (self._serialPort and self._serialPort.is_open and
+               (self._parentThread.is_alive() or not self.killWithParentThread)):
             try:
                 if self._serialPort and self._serialPort.is_open and self._serialPort.in_waiting > 0:
                     self._serialLock.acquire()
                     statusbit = int.from_bytes(self._serialPort.read(1), byteorder='big')
 
                     if statusbit == Statusbit.Idle.value:
-                        print("Idle")
+                        if self.idleCallback is not None:
+                            self.idleCallback()
 
                     elif statusbit == Statusbit.Running.value:
-                        print("Running")
+                        if self.runningCallback is not None:
+                            self.runningCallback()
 
                     elif statusbit == Statusbit.Error.value:
-                        error = self._serialPort.read(1)
-                        if error == ErrorCodes.FirmwareCorrupt.value:
-                            print("Firmware corrupt")
-                        elif error == ErrorCodes.FPGACorrupt.value:
-                            print("FPGA corrupt")
+                        errorByte = self._serialPort.read(1)
+                        error: ErrorCode = ErrorCode.FirmwareCorrupt
+
+                        if errorByte == ErrorCode.FirmwareCorrupt.value:
+                            error = ErrorCode.FirmwareCorrupt
+                        elif errorByte == ErrorCode.FPGACorrupt.value:
+                            error = ErrorCode.FPGACorrupt
+
+                        if self.errorCallback is not None:
+                            self.errorCallback(error)
+                        else:
+                            raise Exception("Device %s firmware is corrupt" %
+                                            "FPGA" if error == ErrorCode.FPGACorrupt else "microcontroller")
 
                     elif statusbit == Statusbit.Info.value:
                         hwVer = tuple(self._serialPort.read(3))
@@ -93,43 +117,53 @@ class SmartWave:
                         fpgaVer = tuple(self._serialPort.read(3))
                         flashId = int.from_bytes(self._serialPort.read(8), byteorder='big')
 
-                        print('Info:\n'
-                              'HW version: %s\n'
-                              'UC version: %s\n'
-                              'FPGA version: %s\n'
-                              'Flash id: %s' % (hwVer, ucVer, fpgaVer, flashId))
+                        if self.infoCallback is not None:
+                            self.infoCallback(hwVer, ucVer, fpgaVer, flashId)
 
                     elif statusbit == Statusbit.Debug.value:
                         string = self._serialPort.read_until(bytes([0]))[:-1].decode("ASCII")
-                        print(string)
+                        if self.debugCallback is not None:
+                            self.debugCallback(string)
 
                     elif statusbit == Statusbit.FirmwareUpdateOk.value:
-                        print("Firmware update OK")
+                        if self.firmwareUpdateOKCallback is not None:
+                            self.firmwareUpdateOKCallback()
 
                     elif statusbit == Statusbit.FirmwareUpdateFailed.value:
-                        print("Firmware update Failed")
+                        if self.firmwareUpdateFailedCallback is not None:
+                            self.firmwareUpdateFailedCallback()
 
                     elif statusbit == Statusbit.Readback.value:
-                        recorderId = int.from_bytes(self._serialPort.read(1))
-                        numSamples = int.from_bytes(self._serialPort.read(2), byteorder='big')
-                        samples = self._serialPort.read(4 * numSamples)
-                        print("Recorder Readback", samples)
+                        recorderId = int.from_bytes(self._serialPort.read(1), 'big')
+                        numSamples = int.from_bytes(self._serialPort.read(2), 'big')
+                        rawSamples = self._serialPort.read(4 * numSamples)
+                        samples = []
+                        for i in range(numSamples):
+                            samples.append(int.from_bytes(rawSamples[i * 4:(i * 4) + 4], 'big'))
+
+                        if self.readbackCallback is not None:
+                            self.readbackCallback(recorderId, samples)
 
                     elif statusbit == Statusbit.SingleAddressRead.value:
-                        data = int.from_bytes(self._serialPort.read(4), byteorder='big')
-                        print("Single Address Read", data)
+                        data = int.from_bytes(self._serialPort.read(4), 'big')
+
+                        if self.singleAddressReadCallback is not None:
+                            self.singleAddressReadCallback(data)
 
                     elif statusbit == Statusbit.PinsStatus.value:
                         pinsA = int.from_bytes(self._serialPort.read(1), 'big')
                         pinsB = int.from_bytes(self._serialPort.read(1), 'big')
-                        print("PinsStatus", pinsA, pinsB)
+
+                        if self.pinsStatusCallback is not None:
+                            self.pinsStatusCallback(pinsA, pinsB)
 
                     elif statusbit == Statusbit.FirmwareUpdateStatus.value:
-                        status = int.from_bytes(self._serialPort.read(1), 'big')
-                        print("%s update Status: %s" % (
-                            "FPGA" if status & 8 == 0 else "Microcontroller",
-                            ('%d%%' % (status & 0xeff)) if status < 127 else "finished"
-                        ))
+                        byte = int.from_bytes(self._serialPort.read(1), 'big')
+                        isMicrocontroller: bool = (byte & 8) == 1
+                        status: int = status & 0xef
+
+                        if self.firwareUpdateStatusCallback is not None:
+                            self.firwareUpdateStatusCallback(isMicrocontroller, status)
 
 
                     else:
@@ -140,7 +174,6 @@ class SmartWave:
 
             except serial.SerialException:
                 pass
-
 
     def _connectToSpecifiedPort(self, portName: str, reset: bool, requestInfo: bool):
         try:
@@ -162,7 +195,6 @@ class SmartWave:
 
         except Exception as e:
             raise ConnectionRefusedError("Could not connect to serial port %s" % portName)
-
 
     def scanAndConnect(self, reset: bool = True, requestInfo: bool = True):
         # scans all ports and autoconnects to matching id
@@ -214,7 +246,7 @@ class SmartWave:
     def trigger(self):
         self.writeToDevice(bytes([
             Command.Trigger.value
-       ]))
+        ]))
 
     def reset(self):
         self.writeToDevice(bytes([
@@ -227,22 +259,54 @@ class SmartWave:
         ]))
 
     def getNextAvailableI2CDriver(self) -> I2CDriver:
-        return self._availableI2CDrivers.pop(0)
+        if len(self._availableI2CDrivers):
+            return self._availableI2CDrivers.pop(0)
+        else:
+            raise Exception("No more I2C Drivers available on this device")
 
     def getNextAvailablePin(self) -> Pin:
-        return self._availablePins.pop(0)
+        if len(self._availablePins):
+            return self._availablePins.pop(0)
+        else:
+            raise Exception("No more pins available on this device")
+
+    def getPin(self, name: str):
+        bank = name[:1]
+        numberStr = name[1:]
+
+        if not bank in ["A", "B"] or not numberStr.isdigit():
+            raise AttributeError("Invalid Pin name")
+
+        number = int(numberStr)
+
+        if not number in [1, 2, 3, 4, 7, 8, 9, 10]:
+            raise AttributeError("Invalid Pin number")
+
+        foundIndex = -1
+
+        for i in range(len(self._availablePins)):
+            pin = self._availablePins[i]
+            if pin.getBank() == bank and pin.getNumber() == number:
+                foundIndex = i
+                break
+
+        if foundIndex == -1:
+            raise Exception("The specified pin is already in use")
+
+        return self._availablePins.pop(foundIndex)
 
     def getNextAvailableStimulus(self) -> Stimulus:
-        return self._availableStimuli.pop(0)
+        if len(self._availablePins):
+            return self._availableStimuli.pop(0)
+        else:
+            raise Exception("No more stimuli available on this device")
 
-    def createI2CConfig(self) -> I2CConfig:
-        config: I2CConfig = I2CConfig(self)
+    def createI2CConfig(self, sdaPinName: Union[str, None] = None, sclPinName: Union[str, None] = None,
+                        clockSpeed: Union[int, None] = None) -> I2CConfig:
+        sdaPin = self.getPin(sdaPinName) if sdaPinName else None
+        sclPin = self.getPin(sclPinName) if sclPinName else None
+
+        config: I2CConfig = I2CConfig(self, sdaPin, sclPin, clockSpeed)
         self.configEntries.append(config)
 
         return config
-
-
-
-
-
-

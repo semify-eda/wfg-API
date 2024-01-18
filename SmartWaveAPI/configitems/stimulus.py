@@ -31,3 +31,6 @@ class Stimulus(object):
             (len(self.samples) >> 8) & 0xff,
             len(self.samples) & 0xff
         ] + shiftedSamples))
+
+    def getId(self):
+        return self._id

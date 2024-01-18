@@ -1,7 +1,13 @@
-from typing import List
+from typing import List, Union
 
-class I2CTransaction(object):
-    def __init__(self, deviceId: int, read: bool, data: List[int]):
+class I2CWrite(object):
+    def __init__(self, deviceId: int, data: List[int]):
         self.deviceId = deviceId
-        self.read = read
         self.data = data
+
+class I2CRead(object):
+    def __init__(self, deviceId: int, length: int):
+        self.deviceId = deviceId
+        self.length = length
+
+I2CTransaction = Union[I2CWrite, I2CRead]

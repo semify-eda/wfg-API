@@ -28,3 +28,6 @@ class Config:
         self._driver.writePinConnectionsToDevice()
         self._driver.writePinsToDevice()
         self.writeStimulusDriverConnectionToDevice()
+
+    def getRecorderId(self):
+        return self._stimulus.getId()

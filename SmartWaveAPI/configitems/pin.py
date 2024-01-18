@@ -20,3 +20,10 @@ class Pin:
             1, # pin input enabled by default
             1 if self.pullup else 0
         ]))
+
+    def getBank(self) -> str:
+        return self._bank
+
+    def getNumber(self) -> int:
+        return self._number
+

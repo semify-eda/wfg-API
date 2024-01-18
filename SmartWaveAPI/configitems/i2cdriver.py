@@ -2,16 +2,16 @@ from typing import Dict, List
 from .pin import Pin
 
 from SmartWaveAPI.configitems import Driver
-from SmartWaveAPI.definitions import Command, DriverType, I2CTransaction
+from SmartWaveAPI.definitions import Command, DriverType, I2CRead, I2CWrite, I2CTransaction
 
 
 class I2CDriver(Driver):
     driverType = DriverType.I2C
     color: str = '#a54be2'
 
-    def __init__(self, device, id: int):
+    def __init__(self, device, id: int, clockSpeed: int = 400e3):
         super().__init__(device, id)
-        self.clockSpeed: int = 400e3
+        self.clockSpeed: int = clockSpeed
         self.pins: Dict[str, Pin or None] = {
             'SCL': None,
             'SDA': None
@@ -58,13 +58,17 @@ class I2CDriver(Driver):
     def generateSamples(self, transactions: List[I2CTransaction]) -> List[int]:
         samples = []
         for transaction in transactions:
+            length = len(transaction.data) if type(transaction) is I2CWrite else transaction.length
+            read = type(transaction) is I2CRead
+
             command_frame = 0
-            command_frame += len(transaction.data) & 0xff
+            command_frame += length & 0xff
             command_frame += 1 << 16  # use device select in frame
             command_frame += (transaction.deviceId & 0xff) << 17
-            command_frame |= (transaction.read & 0x1) << 25
+            command_frame |= (1 if read else 0) << 25
 
             samples.append(command_frame)
-            samples += transaction.data
+            if not read:
+                samples += transaction.data
 
         return samples
