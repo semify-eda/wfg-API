@@ -72,6 +72,9 @@ class SmartWave:
         self.pinsStatusCallback: Union[Callable[[int, int], None], None] = None
         self.firwareUpdateStatusCallback: Union[Callable[[bool, int], None], None] = None
 
+        self._latestFpgaRead: int = 0
+        self._fpgaReadSemaphore = threading.Semaphore(0)
+
     def _heartbeat(self):
         while (self._serialPort and self._serialPort.is_open and
                (self._parentThread.is_alive() or not self.killWithParentThread)):
@@ -310,3 +313,36 @@ class SmartWave:
         self.configEntries.append(config)
 
         return config
+
+    def writeFPGARegister(self, address: int, value: int):
+        self.writeToDevice(bytes([Command.FpgaWrite.value]) +
+                           address.to_bytes(3, 'big') +
+                           value.to_bytes(4, 'big'))
+
+    def _fpgaReadCallbackHandler(self, value: int):
+        self._latestFpgaRead = value
+        self._fpgaReadSemaphore.release()
+
+    def readFPGARegister(self, address: int, blocking: bool = True) -> Union[int, None]:
+        if blocking:
+            if self.singleAddressReadCallback is not None:
+                raise Exception("Cannot configure a blocking read operation because there is already a single-address"
+                                " read callback registered on the device")
+
+            self.singleAddressReadCallback = self._fpgaReadCallbackHandler
+
+
+        self.writeToDevice(bytes([Command.FpgaRead.value]) +
+                           address.to_bytes(3, 'big'))
+
+
+        if blocking:
+            # wait for read value
+            self._fpgaReadSemaphore.acquire()
+
+            # release callback
+            self.singleAddressReadCallback = None
+
+            return self._latestFpgaRead
+
+        return None
