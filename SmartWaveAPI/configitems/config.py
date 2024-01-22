@@ -1,4 +1,4 @@
-from SmartWaveAPI.definitions import Command
+from SmartWaveAPI.definitions import Command, StimulusType
 from SmartWaveAPI.configitems import Driver, Stimulus
 
 
@@ -19,15 +19,38 @@ class Config:
         self._driver: Driver = driver
         self._stimulus: Stimulus = stimulus
 
+    def __del__(self) -> None:
+        """Destructor - return all resources to the device."""
+        self.delete()
+
+    def __enter__(self):
+        """Enter - return instance."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit - delete config"""
+        self.delete()
+
     def writeStimulusDriverConnectionToDevice(self):
         """Configure the connection between the stimulus and the driver on the device."""
         self._device.writeToDevice(bytes([
             Command.StimulusDriverMatrix.value,
             self._stimulus.stimulusType,
-            self._id,
+            self._stimulus.getId(),
             self._driver.driverType.value,
-            self._driver._id,
+            self._driver.getId(),
         ]))
+
+    def removeStimulusDriverConnection(self):
+        """Remove the connection between the stimulus and the driver on the device."""
+        if self._device.isConnected():
+            self._device.writeToDevice(bytes([
+                Command.StimulusDriverMatrix.value,
+                StimulusType.NoStimulus.value,
+                0,  # stimMem
+                self._driver.driverType.value,
+                self._driver.getId()
+            ]))
 
     def writeToDevice(self):
         """Write the configurations of all relevant objects to the device."""
@@ -43,3 +66,9 @@ class Config:
         :return: The recorder ID
         :rtype: int"""
         return self._stimulus.getId()
+
+
+    def delete(self):
+        """Delete this configuration and return all resources to the device."""
+        self._driver.delete()
+        self._stimulus.delete()

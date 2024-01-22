@@ -10,7 +10,7 @@ from SmartWaveAPI.configitems.i2cconfig import I2CConfig
 from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode
 
 
-class SmartWave:
+class SmartWave(object):
     """An instance of a SmartWave device. Keeps track of all available resources."""
     VID: int = 0x2341
     PID: int = 0x8071
@@ -56,8 +56,8 @@ class SmartWave:
 
         self.configEntries: List[Config] = []
 
-        self._heartbeatThread = threading.Thread(target=self._heartbeat)
-        self._readingThread = threading.Thread(target=self._readback)
+        self._heartbeatThread: threading.Thread
+        self._readingThread: threading.Thread
         self._serialLock = threading.Lock()
         self.killWithParentThread = True
         self._parentThread = threading.currentThread()
@@ -77,22 +77,43 @@ class SmartWave:
         self._latestFpgaRead: int = 0
         self._fpgaReadSemaphore = threading.Semaphore(0)
 
+    def __del__(self):
+        """Destructor - closes the device connection"""
+        self.disconnect()
+
+    def __enter__(self):
+        """Enter - return instance."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit - disconnect from device."""
+        if self.isConnected():
+            self.disconnect()
+
     def _heartbeat(self):
         """Continually send a heartbeat message to the device until the connection is closed."""
         while (self._serialPort and self._serialPort.is_open and
                (self._parentThread.is_alive() or not self.killWithParentThread)):
-            self.writeToDevice(bytes([
-                Command.Heartbeat.value
-            ]))
-            time.sleep(0.5)
+
+            self._serialLock.acquire()
+            if self.isConnected():
+                self.writeToDevice(bytes([
+                    Command.Heartbeat.value
+                ]), False)
+                self._serialLock.release()
+                time.sleep(0.5)
+            else:
+                self._serialLock.release()
+                break
+
 
     def _readback(self):
         """Continually read from the device and handle the status messages."""
-        while (self._serialPort and self._serialPort.is_open and
+        while (self.isConnected() and
                (self._parentThread.is_alive() or not self.killWithParentThread)):
+            self._serialLock.acquire()
             try:
-                if self._serialPort and self._serialPort.is_open and self._serialPort.in_waiting > 0:
-                    self._serialLock.acquire()
+                if self.isConnected() and self._serialPort.in_waiting > 0:
                     statusbit = int.from_bytes(self._serialPort.read(1), byteorder='big')
 
                     if statusbit == Statusbit.Idle.value:
@@ -176,11 +197,14 @@ class SmartWave:
                     else:
                         print("Unknown Status bit: %d" % statusbit)
 
-                    self._serialLock.release()
-
-
             except serial.SerialException:
                 pass
+
+            except Exception as e:
+                self._serialLock.release()
+                raise e
+
+            self._serialLock.release()
 
     def _connectToSpecifiedPort(self, portName: str, reset: bool, requestInfo: bool):
         """Try to connect to the specified port.
@@ -193,24 +217,33 @@ class SmartWave:
         :raises ConnectionRefusedError: If no connection to the device could be established
         """
         try:
+            self._serialLock.acquire()
             if self._serialPort is None:
-                self._serialPort = serial.Serial(portName, baudrate=115200)
+                self._serialPort = serial.Serial(portName, baudrate=115200, exclusive=True, timeout=1)
             else:
                 self._serialPort.port = portName
 
-            if reset:
-                self.reset()
+            self._serialLock.release()
 
-            if requestInfo:
-                self.requestInfo()
 
-            self._heartbeatThread.start()
-            self._readingThread.start()
-
-            return
-
-        except ConnectionRefusedError as e:
+        except (ConnectionRefusedError, serial.SerialException) as e:
+            self._serialLock.release()
             raise ConnectionRefusedError("Could not connect to serial port %s" % portName)
+
+        if reset:
+            self.reset()
+
+        if requestInfo:
+            self.requestInfo()
+
+        self._heartbeatThread = threading.Thread(target=self._heartbeat)
+        self._heartbeatThread.start()
+        self._readingThread = threading.Thread(target=self._readback)
+        self._readingThread.start()
+
+        for entry in self.configEntries:
+            entry.writeToDevice()
+        return
 
     def scanAndConnect(self, reset: bool = True, requestInfo: bool = True):
         """Scan all serial ports on the PC and connect to a SmartWave device if one is found.
@@ -245,8 +278,7 @@ class SmartWave:
         :raises ConnectionRefusedError: If no connection could be established with the specified port
         raises AttributeError: If the device at the specified port is not a SmartWave device"""
         if portName is None:
-            self.scanAndConnect(reset)
-            return
+            return self.scanAndConnect(reset)
 
         ports = serial.tools.list_ports.comports()
         for port in ports:
@@ -259,31 +291,45 @@ class SmartWave:
 
         raise ConnectionRefusedError("Could not find specified serial port")
 
-    def writeToDevice(self, data: bytes):
+    def writeToDevice(self, data: bytes, acquireLock: bool = True):
         """Write bare data to the connected device.
 
         :param bytes data: the data to write
         :raises Exception: If the serial connection is not active"""
+
+        if acquireLock:
+            self._serialLock.acquire()
         if (self._serialPort is None):
+            self._serialLock.release()
             raise Exception("Not connected to a device")
 
-        # print(list(data))
-        self._serialLock.acquire()
         self._serialPort.write(data)
-        self._serialLock.release()
+
+        if acquireLock:
+            self._serialLock.release()
 
     def isConnected(self) -> bool:
         """Return whether a device connection is currently active.
 
         :return: True if the device is connected, False otherwise"""
-        return self._serialPort is not None
+        return self._serialPort is not None and self._serialPort.isOpen()
 
     def disconnect(self):
         """Disconnect from the connected device."""
-        self._serialPort.close()
+        self._serialLock.acquire()
+        if self.isConnected():
+            self._serialPort.flush()
+            self._serialPort.close()
+
+            self._serialLock.release()
+            self._heartbeatThread.join()
+            self._heartbeatThread = None
+            self._readingThread.join()
+            self._readingThread = None
+            self._serialLock.acquire()
         self._serialPort = None
-        self._heartbeatThread.join()
-        self._readingThread.join()
+        self._serialLock.release()
+
 
     def trigger(self):
         """Start or Stop the current configuration on the connected device."""
@@ -313,6 +359,15 @@ class SmartWave:
             return self._availableI2CDrivers.pop(0)
         else:
             raise Exception("No more I2C Drivers available on this device")
+
+    def returnI2CDriver(self, driver: I2CDriver) -> int:
+        """Return an I2C Driver to the list of available I2C Drivers.
+
+        :param I2CDriver driver: The I2C driver to return
+        :return: The new number of available I2C Drivers
+        :rtype: int"""
+        self._availableI2CDrivers.append(driver)
+        return len(self._availableI2CDrivers)
 
     def getNextAvailablePin(self) -> Pin:
         """Get the next available Pin.
@@ -358,6 +413,15 @@ class SmartWave:
 
         return self._availablePins.pop(foundIndex)
 
+    def returnPin(self, pin: Pin) -> int:
+        """Return a Pin to the list of available pins.
+
+        :param Pin pin: The pin to return
+        :return: The new number of available pins
+        rtype: int"""
+        self._availablePins.append(pin)
+        return len(self._availablePins)
+
     def getNextAvailableStimulus(self) -> Stimulus:
         """Get the next available stimulus.
 
@@ -368,6 +432,15 @@ class SmartWave:
             return self._availableStimuli.pop(0)
         else:
             raise Exception("No more stimuli available on this device")
+
+    def returnStimulus(self, stimulus: Stimulus) -> int:
+        """Return a stimulus to the list of available stimuli.
+
+        :param Stimulus stimulus: The stimulus to return
+        :return: The new number of available stimuli
+        :rtype: int"""
+        self._availableStimuli.append(stimulus)
+        return len(self._availableStimuli)
 
     def createI2CConfig(self, sdaPinName: Union[str, None] = None, sclPinName: Union[str, None] = None,
                         clockSpeed: Union[int, None] = None) -> I2CConfig:
@@ -386,6 +459,19 @@ class SmartWave:
         self.configEntries.append(config)
 
         return config
+
+    def removeConfig(self, config: Config):
+        """Remove a config from the device.
+
+        :param Config: the config to remove
+        :raises AttributeError: If the config is not found"""
+        index = self.configEntries.index(config)
+
+        if index == -1:
+            raise AttributeError("No such config found")
+
+        config.delete()
+        del self.configEntries[index]
 
     def writeFPGARegister(self, address: int, value: int):
         """Write directly to a register on the SmartWave's FPGA.

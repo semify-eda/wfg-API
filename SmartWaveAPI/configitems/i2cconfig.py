@@ -36,7 +36,9 @@ class I2CConfig(Config):
         stimulus.sampleBitWidth = 32
 
         super().__init__(self._device, driver, stimulus)
-        self.writeToDevice()
+
+        if self._device.isConnected():
+            self.writeToDevice()
 
     def setTransactions(self, transactions: List[I2CTransaction]):
         """Set the list of transactions and send the configuration to the connected device.

@@ -16,6 +16,10 @@ class Pin:
         self._number: int = number
         self.pullup: bool = False
 
+    def __del__(self):
+        """Destructor - return all resources to the device."""
+        self.delete()
+
     def id(self) -> int:
         """Calculate the numerical ID of this pin."""
         return ((ord(self._bank[0]) - ord("A") + 0xa) << 4) + self._number
@@ -42,4 +46,8 @@ class Pin:
         :return: The number of this pin
         :rtype: int"""
         return self._number
+
+    def delete(self):
+        """Unconfigure this pin and return its resources to the device."""
+        self._device.returnPin(self)
 

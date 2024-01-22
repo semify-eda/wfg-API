@@ -1,10 +1,10 @@
-from SmartWaveAPI.definitions import TriggerMode, Command
+from SmartWaveAPI.definitions import TriggerMode, Command, StimulusType
 from typing import List
 
 
 class Stimulus(object):
     """A hardware stimulus on the SmartWave device"""
-    stimulusType: int = 0
+    stimulusType: int = StimulusType.Arbitrary.value
 
     def __init__(self, device, id: int):
         """Create a new Stimulus instance. Only to be called in SmartWave.__init__() function.
@@ -16,6 +16,10 @@ class Stimulus(object):
         self.sampleBitWidth: int = 8
         self.triggerMode: TriggerMode = TriggerMode.Single
         self.samples: List[int] = [0xa, 0xb]
+
+    def __del__(self) -> None:
+        """Destructor - return all resources to the device."""
+        self.delete()
 
     def writeToDevice(self):
         """Write the configuration parameters of this pin to the device."""
@@ -44,3 +48,6 @@ class Stimulus(object):
         :return: the ID of this stimulus
         :rtype: int"""
         return self._id
+
+    def delete(self):
+        self._device.returnStimulus(self)

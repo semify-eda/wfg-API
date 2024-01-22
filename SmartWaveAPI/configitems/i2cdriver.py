@@ -27,6 +27,10 @@ class I2CDriver(Driver):
             'SDA': 1
         }
 
+    def __del__(self) -> None:
+        """Destructor - return all resources to the device."""
+        self.delete()
+
     def writeToDevice(self):
         """Write the configuration parameters of this driver to the device."""
 
@@ -41,20 +45,9 @@ class I2CDriver(Driver):
             cdiv & 0xff
         ]))
 
-    def writePinConnectionsToDevice(self):
-        """Write the pin configuration (i.e. which pin does what) of this driver to the device."""
-        for pin in self.pins.keys():
-            if self.pins[pin]:
-                self._device.writeToDevice(bytes([
-                    Command.DriverPinMatrix.value,
-                    self.driverType.value,
-                    self._id,
-                    self.pinNumbers[pin],
-                    self.pins[pin].id(),
-                    (self.colorRGB565() >> 8) & 0xff,
-                    self.colorRGB565() & 0xff,
-                    len(pin),
-                ]) + bytes(pin, 'ASCII'))
+
+
+
 
     def writePinsToDevice(self):
         """Write the configuration of each of this driver's pins to the device."""
@@ -85,3 +78,20 @@ class I2CDriver(Driver):
                 samples += transaction.data
 
         return samples
+
+
+    def delete(self):
+        """Unconfigure this driver along with its pins and return all resources to the device."""
+        if self.pins["SDA"]:
+            self.pins["SDA"].delete()
+            self.removePinConnection("SDA")
+
+        if self.pins["SCL"]:
+            self.pins["SCL"].delete()
+            self.removePinConnection("SCL")
+
+        self.pins["SDA"] = None
+        self.pins["SCL"] = None
+
+        self._device.returnI2CDriver(self)
+
