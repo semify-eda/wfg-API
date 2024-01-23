@@ -106,7 +106,6 @@ class SmartWave(object):
                 self._serialLock.release()
                 break
 
-
     def _readback(self):
         """Continually read from the device and handle the status messages."""
         while (self.isConnected() and
@@ -214,8 +213,7 @@ class SmartWave(object):
         :param bool requestInfo: Request info from the device after connection
         :return: Self
         :rtype: SmartWave
-        :raises ConnectionRefusedError: If no connection to the device could be established
-        """
+        :raises ConnectionRefusedError: If no connection to the device could be established"""
         try:
             self._serialLock.acquire()
             if self._serialPort is None:
@@ -253,7 +251,6 @@ class SmartWave(object):
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no suitable device is found"""
-
         # scans all ports and autoconnects to matching id
         ports = serial.tools.list_ports.comports()
         for port in ports:
@@ -271,12 +268,12 @@ class SmartWave(object):
         """Try to connect to a SmartWave device at the specified port.
 
         :param str portName: The name of the port to connect to
-        param bool reset: Reset the device after connection
-        param bool requestInfo: Request info from the device after connection
+        :param bool reset: Reset the device after connection
+        :param bool requestInfo: Request info from the device after connection
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no connection could be established with the specified port
-        raises AttributeError: If the device at the specified port is not a SmartWave device"""
+        :raises AttributeError: If the device at the specified port is not a SmartWave device"""
         if portName is None:
             return self.scanAndConnect(reset)
 
@@ -296,7 +293,6 @@ class SmartWave(object):
 
         :param bytes data: the data to write
         :raises Exception: If the serial connection is not active"""
-
         if acquireLock:
             self._serialLock.acquire()
         if (self._serialPort is None):
@@ -329,7 +325,6 @@ class SmartWave(object):
             self._serialLock.acquire()
         self._serialPort = None
         self._serialLock.release()
-
 
     def trigger(self):
         """Start or Stop the current configuration on the connected device."""
@@ -388,7 +383,6 @@ class SmartWave(object):
         :rtype: Pin
         :raises AttributeError: If the pin name does not exist on the device
         :raises Exception: If the pin is already in use"""
-
         bank = name[:1]
         numberStr = name[1:]
 
@@ -418,7 +412,7 @@ class SmartWave(object):
 
         :param Pin pin: The pin to return
         :return: The new number of available pins
-        rtype: int"""
+        :rtype: int"""
         self._availablePins.append(pin)
         return len(self._availablePins)
 
@@ -450,8 +444,7 @@ class SmartWave(object):
         :param str sclPinName: The name of the pin to use for SCL
         :param int clockSpeed: The I2C clock speed in Hz
         :return: An I2C Configuration with the specified settings
-        :rtype: I2CConfig
-        """
+        :rtype: I2CConfig"""
         sdaPin = self.getPin(sdaPinName) if sdaPinName else None
         sclPin = self.getPin(sclPinName) if sclPinName else None
 
@@ -502,10 +495,8 @@ class SmartWave(object):
 
             self.singleAddressReadCallback = self._fpgaReadCallbackHandler
 
-
         self.writeToDevice(bytes([Command.FpgaRead.value]) +
                            address.to_bytes(3, 'big'))
-
 
         if blocking:
             # wait for read value
