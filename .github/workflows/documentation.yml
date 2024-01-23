@@ -9,10 +9,11 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-        -name: Sphinx build
+        - uses: actions/checkout@v3
+        - name: Sphinx build
         run: |
             sphinx-apidoc -o ./source ../
-        -name: Deploy to GitHub Pages
+        - name: Deploy to GitHub Pages
         uses: semify-eda/wfg_doc@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/wfg-api-docs' }}
         with:
