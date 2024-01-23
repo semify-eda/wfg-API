@@ -5,11 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c3f52ce-acd8-4cda-af3b-0f19348491c8" name="Changes" comment="Updated README.md and added Design Specifications">
-      <change beforePath="$PROJECT_DIR$/.idea/wfg-API.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SmartWaveAPI/configitems/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/SmartWaveAPI/configitems/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SmartWaveAPI/smartwave.py" beforeDir="false" afterPath="$PROJECT_DIR$/SmartWaveAPI/smartwave.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +16,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -44,6 +41,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "last_opened_file_path": "C:/semify/Git/wfg-API",
