@@ -5,75 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c3f52ce-acd8-4cda-af3b-0f19348491c8" name="Changes" comment="Updated README.md and added Design Specifications">
-      <change afterPath="$PROJECT_DIR$/docsource/build/doctrees/environment.pickle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docsource/build/html/searchindex.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/doctrees/SmartWaveAPI.configitems.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/doctrees/SmartWaveAPI.configitems.doctree" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/doctrees/SmartWaveAPI.definitions.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/doctrees/SmartWaveAPI.definitions.doctree" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/doctrees/SmartWaveAPI.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/doctrees/SmartWaveAPI.doctree" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/doctrees/environment.pickle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/doctrees/index.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/doctrees/index.doctree" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/doctrees/modules.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/doctrees/modules.doctree" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/.buildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/.buildinfo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/SmartWaveAPI.configitems.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/SmartWaveAPI.configitems.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/SmartWaveAPI.definitions.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/SmartWaveAPI.definitions.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/SmartWaveAPI.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/SmartWaveAPI.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_sources/SmartWaveAPI.configitems.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_sources/SmartWaveAPI.configitems.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_sources/SmartWaveAPI.definitions.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_sources/SmartWaveAPI.definitions.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_sources/SmartWaveAPI.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_sources/SmartWaveAPI.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_sources/index.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_sources/index.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_sources/modules.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_sources/modules.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/_sphinx_javascript_frameworks_compat.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/_sphinx_javascript_frameworks_compat.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/basic.css" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/basic.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/badge_only.css" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/badge_only.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/Roboto-Slab-Bold.woff" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/Roboto-Slab-Bold.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/Roboto-Slab-Bold.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/Roboto-Slab-Bold.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/Roboto-Slab-Regular.woff" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/Roboto-Slab-Regular.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/Roboto-Slab-Regular.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/Roboto-Slab-Regular.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/fontawesome-webfont.eot" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/fontawesome-webfont.eot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/fontawesome-webfont.svg" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/fontawesome-webfont.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/fontawesome-webfont.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/fontawesome-webfont.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/fontawesome-webfont.woff" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/fontawesome-webfont.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/fontawesome-webfont.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/fontawesome-webfont.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/lato-bold-italic.woff" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/lato-bold-italic.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/lato-bold-italic.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/lato-bold-italic.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/lato-bold.woff" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/lato-bold.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/lato-bold.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/lato-bold.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/lato-normal-italic.woff" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/lato-normal-italic.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/lato-normal-italic.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/lato-normal-italic.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/lato-normal.woff" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/lato-normal.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/fonts/lato-normal.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/fonts/lato-normal.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/css/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/css/theme.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/doctools.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/doctools.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/documentation_options.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/documentation_options.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/file.png" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/file.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/jquery.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/jquery.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/js/badge_only.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/js/badge_only.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/js/html5shiv-printshiv.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/js/html5shiv-printshiv.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/js/html5shiv.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/js/html5shiv.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/js/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/js/theme.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/language_data.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/language_data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/minus.png" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/minus.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/plus.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/pygments.css" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/pygments.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/searchtools.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/searchtools.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/_static/sphinx_highlight.js" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/_static/sphinx_highlight.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/genindex.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/genindex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/modules.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/modules.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/objects.inv" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/objects.inv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/py-modindex.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/py-modindex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/build/html/search.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/build/html/searchindex.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/make.bat" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/make.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/SmartWaveAPI.configitems.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/source/SmartWaveAPI.configitems.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/SmartWaveAPI.definitions.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/source/SmartWaveAPI.definitions.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/SmartWaveAPI.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/source/SmartWaveAPI.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/conf.py" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/source/conf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/source/index.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/modules.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docsource/source/modules.rst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,8 +15,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -113,7 +45,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/semify/Git/wfg-API&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.documentation.PythonDocumentationConfigurable&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
@@ -127,7 +59,7 @@
       <recent name="C:\semify\Git\wfg-API\docs" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.mcp9808">
+  <component name="RunManager" selected="Python.ina260">
     <configuration name="imu" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="wfg-API" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -141,6 +73,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/imu.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ina260" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="wfg-API" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/ina260.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -228,6 +181,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.ina260" />
         <item itemvalue="Python.mcp9808" />
         <item itemvalue="Python.registerAccess" />
         <item itemvalue="Python.simpleI2C" />
