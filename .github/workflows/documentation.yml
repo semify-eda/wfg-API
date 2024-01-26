@@ -5,22 +5,14 @@ on:
     branches: [devel-adam] # branch to trigger deployment
 
 jobs:
-  build:
+  pages:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
-        contents: write
+      pages: write
+      id-token: write
     steps:
-    - uses: actions/checkout@v4
-    - name: Build HTML
-      uses: ammaraskar/sphinx-action@master
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: html-docs
-        path: docs/html
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/html
+    - id: deployment
+      uses: sphinx-notes/pages@v3
