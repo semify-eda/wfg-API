@@ -33,12 +33,15 @@ class Config:
 
     def writeStimulusDriverConnectionToDevice(self):
         """Configure the connection between the stimulus and the driver on the device."""
+        readNumber = self._getReadNumber()
         self._device.writeToDevice(bytes([
             Command.StimulusDriverMatrix.value,
             self._stimulus.stimulusType,
             self._stimulus.getId(),
             self._driver.driverType.value,
             self._driver.getId(),
+            (readNumber >> 8) & 0xff,
+            readNumber & 0xff,
         ]))
 
     def removeStimulusDriverConnection(self):
@@ -49,7 +52,9 @@ class Config:
                 StimulusType.NoStimulus.value,
                 0,  # stimMem
                 self._driver.driverType.value,
-                self._driver.getId()
+                self._driver.getId(),
+                0xff,
+                0xff
             ]))
 
     def writeToDevice(self):
@@ -72,3 +77,11 @@ class Config:
         """Delete this configuration and return all resources to the device."""
         self._driver.delete()
         self._stimulus.delete()
+
+
+    def _getReadNumber(self) -> int:
+        """Get the number of samples to read back from the device.
+
+        :return: The number of samples
+        :rtype: int"""
+        return 0

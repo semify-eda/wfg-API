@@ -19,7 +19,7 @@ def main():
     # ret1 = i2c.readRegister(0b1101010, [0x28], 2, False)
 
     start = time.time()
-    for i in range(200):
+    for i in range(20000):
         # sw.trigger()
         # time.sleep(0.005)
         ret1 = i2c.readRegister(0b1101010, [0x2A], 2)

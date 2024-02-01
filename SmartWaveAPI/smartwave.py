@@ -76,6 +76,7 @@ class SmartWave(object):
 
         self._latestFpgaRead: int = 0
         self._fpgaReadSemaphore = threading.Semaphore(0)
+        self._deviceRunning: bool = False
 
     def __del__(self):
         """Destructor - closes the device connection"""
@@ -117,10 +118,12 @@ class SmartWave(object):
                     statusbit = int.from_bytes(self._serialPort.read(1), byteorder='big')
 
                     if statusbit == Statusbit.Idle.value:
+                        self._deviceRunning = False
                         if self.idleCallback is not None:
                             self.idleCallback()
 
                     elif statusbit == Statusbit.Running.value:
+                        self._deviceRunning = True
                         if self.runningCallback is not None:
                             self.runningCallback()
 
@@ -300,7 +303,8 @@ class SmartWave(object):
         if acquireLock:
             self._serialLock.acquire()
         if (self._serialPort is None):
-            self._serialLock.release()
+            if acquireLock:
+                self._serialLock.release()
             raise Exception("Not connected to a device")
 
         self._serialPort.write(data)
