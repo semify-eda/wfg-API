@@ -14,6 +14,7 @@ def meas_voltage(i2c):
     lsb_volt = 1.25
     i2c.write(0x40, [0x02])
     volt_read = i2c.readRegister(0x40, [0x02], 2)
+    print(f"Vbus Register content: {bin(volt_read[0] + volt_read[1])[2:].zfill(8)}")
     volt_val = lsb_volt * (volt_read[0] + volt_read[1])
     print(f"Measured voltage: {volt_val:.2f}mV")
 
@@ -26,6 +27,7 @@ def meas_current(i2c):
     lsb_current = 1.25
     i2c.write(0x40, [0x01])
     current_read = i2c.readRegister(0x40, [0x01], 2)
+    print(f"Current Register content: {bin(current_read[0] + current_read[1])[2:].zfill(8)}")
     current_val = lsb_current * (current_read[0] + current_read[1])
     print(f"Measured current: {current_val:.2f}mA")
 
@@ -38,6 +40,7 @@ def meas_power(i2c):
     lsb_power = 10
     i2c.write(0x40, [0x03])
     power_read = i2c.readRegister(0x40, [0x03], 2)
+    print(f"Power Register content: {bin(power_read[0] + power_read[1])[2:].zfill(8)}")
     power_val = lsb_power * (power_read[0] + power_read[1])
     print(f"Measured power: {power_val:.2f}mW")
 
