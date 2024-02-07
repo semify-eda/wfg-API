@@ -2,6 +2,7 @@ import serial
 import serial.tools.list_ports
 import threading
 import time
+import os
 
 from typing import List, Union, Callable
 
@@ -15,6 +16,12 @@ class SmartWave(object):
     VID: int = 0x2341
     PID: int = 0x8071
     FPGAClockSpeed: int = 100e6
+
+    SBLStart = 0x2000
+    FirmwareStart = 0x9000
+    FirmwareEnd = 0x18200
+    FPGABitstreamStart = 0x0
+    FPGABitstreamEnd = 0xfffffffffffff
 
     def __init__(self):
         """Create a new SmartWave instance."""
@@ -76,6 +83,8 @@ class SmartWave(object):
 
         self._latestFpgaRead: int = 0
         self._fpgaReadSemaphore = threading.Semaphore(0)
+        self._deviceRunning: bool = False
+
 
     def __del__(self):
         """Destructor - closes the device connection"""
@@ -116,10 +125,12 @@ class SmartWave(object):
                     statusbit = int.from_bytes(self._serialPort.read(1), byteorder='big')
 
                     if statusbit == Statusbit.Idle.value:
+                        self._deviceRunning = False
                         if self.idleCallback is not None:
                             self.idleCallback()
 
                     elif statusbit == Statusbit.Running.value:
+                        self._deviceRunning = True
                         if self.runningCallback is not None:
                             self.runningCallback()
 
@@ -187,7 +198,7 @@ class SmartWave(object):
                     elif statusbit == Statusbit.FirmwareUpdateStatus.value:
                         byte = int.from_bytes(self._serialPort.read(1), 'big')
                         isMicrocontroller: bool = (byte & 8) == 1
-                        status: int = status & 0xef
+                        status: int = byte & 0xef
 
                         if self.firwareUpdateStatusCallback is not None:
                             self.firwareUpdateStatusCallback(isMicrocontroller, status)
@@ -251,6 +262,7 @@ class SmartWave(object):
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no suitable device is found"""
+
         # scans all ports and autoconnects to matching id
         ports = serial.tools.list_ports.comports()
         for port in ports:
@@ -293,10 +305,12 @@ class SmartWave(object):
 
         :param bytes data: the data to write
         :raises Exception: If the serial connection is not active"""
+
         if acquireLock:
             self._serialLock.acquire()
         if (self._serialPort is None):
-            self._serialLock.release()
+            if acquireLock:
+                self._serialLock.release()
             raise Exception("Not connected to a device")
 
         self._serialPort.write(data)
@@ -383,6 +397,7 @@ class SmartWave(object):
         :rtype: Pin
         :raises AttributeError: If the pin name does not exist on the device
         :raises Exception: If the pin is already in use"""
+
         bank = name[:1]
         numberStr = name[1:]
 
@@ -495,8 +510,10 @@ class SmartWave(object):
 
             self.singleAddressReadCallback = self._fpgaReadCallbackHandler
 
+
         self.writeToDevice(bytes([Command.FpgaRead.value]) +
                            address.to_bytes(3, 'big'))
+
 
         if blocking:
             # wait for read value
@@ -508,3 +525,98 @@ class SmartWave(object):
             return self._latestFpgaRead
 
         return None
+
+    def updateFirmware(self, firmwarePath: str):
+        """Update the microcontroller firmware with a given firmware.
+
+        This also checks the firmware file for plausibility and calculates the checksum.
+
+        :param str firmwarePath: The path to the new firmware
+        :raises FileNotFoundError: If the firmware file could not be found
+        :raises Exception: If the firmware file is incompatible with the bootloader
+        :raises Exception: If the firmware size is incompatible with the bootloader"""
+        f = open(firmwarePath, "rb")
+        f_check = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "SBL_sample.bin"), "rb")
+
+        f.seek(self.SBLStart)
+        f_check.seek(self.SBLStart)
+        # check if SBL was changed
+        while f.tell() < self.FirmwareStart:
+            if f.read(1) != f_check.read(1):
+                # the given firmware has a different SBL; will not be compatible
+                raise Exception("The given firmware is not compatible with the current bootloader on the device!")
+
+        # check if firmware chunk is big enough
+        f.seek(self.FirmwareEnd)
+        for i in range(16):
+            if f.read(1) != b'\x00':
+                raise Exception("The firmware size seems to be incompatible with the device!")
+
+
+        dataLen = self.FirmwareEnd - self.FirmwareStart
+        commands = bytes([
+            Command.FirmwareUpdate.value,
+            0x1b,
+            (dataLen >> 24) & 0xff,
+            (dataLen >> 16) & 0xff,
+            (dataLen >> 8) & 0xff,
+            dataLen & 0xff
+        ])
+
+        f.seek(self.FirmwareStart)
+        checksum = 0xC0DEF19E
+        while f.tell() <= self.FirmwareEnd:
+            checksum += int.from_bytes(f.read(4), "little")
+        checksum %= 0x100000000
+
+        f.seek(self.FirmwareStart)
+        data = f.read(dataLen)
+
+        checksumArray = int.to_bytes(checksum, 4, "big")
+
+        f.close()
+        f_check.close()
+
+        self.writeToDevice(commands + data + checksumArray)
+
+    def updateFPGABitstream(self, bitstreamPath: str):
+        """Update the FPGA bitstream with a given bitstream.
+
+        Also checks the bitstream file for plausibility and calculates the checksum.
+
+        :param str bitstreamPath: The path to the bitstream
+        :raises FileNotFoundError: If the bitstream file could not be found
+        :raises Exception: If the bitstream file is of the wrong size"""
+
+        f = open(bitstreamPath, "rb")
+
+        # size check
+        f.seek(0, os.SEEK_END)
+        fileSize = f.tell()
+        if fileSize != 0x21728c:
+            raise Exception(
+                "The bitstream seems to be of the wrong size: 0x%x. Please check for correctness." % fileSize)
+
+        # checksum
+        f.seek(self.FPGABitstreamStart)
+        checksum = 0xC0DEF19E
+        while f.tell() + 4 <= fileSize and f.tell() + 4 <= self.FPGABitstreamEnd:
+            num = int.from_bytes(f.read(4), "big")
+            checksum += num
+            checksum %= 0x100000000
+
+        f.seek(self.FPGABitstreamStart)
+
+        commands = bytes([
+            Command.FpgaUpdate.value,
+            0x1c,
+            (fileSize >> 24) & 0xff,
+            (fileSize >> 16) & 0xff,
+            (fileSize >> 8) & 0xff,
+            fileSize & 0xff
+        ])
+        data = f.read()
+        checksumArray = checksum.to_bytes(4, "big")
+        f.close()
+
+        self.writeToDevice(commands + data + checksumArray)

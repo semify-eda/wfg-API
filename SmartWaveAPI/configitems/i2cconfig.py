@@ -57,9 +57,13 @@ class I2CConfig(Config):
                     break
 
         if changedTransactions:
+            # write new transactions
             self._lastTransactions = transactions
             self._stimulus.samples = self._driver.generateSamples(transactions)
             self._stimulus.writeToDevice()
+
+            # write new expected read number
+            self.writeStimulusDriverConnectionToDevice()
 
     def write(self, deviceId: int, data: bytes):
         """Write bytes over I2C with the connected device.
@@ -166,3 +170,16 @@ class I2CConfig(Config):
             return self._latestReadValues
 
         return None
+
+    def _getReadNumber(self) -> int:
+        """Get the number of samples to read back from the device.
+
+        :return: The number of samples
+        :rtype: int"""
+        readNumber = 0
+
+        for transaction in self._lastTransactions:
+            if type(transaction) is I2CRead:
+                readNumber += transaction.length
+
+        return readNumber
