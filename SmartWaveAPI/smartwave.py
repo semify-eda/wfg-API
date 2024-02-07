@@ -542,19 +542,33 @@ class SmartWave(object):
         f = open(firmwarePath, "rb")
         f_check = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "SBL_sample.bin"), "rb")
 
-        f.seek(self.SBLStart)
-        f_check.seek(self.SBLStart)
-        # check if SBL was changed
-        while f.tell() < self.FirmwareStart:
-            if f.read(1) != f_check.read(1):
-                # the given firmware has a different SBL; will not be compatible
-                raise Exception("The given firmware is not compatible with the current bootloader on the device!")
+        # check if given file is cropped (webgui) or raw (from arduino IDE)
+        f_size = f.seek(0, os.SEEK_END)
+        f_check_size = f_check.seek(0, os.SEEK_END)
 
-        # check if firmware chunk is big enough
-        f.seek(self.FirmwareEnd)
-        for i in range(16):
-            if f.read(1) != b'\x00':
-                raise Exception("The firmware size seems to be incompatible with the device!")
+        cropped = False
+        if f_size == f_check_size:
+            cropped = False
+        elif f_size > self.FirmwareEnd - self.FirmwareStart:
+            cropped = True
+        else:
+            raise Exception("The size of the given file suggests that it is not a valid firmware")
+
+        if not cropped:
+            f.seek(self.SBLStart)
+            f_check.seek(self.SBLStart)
+
+            # check if SBL was changed
+            while f.tell() < self.FirmwareStart:
+                if f.read(1) != f_check.read(1):
+                    # the given firmware has a different SBL; will not be compatible
+                    raise Exception("The given firmware is not compatible with the current bootloader on the device!")
+
+            # check if firmware chunk is big enough
+            f.seek(self.FirmwareEnd)
+            for i in range(16):
+                if f.read(1) != b'\x00':
+                    raise Exception("The firmware size seems to be incompatible with the device!")
 
 
         dataLen = self.FirmwareEnd - self.FirmwareStart
@@ -567,13 +581,16 @@ class SmartWave(object):
             dataLen & 0xff
         ])
 
-        f.seek(self.FirmwareStart)
+        f_start = self.FirmwareStart if not cropped else 0
+        f_end = self.FirmwareEnd if not cropped else dataLen
+
+        f.seek(f_start)
         checksum = 0xC0DEF19E
-        while f.tell() <= self.FirmwareEnd:
+        while f.tell() <= f_end:
             checksum += int.from_bytes(f.read(4), "little")
         checksum %= 0x100000000
 
-        f.seek(self.FirmwareStart)
+        f.seek(f_start)
         data = f.read(dataLen)
 
         checksumArray = int.to_bytes(checksum, 4, "big")
