@@ -8,7 +8,7 @@ from typing import List, Union, Callable
 
 from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config
 from SmartWaveAPI.configitems.i2cconfig import I2CConfig
-from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode
+from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode, TriggerMode
 
 
 class SmartWave(object):
@@ -84,6 +84,11 @@ class SmartWave(object):
         self._latestFpgaRead: int = 0
         self._fpgaReadSemaphore = threading.Semaphore(0)
         self._deviceRunning: bool = False
+
+        self._syncDiv: int = 0
+        self._subcycles: int = 0
+        self._triggerMode: TriggerMode = TriggerMode.Single
+        self._vddio: float = 3.3
 
 
     def __del__(self):
@@ -217,12 +222,13 @@ class SmartWave(object):
 
             self._serialLock.release()
 
-    def _connectToSpecifiedPort(self, portName: str, reset: bool, requestInfo: bool):
+    def _connectToSpecifiedPort(self, portName: str, reset: bool, requestInfo: bool, configureGeneral: bool):
         """Try to connect to the specified port.
 
         :param str portName: The port to connect to
         :param bool reset: Reset the device after connection
         :param bool requestInfo: Request info from the device after connection
+        :param bool configureGeneral: Configure general with the default values
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no connection to the device could be established
@@ -236,13 +242,15 @@ class SmartWave(object):
 
             self._serialLock.release()
 
-
         except (ConnectionRefusedError, serial.SerialException) as e:
             self._serialLock.release()
             raise ConnectionRefusedError("Could not connect to serial port %s" % portName)
 
         if reset:
             self.reset()
+
+        if configureGeneral:
+            self.configGeneral()
 
         if requestInfo:
             self.requestInfo()
@@ -256,11 +264,12 @@ class SmartWave(object):
             entry.writeToDevice()
         return
 
-    def scanAndConnect(self, reset: bool = True, requestInfo: bool = True):
+    def scanAndConnect(self, reset: bool = True, requestInfo: bool = True, configureGeneral: bool = True):
         """Scan all serial ports on the PC and connect to a SmartWave device if one is found.
 
         :param bool reset: Reset the device after connection
         :param bool requestInfo: Request info from the device after connection
+        :param bool configureGeneral: Configure general with the default values
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no suitable device is found"""
@@ -270,7 +279,7 @@ class SmartWave(object):
         for port in ports:
             if port.vid == SmartWave.VID and port.pid == SmartWave.PID:
                 try:
-                    self._connectToSpecifiedPort(port.device, reset, requestInfo)
+                    self._connectToSpecifiedPort(port.device, reset, requestInfo, configureGeneral)
                     return self
                 except ConnectionRefusedError as e:
                     # try another device
@@ -278,12 +287,13 @@ class SmartWave(object):
 
         raise ConnectionRefusedError("Could not find a suitable device to connect to")
 
-    def connect(self, portName: str = None, reset: bool = True, requestInfo: bool = True):
+    def connect(self, portName: str = None, reset: bool = True, requestInfo: bool = True, configureGeneral: bool = True):
         """Try to connect to a SmartWave device at the specified port.
 
         :param str portName: The name of the port to connect to
-        param bool reset: Reset the device after connection
-        param bool requestInfo: Request info from the device after connection
+        :param bool reset: Reset the device after connection
+        :param bool requestInfo: Request info from the device after connection
+        :param bool configureGeneral: Configure general with the default values
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no connection could be established with the specified port
@@ -297,7 +307,7 @@ class SmartWave(object):
                 if port.vid != SmartWave.VID or port.pid != SmartWave.PID:
                     raise AttributeError("The device at the specified port %s is not a SmartWave device" % port)
 
-                self._connectToSpecifiedPort(portName, reset, requestInfo)
+                self._connectToSpecifiedPort(portName, reset, requestInfo, configureGeneral)
                 return self
 
         raise ConnectionRefusedError("Could not find specified serial port")
@@ -354,6 +364,67 @@ class SmartWave(object):
         self.writeToDevice(bytes([
             Command.Reset.value
         ]))
+
+    def configGeneral(self, vddio: Union[float, None] = None, triggerMode: Union[TriggerMode, None] = None):
+        """Configure general information on the connected device.
+
+        :param float vddio: The IO voltage of the connected device (accurate to 0.01V)
+        :param TriggerMode triggerMode: The trigger mode of the output device (i.e. whether it runs once or continuously)
+
+        :raises AttributeError: if vddio is not betweeen 1.8V and 5.0V"""
+
+        if triggerMode is not None:
+            self._triggerMode = triggerMode
+
+        if vddio is not None:
+            if vddio < 1.8:
+                raise AttributeError("VDDIO needs to be above 1.8V")
+            if vddio > 5:
+                raise AttributeError("VDDIO needs to be below 5V")
+            self._vddio = vddio
+
+        vddioWord = int(self._vddio / 0.01)
+        self.writeToDevice(bytes([
+            Command.General.value,
+            (self._syncDiv >> 8) & 0xff,
+            self._syncDiv & 0xff,
+            (self._subcycles >> 8) & 0xff,
+            self._subcycles & 0xff,
+            self._triggerMode.value,
+            (vddioWord >> 8) & 0xff,
+            vddioWord & 0xff
+        ]))
+
+    @property
+    def vddio(self) -> float:
+        """Get the current IO voltage of the connected device.
+
+        :return: The current IO voltage of the connected device
+        :rtype: float"""
+        return self._vddio
+
+    @vddio.setter
+    def vddio(self, new_vddio: float):
+        """Set the IO voltage of the connected device.
+
+        :param float new_vddio: The new VDDIO of the device
+        :raises ValueError: If the new VDDIO is not between 1.8V and 5.0V"""
+        self.configGeneral(vddio=new_vddio)
+
+    @property
+    def triggerMode(self) -> TriggerMode:
+        """Get the current trigger mode of the connected device.
+
+        :return: The current trigger mode of the connected device
+        :rtype: TriggerMode"""
+        return self._triggerMode
+
+    @triggerMode.setter
+    def triggerMode(self, new_triggerMode: TriggerMode):
+        """Set the current trigger mode of the connected device.
+
+        :param TriggerMode new_triggerMode: The new triggermode"""
+        self.configGeneral(triggerMode=new_triggerMode)
 
     def requestInfo(self):
         """Request the device information from the connected device."""
