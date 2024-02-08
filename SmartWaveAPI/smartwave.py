@@ -16,6 +16,7 @@ class SmartWave(object):
     VID: int = 0x2341
     PID: int = 0x8071
     FPGAClockSpeed: int = 100e6
+    FPGAClockDivided: int = FPGAClockSpeed / 0xffff  # slowest possible division
 
     SBLStart = 0x2000
     FirmwareStart = 0x9000

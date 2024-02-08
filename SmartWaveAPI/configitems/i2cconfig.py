@@ -16,20 +16,19 @@ class I2CConfig(Config):
         :param Union[Pin, None] sclPin: The pin to use for SCL
         :param int clockSpeed: The transmission clock speed in Hz"""
         self._device = device
-        self._driver: I2CDriver
 
         self._readSemaphore = threading.Semaphore(0)
         self._latestReadValues: bytes = bytes()
 
-        driver = self._device.getNextAvailableI2CDriver()
-        if clockSpeed is not None:
-            driver.clockSpeed = clockSpeed
 
-        driver.pins['SCL'] = sdaPin if sdaPin is not None else device.getNextAvailablePin()
-        driver.pins['SCL'].pullup = True
+        self._driver: I2CDriver = self._device.getNextAvailableI2CDriver()
+        self._driver.configure(clockSpeed=clockSpeed)
 
-        driver.pins['SDA'] = sclPin if sclPin is not None else device.getNextAvailablePin()
-        driver.pins['SDA'].pullup = True
+        self._driver.pins['SCL'] = sdaPin if sdaPin is not None else device.getNextAvailablePin()
+        self._driver.pins['SCL'].pullup = True
+
+        self._driver.pins['SDA'] = sclPin if sclPin is not None else device.getNextAvailablePin()
+        self._driver.pins['SDA'].pullup = True
 
         stimulus = device.getNextAvailableStimulus()
 
@@ -37,7 +36,7 @@ class I2CConfig(Config):
 
         self._lastTransactions: List[I2CTransaction] = []
 
-        super().__init__(self._device, driver, stimulus)
+        super().__init__(self._device, self._driver, stimulus)
 
         if self._device.isConnected():
             self.writeToDevice()
@@ -183,3 +182,16 @@ class I2CConfig(Config):
                 readNumber += transaction.length
 
         return readNumber
+
+    @property
+    def clockSpeed(self) -> int:
+        """The driver's transmission clock speed in Hz"""
+        return self._driver.clockSpeed
+
+    @clockSpeed.setter
+    def clockSpeed(self, value: int):
+        """Set the driver's transmission clock speed in Hz
+
+        :param int value: The transmission clock speed in Hz
+        :raises AttributeError: If clockSpeed is not available on the device"""
+        self._driver.clockSpeed = value
