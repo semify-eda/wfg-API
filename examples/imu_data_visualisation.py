@@ -5,12 +5,13 @@ Demo script for the ASM330LHHXG1 IMU Sensor
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import keyboard
+import time
+
+from multiprocessing import Process
 
 from SmartWaveAPI import SmartWave
 from imu_conf_lib import gyro_sense, gyro_odr, gyro_fs_g, gyro_fs_125, gyro_fs_4000, axl_sens, axl_odr, axl_fs
-import time
-import os
-import sys
 
 
 def axl_conf(i2c, i2c_addr, odr='208Hz', fs='2g'):
@@ -125,7 +126,7 @@ def main():
         z_axis = (z_axis_msb[0] << 8) + z_axis_lsb[0]
         tc_z_axis = twos_comp(z_axis, 16)
 
-        # Linear acceleration conversion 
+        # Linear acceleration conversion
         # convert from g to m/s^2 1 g-unit = 9.80665
         x_res = tc_x_axis * axl_sens['2g'] * 9.80665
         y_res = tc_y_axis * axl_sens['2g'] * 9.80665
@@ -147,11 +148,16 @@ def main():
 
         return line
 
-    ani = animation.FuncAnimation(fig, animate, fargs=(ys, ), interval=50, blit=True, cache_frame_data=False)
+    ani = animation.FuncAnimation(fig, animate, fargs=(ys,), interval=50, blit=True, cache_frame_data=False)
     plt.show()
 
     sw.disconnect()
 
 
 if __name__ == "__main__":
-    main()
+    process = Process(target=main)
+    process.start()
+    while process.is_alive():
+        if keyboard.is_pressed('q'):
+            process.terminate()
+            break
