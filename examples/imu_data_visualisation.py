@@ -56,27 +56,28 @@ def main():
     axl_conf(i2c, i2c_addr)
     gyro_conf(i2c, i2c_addr)
 
-    # Parameters
+    # Default settings for plotting
+    plt.rcParams["figure.figsize"] = [7.50, 5.50]
+    plt.rcParams["figure.autolayout"] = True
     x_len = 200
-    y_range = [-15, 15]
-
-    # Create figure for plotting
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
     xs = list(range(0, 200))
-    ys = [0] * x_len
-    ax.set_ylim(y_range)
 
-    # Create blank line.
-    line, = ax.plot(xs, ys)
+    for ax in [ax1, ax2, ax3]:
+        ax.set_ylim(-20, 20)
+        ax.grid()
 
-    # Add labels
-    plt.title("IMU Data Capture")
-    plt.xlabel("Samples")
-    plt.ylabel("Force (m/s^2)")
+    y1data = [0] * x_len
+    y2data = [0] * x_len
+    y3data = [0] * x_len
+    line1, = ax1.plot(xs, y1data, lw=3)
+    line2, = ax2.plot(xs, y2data, lw=3, color='r')
+    line3, = ax3.plot(xs, y3data, lw=3, color='g')
+    line = [line1, line2, line3]
+
+    ys = [y1data, y2data, y3data]
 
     def animate(i, ys):
-        status = i2c.readRegister(i2c_addr, 0x1E.to_bytes(1, 'big'), 1)
         # Angular rate sensor
         pitch_lsb = i2c.readRegister(i2c_addr, 0x22.to_bytes(1, 'big'), 1)
         pitch_msb = i2c.readRegister(i2c_addr, 0x23.to_bytes(1, 'big'), 1)
@@ -93,7 +94,7 @@ def main():
         yaw = (yaw_msb[0] << 8) + yaw_lsb[0]
         tc_yaw = twos_comp(yaw)
 
-        # Angular rate conversion # TODO: create separate function for conversion // Store results in tuple - data vis.
+        # Angular rate conversion
         pitch_res = tc_pitch * gyro_sense['500_dps']
         roll_res = tc_roll * gyro_sense['500_dps']
         yaw_res = tc_yaw * gyro_sense['500_dps']
@@ -124,14 +125,21 @@ def main():
         print(f"X_adc: {pitch:.3f}     Y_adc: {roll:.3f}    Z_adc:: {yaw:.3f}")
         print(f"X_a: {x_res:.3f} m/s^2    Y_a: {y_res:.3f} m/s^2   Z_a: {z_res:.3f} m/s^2\n")
 
-        ys.append(x_res)
-        ys = ys[-x_len:]
-        line.set_ydata(ys)
+        ys[0].append(x_res)
+        ys[0] = ys[0][-x_len:]
+        line[0].set_ydata(ys[0])
 
-        return line,
+        ys[1].append(y_res)
+        ys[1] = ys[1][-x_len:]
+        line[1].set_ydata(ys[1])
+
+        ys[2].append(z_res)
+        ys[2] = ys[2][-x_len:]
+        line[2].set_ydata(ys[2])
+
+        return line
 
     ani = animation.FuncAnimation(fig, animate, fargs=(ys, ), interval=50, blit=True, cache_frame_data=False)
-    plt.grid()
     plt.show()
 
     sw.disconnect()
