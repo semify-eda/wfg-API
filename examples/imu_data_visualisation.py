@@ -9,6 +9,8 @@ import matplotlib.animation as animation
 from SmartWaveAPI import SmartWave
 from imu_conf_lib import gyro_sense, gyro_odr, gyro_fs_g, gyro_fs_125, gyro_fs_4000, axl_sens, axl_odr, axl_fs
 import time
+import os
+import sys
 
 
 def axl_conf(i2c, i2c_addr, odr='208Hz', fs='2g'):
@@ -57,22 +59,28 @@ def main():
     gyro_conf(i2c, i2c_addr)
 
     # Default settings for plotting
-    plt.rcParams["figure.figsize"] = [7.50, 5.50]
+    plt.rcParams["figure.figsize"] = [9.50, 7.50]
     plt.rcParams["figure.autolayout"] = True
     x_len = 200
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+    fig.suptitle("IMU - Linear acceleration")
+    ax1.set_title("X - axis")
+    ax2.set_title("Y - axis")
+    ax3.set_title("Z - axis")
     xs = list(range(0, 200))
 
     for ax in [ax1, ax2, ax3]:
         ax.set_ylim(-20, 20)
+        ax.set_ylabel("Force (m/s^2)")
+        ax.set_xlabel("Samples")
         ax.grid()
 
     y1data = [0] * x_len
     y2data = [0] * x_len
     y3data = [0] * x_len
-    line1, = ax1.plot(xs, y1data, lw=3)
-    line2, = ax2.plot(xs, y2data, lw=3, color='r')
-    line3, = ax3.plot(xs, y3data, lw=3, color='g')
+    line1, = ax1.plot(xs, y1data, lw=2)
+    line2, = ax2.plot(xs, y2data, lw=2, color='r')
+    line3, = ax3.plot(xs, y3data, lw=2, color='g')
     line = [line1, line2, line3]
 
     ys = [y1data, y2data, y3data]
@@ -117,7 +125,7 @@ def main():
         z_axis = (z_axis_msb[0] << 8) + z_axis_lsb[0]
         tc_z_axis = twos_comp(z_axis, 16)
 
-        # Linear acceleration conversion # TODO: create separate function for conversion
+        # Linear acceleration conversion 
         # convert from g to m/s^2 1 g-unit = 9.80665
         x_res = tc_x_axis * axl_sens['2g'] * 9.80665
         y_res = tc_y_axis * axl_sens['2g'] * 9.80665
