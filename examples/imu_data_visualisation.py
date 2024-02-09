@@ -52,15 +52,30 @@ def main():
     else:
         print(f"Connection was successful. Device ID: {device_id[0]:#0x}")
 
-    # TODO: global variable for config
     # Configure the ASM330LHHXG1 IMU
-    # pin_ctrl = i2c.readRegister(i2c_addr, 0x02.to_bytes(1, 'big'), 1)
-    # print(f"Pin control register value: {bin(int.from_bytes(pin_ctrl, 'big', signed=False))[2:].zfill(8)}")
     axl_conf(i2c, i2c_addr)
     gyro_conf(i2c, i2c_addr)
 
-    start = time.time()
-    for _ in range(10000):
+    # Parameters
+    x_len = 200
+    y_range = [-15, 15]
+
+    # Create figure for plotting
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    xs = list(range(0, 200))
+    ys = [0] * x_len
+    ax.set_ylim(y_range)
+
+    # Create blank line.
+    line, = ax.plot(xs, ys)
+
+    # Add labels
+    plt.title("IMU Data Capture")
+    plt.xlabel("Samples")
+    plt.ylabel("Force (m/s^2)")
+
+    def animate(i, ys):
         status = i2c.readRegister(i2c_addr, 0x1E.to_bytes(1, 'big'), 1)
         # Angular rate sensor
         pitch_lsb = i2c.readRegister(i2c_addr, 0x22.to_bytes(1, 'big'), 1)
@@ -109,9 +124,16 @@ def main():
         print(f"X_adc: {pitch:.3f}     Y_adc: {roll:.3f}    Z_adc:: {yaw:.3f}")
         print(f"X_a: {x_res:.3f} m/s^2    Y_a: {y_res:.3f} m/s^2   Z_a: {z_res:.3f} m/s^2\n")
 
-        time.sleep(1)
+        ys.append(x_res)
+        ys = ys[-x_len:]
+        line.set_ydata(ys)
 
-    print(time.time() - start)
+        return line,
+
+    ani = animation.FuncAnimation(fig, animate, fargs=(ys, ), interval=50, blit=True, cache_frame_data=False)
+    plt.grid()
+    plt.show()
+
     sw.disconnect()
 
 
