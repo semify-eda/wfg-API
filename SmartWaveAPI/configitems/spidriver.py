@@ -4,7 +4,7 @@ from SmartWaveAPI.configitems import Driver, Pin
 from SmartWaveAPI.definitions import DriverType, Command
 
 
-class SPIdriver(Driver):
+class SPIDriver(Driver):
     """A hardware SPI driver on the SmartWave device"""
     driverType = DriverType.SPI
     color: str = '#ab5848'
@@ -139,12 +139,12 @@ class SPIdriver(Driver):
 
     @property
     def clockSpeed(self) -> int:
-        """The transmission clock speed in Hz"""
+        """The transmission clock speed in Hz."""
         return self._clockSpeed
 
     @clockSpeed.setter
     def clockSpeed(self, value: int):
-        """Set the transmission clock speed in Hz
+        """Set the transmission clock speed in Hz.
 
         :param int value: The transmission clock speed in Hz
         :raises AttributeError: If clockSpeed is not available on the device"""
@@ -152,7 +152,7 @@ class SPIdriver(Driver):
 
     @property
     def bitWidth(self) -> int:
-        """The bit widht of the SPI transmissions"""
+        """The bit width of the SPI transmissions"""
         return self._bitWidth
 
     @bitWidth.setter
@@ -211,3 +211,19 @@ class SPIdriver(Driver):
         :param Literal[0, 1] value: The polarity of the clock pin"""
         self.configure(cphase=value)
 
+    def writePinsToDevice(self):
+        """Write the configuration of each of this driver's pins to the device."""
+        for pin in self.pins.keys():
+            if self.pins[pin]:
+                self.pins[pin].writeToDevice()
+
+
+    def delete(self):
+        """Unconfigure this driver along with its pins and return all resources to the device."""
+        for pin in self.pins.keys():
+            if self.pins[pin]:
+                self.pins[pin].delete()
+                self.removePinConnection(pin)
+            self.pins[pin] = None
+
+        self._device.returnSPIDriver(self)

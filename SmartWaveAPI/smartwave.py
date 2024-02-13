@@ -4,10 +4,11 @@ import threading
 import time
 import os
 
-from typing import List, Union, Callable
+from typing import List, Union, Callable, Literal
 
-from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config
+from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config, SPIDriver
 from SmartWaveAPI.configitems.i2cconfig import I2CConfig
+from SmartWaveAPI.configitems.spiconfig import SPIConfig
 from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode, TriggerMode
 
 
@@ -31,6 +32,11 @@ class SmartWave(object):
         self._availableI2CDrivers = [
             I2CDriver(self, 0),
             I2CDriver(self, 1),
+        ]
+
+        self._availableSPIDrivers = [
+            SPIDriver(self, 0),
+            SPIDriver(self, 1)
         ]
 
         self._availableStimuli = [
@@ -326,6 +332,7 @@ class SmartWave(object):
                 self._serialLock.release()
             raise Exception("Not connected to a device")
 
+        print(["%d" % int(x) for x in data])
         self._serialPort.write(data)
 
         if acquireLock:
@@ -444,6 +451,17 @@ class SmartWave(object):
         else:
             raise Exception("No more I2C Drivers available on this device")
 
+    def getNextAvailableSPIDriver(self) -> SPIDriver:
+        """Get the next available SPI Driver.
+
+        :return: An SPI Driver, which has already been marked as in use
+        :rtype: SPIDriver
+        :raises Exception: If no more SPI Drivers are available on the device"""
+        if len(self._availableSPIDrivers):
+            return self._availableSPIDrivers.pop(0)
+        else:
+            raise Exception("No more SPI Drivers available on this device")
+
     def returnI2CDriver(self, driver: I2CDriver) -> int:
         """Return an I2C Driver to the list of available I2C Drivers.
 
@@ -452,6 +470,15 @@ class SmartWave(object):
         :rtype: int"""
         self._availableI2CDrivers.append(driver)
         return len(self._availableI2CDrivers)
+
+    def returnSPIDriver(self, driver: SPIDriver) -> int:
+        """Return an SPI Driver to the list of available SPI Drivers.
+
+        :param SPIDriver driver: The SPI driver to return
+        :return: The new number of available SPI drivers
+        :rtype: int"""
+        self._availableSPIDrivers.append(driver)
+        return len(self._availableSPIDrivers)
 
     def getNextAvailablePin(self) -> Pin:
         """Get the next available Pin.
@@ -540,6 +567,46 @@ class SmartWave(object):
         sclPin = self.getPin(sclPinName) if sclPinName else None
 
         config: I2CConfig = I2CConfig(self, sdaPin, sclPin, clockSpeed)
+        self.configEntries.append(config)
+
+        return config
+
+    def createSPIConfig(self,
+                        sclkPinName: Union[str, None] = None,
+                        mosiPinName: Union[str, None] = None,
+                        misoPinName: Union[str, None] = None,
+                        ssPinName: Union[str, None] = None,
+                        clockSpeed: Union[int, None] = None,
+                        bitWidth: Union[int, None] = None,
+                        bitNumbering: Union[Literal["MSB", "LSB"], None] = None,
+                        cspol: Union[Literal[0, 1], None] = None,
+                        cpol: Union[Literal[0, 1], None] = None,
+                        cphase: Union[Literal[0, 1], None] = None):
+        """Create an SPI Configuration object.
+
+        :param str sclkPinName: The name of the pin to use for SCLK
+        :param str mosiPinName: The name of the pin to use for MOSI
+        :param str misoPinName: The name of the pin to use for MISO
+        :param str ssPinName: The name of the pin to use for SS
+        :return: An SPI Configuration with the specified settings
+        :rtype: SPIConfig
+        """
+        sclkPin = self.getPin(sclkPinName) if sclkPinName else None
+        misoPin = self.getPin(misoPinName) if misoPinName else None
+        mosiPin = self.getPin(mosiPinName) if mosiPinName else None
+        ssPin = self.getPin(ssPinName) if ssPinName else None
+
+        config: SPIConfig = SPIConfig(self,
+                                      sclkPin,
+                                      mosiPin,
+                                      misoPin,
+                                      ssPin,
+                                      clockSpeed,
+                                      bitWidth,
+                                      bitNumbering,
+                                      cspol,
+                                      cpol,
+                                      cphase)
         self.configEntries.append(config)
 
         return config

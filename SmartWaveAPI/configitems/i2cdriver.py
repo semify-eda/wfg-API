@@ -110,7 +110,6 @@ class I2CDriver(Driver):
 
         return samples
 
-
     def delete(self):
         """Unconfigure this driver along with its pins and return all resources to the device."""
         if self.pins["SDA"]:
