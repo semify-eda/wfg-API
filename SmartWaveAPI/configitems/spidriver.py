@@ -48,10 +48,10 @@ class SPIDriver(Driver):
             "SS": None,
         }
         self.pinNumbers: Dict[str, int] = {
-            "SCLK": 1,
+            "SCLK": 0,
+            "SS": 1,
             "MOSI": 2,
             "MISO": 3,
-            "SS": 4,
         }
 
     def __del__(self) -> None:

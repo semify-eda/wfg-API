@@ -70,8 +70,8 @@ class SmartWave(object):
 
         self.configEntries: List[Config] = []
 
-        self._heartbeatThread: threading.Thread
-        self._readingThread: threading.Thread
+        self._heartbeatThread: Union[threading.Thread, None] = None
+        self._readingThread: Union[threading.Thread, None] = None
         self._serialLock = threading.Lock()
         self.killWithParentThread = True
         self._parentThread = threading.currentThread()
@@ -92,11 +92,10 @@ class SmartWave(object):
         self._fpgaReadSemaphore = threading.Semaphore(0)
         self._deviceRunning: bool = False
 
-        self._syncDiv: int = 0
+        self._syncDiv: int = 1
         self._subcycles: int = 0
         self._triggerMode: TriggerMode = TriggerMode.Single
         self._vddio: float = 3.3
-
 
     def __del__(self):
         """Destructor - closes the device connection"""
@@ -126,7 +125,6 @@ class SmartWave(object):
             else:
                 self._serialLock.release()
                 break
-
 
     def _readback(self):
         """Continually read from the device and handle the status messages."""
@@ -216,7 +214,6 @@ class SmartWave(object):
                         if self.firwareUpdateStatusCallback is not None:
                             self.firwareUpdateStatusCallback(isMicrocontroller, status)
 
-
                     else:
                         print("Unknown Status bit: %d" % statusbit)
 
@@ -249,7 +246,7 @@ class SmartWave(object):
 
             self._serialLock.release()
 
-        except (ConnectionRefusedError, serial.SerialException) as e:
+        except (ConnectionRefusedError, serial.SerialException):
             self._serialLock.release()
             raise ConnectionRefusedError("Could not connect to serial port %s" % portName)
 
@@ -288,13 +285,17 @@ class SmartWave(object):
                 try:
                     self._connectToSpecifiedPort(port.device, reset, requestInfo, configureGeneral)
                     return self
-                except ConnectionRefusedError as e:
+                except ConnectionRefusedError:
                     # try another device
                     pass
 
         raise ConnectionRefusedError("Could not find a suitable device to connect to")
 
-    def connect(self, portName: str = None, reset: bool = True, requestInfo: bool = True, configureGeneral: bool = True):
+    def connect(self,
+                portName: str = None,
+                reset: bool = True,
+                requestInfo: bool = True,
+                configureGeneral: bool = True):
         """Try to connect to a SmartWave device at the specified port.
 
         :param str portName: The name of the port to connect to
@@ -323,16 +324,17 @@ class SmartWave(object):
         """Write bare data to the connected device.
 
         :param bytes data: the data to write
+        :param bool acquireLock: Whether to acquire lock for serial resource.
+            Setting this to False may have adverse side effects.
         :raises Exception: If the serial connection is not active"""
 
         if acquireLock:
             self._serialLock.acquire()
-        if (self._serialPort is None):
+        if self._serialPort is None:
             if acquireLock:
                 self._serialLock.release()
             raise Exception("Not connected to a device")
 
-        print(["%d" % int(x) for x in data])
         self._serialPort.write(data)
 
         if acquireLock:
@@ -360,7 +362,6 @@ class SmartWave(object):
         self._serialPort = None
         self._serialLock.release()
 
-
     def trigger(self):
         """Start or Stop the current configuration on the connected device."""
         self.writeToDevice(bytes([
@@ -373,11 +374,14 @@ class SmartWave(object):
             Command.Reset.value
         ]))
 
-    def configGeneral(self, vddio: Union[float, None] = None, triggerMode: Union[TriggerMode, None] = None):
+    def configGeneral(self,
+                      vddio: Union[float, None] = None,
+                      triggerMode: Union[TriggerMode, None] = None):
         """Configure general information on the connected device.
 
         :param float vddio: The IO voltage of the connected device (accurate to 0.01V)
-        :param TriggerMode triggerMode: The trigger mode of the output device (i.e. whether it runs once or continuously)
+        :param TriggerMode triggerMode: The trigger mode of the output device
+            (i.e. whether it runs once or continuously)
 
         :raises AttributeError: if vddio is not betweeen 1.8V and 5.0V"""
 
@@ -503,12 +507,12 @@ class SmartWave(object):
         bank = name[:1]
         numberStr = name[1:]
 
-        if not bank in ["A", "B"] or not numberStr.isdigit():
+        if bank not in ["A", "B"] or not numberStr.isdigit():
             raise AttributeError("Invalid Pin name")
 
         number = int(numberStr)
 
-        if not number in [1, 2, 3, 4, 7, 8, 9, 10]:
+        if number not in [1, 2, 3, 4, 7, 8, 9, 10]:
             raise AttributeError("Invalid Pin number")
 
         foundIndex = -1
@@ -588,6 +592,12 @@ class SmartWave(object):
         :param str mosiPinName: The name of the pin to use for MOSI
         :param str misoPinName: The name of the pin to use for MISO
         :param str ssPinName: The name of the pin to use for SS
+        :param int clockSpeed: The transmission clock speed in Hz
+        :param int bitWidth: The bit width of the SPI transmissions
+        :param Literal["MSB", "LSB"] bitNumbering: Whether to transmit MSB-first or LSB-first
+        :param Literal[0, 1] cspol: The polarity of the chipselect pin
+        :param Literal[0, 1] cpol: The polarity of the clock pin
+        :param Literal[0, 1] cphase: The phase of the clock
         :return: An SPI Configuration with the specified settings
         :rtype: SPIConfig
         """
@@ -614,7 +624,7 @@ class SmartWave(object):
     def removeConfig(self, config: Config):
         """Remove a config from the device.
 
-        :param Config: the config to remove
+        :param Config config: the config to remove
         :raises AttributeError: If the config is not found"""
         index = self.configEntries.index(config)
 
@@ -645,7 +655,8 @@ class SmartWave(object):
         :param bool blocking: If true, wait for the response from the connected device
         :return: If blocking == True, return the content of the specified register. Else return None.
         :rtype: Union[int, None]
-        :raises Exception: If the blocking mode is requested and another callback for a register read operation is already registered"""
+        :raises Exception: If the blocking mode is requested and another callback for a register read operation
+        is already registered"""
         if blocking:
             if self.singleAddressReadCallback is not None:
                 raise Exception("Cannot configure a blocking read operation because there is already a single-address"
@@ -653,10 +664,8 @@ class SmartWave(object):
 
             self.singleAddressReadCallback = self._fpgaReadCallbackHandler
 
-
         self.writeToDevice(bytes([Command.FpgaRead.value]) +
                            address.to_bytes(3, 'big'))
-
 
         if blocking:
             # wait for read value
@@ -685,7 +694,6 @@ class SmartWave(object):
         f_size = f.seek(0, os.SEEK_END)
         f_check_size = f_check.seek(0, os.SEEK_END)
 
-        cropped = False
         if f_size == f_check_size:
             cropped = False
         elif f_size > self.FirmwareEnd - self.FirmwareStart:
@@ -708,7 +716,6 @@ class SmartWave(object):
             for i in range(16):
                 if f.read(1) != b'\x00':
                     raise Exception("The firmware size seems to be incompatible with the device!")
-
 
         dataLen = self.FirmwareEnd - self.FirmwareStart
         commands = bytes([

@@ -2,6 +2,7 @@ from typing import Union
 from SmartWaveAPI.configitems import Pin, Config, SPIDriver, Literal, List
 import threading
 
+
 class SPIConfig(Config):
     """A collection of data, driver and pins used to send data via SPI using the SmartWave."""
     def __init__(self,
@@ -23,7 +24,7 @@ class SPIConfig(Config):
         :param Union[Pin, None] mosiPin: The pin to use for MOSI
         :param Union[Pin, None] misoPin: The pin to use for MISO
         :param Union[Pin, None] ssPin: The pin to use for SS
-        :param int clockSpeed: The transmission clock speed in Hz
+        :param int clockspeed: The transmission clock speed in Hz
         :param int bitWidth: The bit width of the SPI transmissions
         :param Literal["MSB", "LSB"] bitNumbering: Whether to transmit MSB-first or LSB-first
         :param Literal[0, 1] cspol: The polarity of the chipselect pin
@@ -32,7 +33,7 @@ class SPIConfig(Config):
         self._device = device
 
         self._readSemaphore = threading.Semaphore(0)
-        self._latestReadValues: bytes = bytes()
+        self._latestReadValues: List[int] = []
 
         self._driver: SPIDriver = self._device.getNextAvailableSPIDriver()
         self._driver.configure(
@@ -59,14 +60,12 @@ class SPIConfig(Config):
         if self._device.isConnected():
             self.writeToDevice()
 
-
     def setData(self, data: List[int]):
         """Set the data and send the configuration to the connected device.
 
          Also checks if the data is new, and skips reconfiguring the device if not.
 
-        :param List[int] data: The data to send
-        :param bool read: Whether to simultaneously read data from the SPI slave device"""
+        :param List[int] data: The data to send"""
         changedData = True
         if len(data) == len(self._lastData):
             changedData = False
@@ -84,7 +83,6 @@ class SPIConfig(Config):
             # write new expected read number
             self.writeStimulusDriverConnectionToDevice()
 
-
     def _readCallback(self, recorderId: int, values: List[int]):
         """Handle the result of an SPI read."""
         if recorderId == self.getRecorderId():
@@ -97,11 +95,11 @@ class SPIConfig(Config):
         If the data is not new, the reconfiguration of the device is skipped.
 
         :param List[int] data: The data to write
-        :param bool read: Whether to simultaneously read data from the SPI slave device
         :param bool blockingRead: If true, wait for the response from the connected device
         :return: If blockingRead == True, return the values that were read over SPI. Else return None.
         :rtype: Union[None, List[int]]
-        :raises Exception: If the blocking read mode is requested and another callback for a readback operation is already registered."""
+        :raises Exception: If the blocking read mode is requested and another callback for a
+            readback operation is already registered."""
 
         if blockingRead:
             if self._device.readbackCallback is not None:
@@ -154,7 +152,7 @@ class SPIConfig(Config):
     def bitWidth(self, value: int):
         """Set the bit width of the SPI transmissions
 
-        :param int bitWidth: The bit width of the SPI transmissions
+        :param int value: The bit width of the SPI transmissions
         :raises AttributeError: If bitWidth is not between 1 and 32"""
         self._driver.bitWidth = value
 
@@ -168,7 +166,7 @@ class SPIConfig(Config):
         """Set the bit numbering of the SPI transmissions; MSB-first or LSB-first
 
         :param Literal["MSB", "LSB"] value: The bit numbering of the SPI transmissions"""
-        self.driver.bitNumbering = value
+        self._driver.bitNumbering = value
 
     @property
     def cspol(self) -> Literal[0, 1]:
