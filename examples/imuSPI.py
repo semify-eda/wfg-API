@@ -20,35 +20,13 @@ def main():
 
             start = time.time()
             next_time = start + cycle_time
-            for i in range(1000):
+            while True:
                 while (time.time() < next_time):
                     pass
                 val = spi.write([0xaa00])[0]
                 val = val if val < 0x8000 else val - 0x10000
                 print(val)
                 next_time += cycle_time
-
-            spi.cpol = 1
-            spi.cphase = 1
-
-            for i in range(1000):
-                while (time.time() < next_time):
-                    pass
-                val = spi.write([0xaa00])[0]
-                val = val if val < 0x8000 else val - 0x10000
-                print(val)
-                next_time += cycle_time
-
-            spi.cphase = 0
-
-            for i in range(1000):
-                while (time.time() < next_time):
-                    pass
-                val = spi.write([0xaa00])[0]
-                val = val if val < 0x8000 else val - 0x10000
-                print(val)
-                next_time += cycle_time
-
 
             print(time.time() - start)
 
