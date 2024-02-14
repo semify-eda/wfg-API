@@ -235,8 +235,7 @@ class SmartWave(object):
         :param bool configureGeneral: Configure general with the default values
         :return: Self
         :rtype: SmartWave
-        :raises ConnectionRefusedError: If no connection to the device could be established
-        """
+        :raises ConnectionRefusedError: If no connection to the device could be established"""
         try:
             self._serialLock.acquire()
             if self._serialPort is None:
@@ -305,7 +304,7 @@ class SmartWave(object):
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no connection could be established with the specified port
-        raises AttributeError: If the device at the specified port is not a SmartWave device"""
+        :raises AttributeError: If the device at the specified port is not a SmartWave device"""
         if portName is None:
             return self.scanAndConnect(reset)
 
@@ -533,7 +532,7 @@ class SmartWave(object):
 
         :param Pin pin: The pin to return
         :return: The new number of available pins
-        rtype: int"""
+        :rtype: int"""
         self._availablePins.append(pin)
         return len(self._availablePins)
 
@@ -565,8 +564,7 @@ class SmartWave(object):
         :param str sclPinName: The name of the pin to use for SCL
         :param int clockSpeed: The I2C clock speed in Hz
         :return: An I2C Configuration with the specified settings
-        :rtype: I2CConfig
-        """
+        :rtype: I2CConfig"""
         sdaPin = self.getPin(sdaPinName) if sdaPinName else None
         sclPin = self.getPin(sclPinName) if sclPinName else None
 
