@@ -4,7 +4,7 @@ import threading
 import time
 import os
 
-from typing import List, Union, Callable, Literal
+from typing import List, Union, Callable, Literal, Optional
 
 from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config, SPIDriver
 from SmartWaveAPI.configitems.i2cconfig import I2CConfig
@@ -678,16 +678,18 @@ class SmartWave(object):
 
         return None
 
-    def updateFirmware(self, firmwarePath: str):
-        """Update the microcontroller firmware with a given firmware.
+    def updateFirmware(self, firmwarePath: Optional[str] = None):
+        """Update the microcontroller firmware with a given firmware, or to the newest version.
 
         This also checks the firmware file for plausibility and calculates the checksum.
 
-        :param str firmwarePath: The path to the new firmware
+        :param Optional[str] firmwarePath: The path to the new firmware. If unspecified, upload newest
+            packaged firmware.
         :raises FileNotFoundError: If the firmware file could not be found
         :raises Exception: If the firmware file is incompatible with the bootloader
         :raises Exception: If the firmware size is incompatible with the bootloader"""
-        f = open(firmwarePath, "rb")
+        f = open(firmwarePath if firmwarePath else
+                 os.path.join(os.path.dirname(os.path.abspath(__file__)), "newest_firmware.bin"), "rb")
         f_check = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "SBL_sample.bin"), "rb")
 
         # check if given file is cropped (webgui) or raw (from arduino IDE)
@@ -746,16 +748,18 @@ class SmartWave(object):
 
         self.writeToDevice(commands + data + checksumArray)
 
-    def updateFPGABitstream(self, bitstreamPath: str):
-        """Update the FPGA bitstream with a given bitstream.
+    def updateFPGABitstream(self, bitstreamPath: Optional[str] = None):
+        """Update the FPGA bitstream with a given bitstream, or to the newest version.
 
         Also checks the bitstream file for plausibility and calculates the checksum.
 
-        :param str bitstreamPath: The path to the bitstream
+        :param Optional[str] bitstreamPath: The path to the bitstream. If unspecified,
+            upload newest packaged bitstream.
         :raises FileNotFoundError: If the bitstream file could not be found
         :raises Exception: If the bitstream file is of the wrong size"""
 
-        f = open(bitstreamPath, "rb")
+        f = open(bitstreamPath if bitstreamPath else
+                 os.path.join(os.path.dirname(os.path.abspath(__file__)), "newest_fpga_bitstream.bin"), "rb")
 
         # size check
         f.seek(0, os.SEEK_END)
