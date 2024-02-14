@@ -31,7 +31,7 @@ def gyro_conf(i2c, i2c_addr, odr='208Hz', fs_g='500_dps', fs_125='fs_g', fs_4000
 
 def twos_comp(val, bits=16):
     """Compute the two's complement of register value"""
-    if(val & (1 << (bits - 1))) != 0:
+    if (val & (1 << (bits - 1))) != 0:
         val = val - (1 << bits)
     return val
 
