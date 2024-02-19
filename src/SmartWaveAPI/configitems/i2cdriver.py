@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 from .pin import Pin
 
 from SmartWaveAPI.configitems import Driver
@@ -6,7 +6,7 @@ from SmartWaveAPI.definitions import Command, DriverType, I2CRead, I2CWrite, I2C
 
 
 class I2CDriver(Driver):
-    """An hardware I2C driver on the SmartWave device"""
+    """A hardware I2C driver on the SmartWave device"""
     driverType = DriverType.I2C
     color: str = '#a54be2'
 
@@ -15,9 +15,11 @@ class I2CDriver(Driver):
 
         :param SmartWave device: The SmartWave device this driver belongs to
         :param int id: The ID of this driver
-        :param int clockSpeed: The transmission clock speed in Hz"""
+        :param int clockSpeed: The transmission clock speed in Hz
+        :raises AttributeError: If clockSpeed is not available on the device"""
         super().__init__(device, id)
-        self.clockSpeed: int = clockSpeed
+        self._clockSpeed: int
+        self._checkAndSetClockSpeed(clockSpeed=clockSpeed)
         self.pins: Dict[str, Pin or None] = {
             'SCL': None,
             'SDA': None
@@ -34,20 +36,49 @@ class I2CDriver(Driver):
     def writeToDevice(self):
         """Write the configuration parameters of this driver to the device."""
 
-        cdiv = int(self._device.FPGAClockSpeed / (self.clockSpeed * 6))
+        cdiv = int(self._device.FPGAClockSpeed / (self._clockSpeed * 6))
 
         self._device.writeToDevice(bytes([
             Command.Driver.value,
             self.driverType.value,
             self._id,
-            1,
+            1,  # enable
             (cdiv >> 8) & 0xff,
             cdiv & 0xff
         ]))
 
+    def _checkAndSetClockSpeed(self, clockSpeed: int):
+        """Check the clock speed for correctness and set the local variable.
 
+        :param int clockSpeed: The clock speed in Hz
+        :raises ValueError: If the clock speed is not available on the device"""
+        if clockSpeed > 3e6:
+            raise AttributeError("The desired clock speed is too high")
+        if clockSpeed < self._device.FPGAClockDivided / 2:
+            raise AttributeError("The desired clock speed is too low")
+        self._clockSpeed = clockSpeed
 
+    def configure(self, clockSpeed: Union[int, None] = None):
+        """Configure the settings of this driver and write them to the connected device.
+        
+        :param int clockSpeed: The transmission clock speed in Hz
+        :raises AttributeError: If clockSpeed is not available on the device"""
+        if clockSpeed is not None:
+            self._checkAndSetClockSpeed(clockSpeed)
+        self.writeToDevice()
 
+    @property
+    def clockSpeed(self) -> int:
+        """The transmission clock speed in Hz"""
+        return self._clockSpeed
+
+    @clockSpeed.setter
+    def clockSpeed(self, value: int):
+        """Set the transmission clock speed in Hz
+
+        :param int value: The transmission clock speed in Hz
+        :raises AttributeError: If clockSpeed is not available on the device"""
+        self.configure(clockSpeed=value)
 
     def writePinsToDevice(self):
         """Write the configuration of each of this driver's pins to the device."""
@@ -78,7 +109,6 @@ class I2CDriver(Driver):
                 samples += transaction.data
 
         return samples
-
 
     def delete(self):
         """Unconfigure this driver along with its pins and return all resources to the device."""

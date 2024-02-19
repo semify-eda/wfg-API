@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "SmartWaveAPI"
+version = "1.0.0"
+authors = [
+  { name="Christoph Royer", email="mail@christophroyer.com" },
+  { name="Erwin Peterlin", email="erwin.peterlin@semify-eda.com" },
+  { name="Adam Horvath", email="adam.horvath@semify-eda.com" },
+]
+description = "A python API for the SmartWave interface."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pyserial == 3.5"
+]
+
+[project.urls]
+Homepage = "https://semify-eda.github.io/wfg-API/docs/html/index.html"
+# Issues = "https://github.com/pypa/sampleproject/issues"
