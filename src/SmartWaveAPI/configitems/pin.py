@@ -1,6 +1,7 @@
-from typing import Literal
+from typing import Literal, Optional, Callable
 
 from SmartWaveAPI.definitions import Command
+
 
 class Pin:
     """A hardware pin on the SmartWave device"""
@@ -15,6 +16,9 @@ class Pin:
         self._bank: Literal['A', 'B'] = bank
         self._number: int = number
         self.pullup: bool = False
+
+        self._inputLevel: Literal[0, 1] = 0
+        self.inputLevelCallback: Optional[Callable[[Literal[0, 1]], None]] = None
 
     def __del__(self):
         """Destructor - return all resources to the device."""
@@ -50,4 +54,22 @@ class Pin:
     def delete(self):
         """Unconfigure this pin and return its resources to the device."""
         self._device.returnPin(self)
+
+    @property
+    def inputLevel(self) -> Literal[0, 1]:
+        """Get the current input level of the pin.
+
+        :return: The current input level.
+        :rtype: Literal[0, 1]"""
+        return self._inputLevel
+
+    @inputLevel.setter
+    def inputLevel(self, value: Literal[0, 1]):
+        """Set the current input level of the pin - only to be called from SmartWave class.
+
+        :param Literal[0, 1] value: the current input level."""
+        if value != self._inputLevel:
+            self._inputLevel = value
+            if self.inputLevelCallback:
+                self.inputLevelCallback(self._inputLevel)
 

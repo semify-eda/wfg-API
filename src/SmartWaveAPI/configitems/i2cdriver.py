@@ -6,7 +6,7 @@ from SmartWaveAPI.definitions import Command, DriverType, I2CRead, I2CWrite, I2C
 
 
 class I2CDriver(Driver):
-    """A hardware I2C driver on the SmartWave device"""
+    """A hardware I2C driver on the SmartWave device."""
     driverType = DriverType.I2C
     color: str = '#a54be2'
 

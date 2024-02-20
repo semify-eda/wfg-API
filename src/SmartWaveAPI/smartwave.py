@@ -4,12 +4,12 @@ import threading
 import time
 import os
 
-from typing import List, Union, Callable, Literal, Optional
+from typing import List, Union, Callable, Literal, Optional, Dict
 
-from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config, SPIDriver
+from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config, SPIDriver, GPIO
 from SmartWaveAPI.configitems.i2cconfig import I2CConfig
 from SmartWaveAPI.configitems.spiconfig import SPIConfig
-from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode, TriggerMode
+from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode, TriggerMode, PinOutputType
 
 
 class SmartWave(object):
@@ -68,6 +68,11 @@ class SmartWave(object):
             Pin(self, "B", 10),
         ]
 
+        # TODO check if this creates a reference or copies
+        self._allPins: List[Pin] = []
+        for pin in self._availablePins:
+            self._allPins.append(pin)
+
         self.configEntries: List[Config] = []
 
         self._heartbeatThread: Union[threading.Thread, None] = None
@@ -85,7 +90,6 @@ class SmartWave(object):
         self.firmwareUpdateFailedCallback: Union[Callable[[], None], None] = None
         self.readbackCallback: Union[Callable[[int, List[int]], None], None] = None
         self.singleAddressReadCallback: Union[Callable[[int], None], None] = None
-        self.pinsStatusCallback: Union[Callable[[int, int], None], None] = None
         self.firwareUpdateStatusCallback: Union[Callable[[bool, int], None], None] = None
 
         self._latestFpgaRead: int = 0
@@ -202,9 +206,10 @@ class SmartWave(object):
                     elif statusbit == Statusbit.PinsStatus.value:
                         pinsA = int.from_bytes(self._serialPort.read(1), 'big')
                         pinsB = int.from_bytes(self._serialPort.read(1), 'big')
+                        allPins = pinsA | (pinsB << 8)
 
-                        if self.pinsStatusCallback is not None:
-                            self.pinsStatusCallback(pinsA, pinsB)
+                        for pinId in range(16):
+                            self._allPins[pinId].inputLevel = 1 if (allPins & (1 << pinId)) else 0
 
                     elif statusbit == Statusbit.FirmwareUpdateStatus.value:
                         byte = int.from_bytes(self._serialPort.read(1), 'big')
@@ -556,8 +561,8 @@ class SmartWave(object):
         self._availableStimuli.append(stimulus)
         return len(self._availableStimuli)
 
-    def createI2CConfig(self, sdaPinName: Union[str, None] = None, sclPinName: Union[str, None] = None,
-                        clockSpeed: Union[int, None] = None) -> I2CConfig:
+    def createI2CConfig(self, sdaPinName: Optional[str] = None, sclPinName: Optional[str] = None,
+                        clockSpeed: Optional[int] = None) -> I2CConfig:
         """Create an I2C Configuration object.
 
         :param str sdaPinName: The name of the pin to use for SDA
@@ -574,16 +579,16 @@ class SmartWave(object):
         return config
 
     def createSPIConfig(self,
-                        sclkPinName: Union[str, None] = None,
-                        mosiPinName: Union[str, None] = None,
-                        misoPinName: Union[str, None] = None,
-                        ssPinName: Union[str, None] = None,
-                        clockSpeed: Union[int, None] = None,
-                        bitWidth: Union[int, None] = None,
-                        bitNumbering: Union[Literal["MSB", "LSB"], None] = None,
-                        cspol: Union[Literal[0, 1], None] = None,
-                        cpol: Union[Literal[0, 1], None] = None,
-                        cphase: Union[Literal[0, 1], None] = None):
+                        sclkPinName: Optional[str] = None,
+                        mosiPinName: Optional[str] = None,
+                        misoPinName: Optional[str] = None,
+                        ssPinName: Optional[str] = None,
+                        clockSpeed: Optional[int] = None,
+                        bitWidth: Optional[int] = None,
+                        bitNumbering: Optional[Literal["MSB", "LSB"]] = None,
+                        cspol: Optional[Literal[0, 1]] = None,
+                        cpol: Optional[Literal[0, 1]] = None,
+                        cphase: Optional[Literal[0, 1]] = None):
         """Create an SPI Configuration object.
 
         :param str sclkPinName: The name of the pin to use for SCLK
@@ -618,6 +623,46 @@ class SmartWave(object):
         self.configEntries.append(config)
 
         return config
+    
+    def createGPIO(self,
+                   pin_name: Optional[str] = None,
+                   name: Optional[str] = None,
+                   level: Optional[Literal[0, 1]] = None,
+                   pullup: Optional[bool] = None,
+                   output_type: Optional[PinOutputType] = None,
+                   input_level_callback: Optional[Callable[[Literal[0, 1]], None]] = None) -> GPIO:
+        """Create a GPIO configuration object.
+
+        :param str pin_name: The name of the pin to use, eg "A1"
+        :param str name: The name of the GPIO pin, as displayed on the device, eg "GPIO"
+        :param Literal[0, 1] level: The initial level of the pin
+        :param bool pullup: Whether to enable a pullup resistor on the pin
+        :param PinOutputType output_type: The output type of the pin
+        :param Callable[[Literal[0, 1]], None] input_level_callback: A callable to be run whenever the input level of the pin is changed.
+
+        :return: A GPIO configuration object
+        :rtype: GPIO"""
+        pin = self.getPin(pin_name)
+
+        args: Dict[str, any] = {}
+
+        if name is not None:
+            args["name"] = name
+
+        if level is not None:
+            args["level"] = level
+
+        if pullup is not None:
+            args["pullup"] = pullup
+
+        if output_type is not None:
+            args["output_type"] = output_type
+
+        if input_level_callback is not None:
+            args["input_level_callback"] = input_level_callback
+
+        gpio: GPIO = GPIO(pin, **args)
+        return gpio
 
     def removeConfig(self, config: Config):
         """Remove a config from the device.

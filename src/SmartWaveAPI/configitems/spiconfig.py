@@ -57,6 +57,7 @@ class SPIConfig(Config):
 
         super().__init__(self._device, self._driver, stimulus)
 
+        # TODO update SPIDriver to write to device itself and remove this
         if self._device.isConnected():
             self.writeToDevice()
 

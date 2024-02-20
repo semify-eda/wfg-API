@@ -6,3 +6,4 @@ from SmartWaveAPI.configitems.i2cdriver import *
 from SmartWaveAPI.configitems.spidriver import *
 from SmartWaveAPI.configitems.stimulus import *
 from SmartWaveAPI.configitems.config import *
+from SmartWaveAPI.configitems.gpio import *
