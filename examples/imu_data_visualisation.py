@@ -21,7 +21,7 @@ matplotlib.rcParams['animation.ffmpeg_path'] = r"C:\resources\ffmpeg-master-late
 
 # If True, a video is captured of the plotting
 # If False, the data is visualized in real-time
-SAVE_VIDEO = True
+SAVE_VIDEO = False
 
 # Color scheme for plotting
 sem_grey = '#323c40'
