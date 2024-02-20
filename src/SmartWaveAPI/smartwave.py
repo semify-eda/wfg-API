@@ -642,7 +642,7 @@ class SmartWave(object):
 
         :return: A GPIO configuration object
         :rtype: GPIO"""
-        pin = self.getPin(pin_name)
+        pin = self.getPin(pin_name) if pin_name else self.getNextAvailablePin()
 
         args: Dict[str, any] = {}
 
@@ -661,7 +661,7 @@ class SmartWave(object):
         if input_level_callback is not None:
             args["input_level_callback"] = input_level_callback
 
-        gpio: GPIO = GPIO(pin, **args)
+        gpio: GPIO = GPIO(self, pin, **args)
         return gpio
 
     def removeConfig(self, config: Config):

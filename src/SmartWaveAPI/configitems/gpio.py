@@ -43,7 +43,15 @@ class GPIO:
 
     def __del__(self):
         """Destructor - return all resources to the device."""
-        self._pin.delete()
+        self.delete()
+
+    def __enter__(self):
+        """Enter - return instance."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit - delete config"""
+        self.delete()
 
     def configure(self,
                   name: Optional[str] = None,
@@ -91,6 +99,10 @@ class GPIO:
         b = int(self.color[5:7], 16)
 
         return ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)
+
+    def delete(self):
+        """Delete this GPIO pin and return all resources to the device."""
+        self._pin.delete()
 
     @property
     def name(self) -> str:
