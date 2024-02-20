@@ -51,7 +51,7 @@ def gyro_conf(i2c, i2c_addr, odr='12.5Hz', fs_g='250_dps', fs_125='fs_g', fs_400
     Method used to configure the gyroscope control register
     :param i2c: i2c object for SmartWave connection
     :param i2c_addr: default I2C address of the ASM330LHHXG1 IMU Sensor
-    :param odr: Gyroscope output data rate selectino (in Hz)
+    :param odr: Gyroscope output data rate selection (in Hz)
     :param fs_g: Gyroscope chain full-scale selection
     :param fs_125: Selects gyroscope chain full-scale ±125 dps
     :param fs_4000: Selects gyroscope chain full-scale ±4000 dps
@@ -89,12 +89,8 @@ def main():
     i2c_addr = 0b1101010  # Default I2C address
     i2c = sw.createI2CConfig("A1", "A2", int(200e3))
 
-    i2c.writeRegister(
-        i2c_addr,
-        0x10.to_bytes(1, 'big'),
-        0b00010000.to_bytes(1, 'big')
-    )
-    device_id = i2c.readRegister(0b1101010, 0x0f.to_bytes(1, 'big'), 1)
+    i2c.writeRegister(i2c_addr, 0x10.to_bytes(1, 'big'), 0b00010000.to_bytes(1, 'big'))
+    device_id = i2c.readRegister(i2c_addr, 0x0f.to_bytes(1, 'big'), 1)
 
     # Check if connection to the target device was successful
     if device_id[0] == 0xff:
