@@ -10,7 +10,7 @@ class SPIConfig(Config):
                  sclk_pin: Union[Pin, None] = None,
                  mosi_pin: Union[Pin, None] = None,
                  miso_pin: Union[Pin, None] = None,
-                 ss_pin: Union[Pin, None] = None,
+                 cs_pin: Union[Pin, None] = None,
                  clockspeed: Union[int, None] = None,
                  bit_width:  Union[int, None] = None,
                  bit_numbering: Union[Literal["MSB", "LSB"], None] = None,
@@ -23,7 +23,7 @@ class SPIConfig(Config):
         :param Union[Pin, None] sclk_pin: The pin to use for SCLK
         :param Union[Pin, None] mosi_pin: The pin to use for MOSI
         :param Union[Pin, None] miso_pin: The pin to use for MISO
-        :param Union[Pin, None] ss_pin: The pin to use for SS
+        :param Union[Pin, None] cs_pin: The pin to use for CS
         :param int clockspeed: The transmission clock speed in Hz
         :param int bit_width: The bit width of the SPI transmissions
         :param Literal["MSB", "LSB"] bit_numbering: Whether to transmit MSB-first or LSB-first
@@ -48,7 +48,7 @@ class SPIConfig(Config):
         self._driver.pins['SCLK'] = sclk_pin if sclk_pin is not None else device.getNextAvailablePin()
         self._driver.pins['MOSI'] = mosi_pin if mosi_pin is not None else device.getNextAvailablePin()
         self._driver.pins['MISO'] = miso_pin if miso_pin is not None else device.getNextAvailablePin()
-        self._driver.pins['SS'] = ss_pin if ss_pin is not None else device.getNextAvailablePin()
+        self._driver.pins['CS'] = cs_pin if cs_pin is not None else device.getNextAvailablePin()
 
         stimulus = device.getNextAvailableStimulus()
         stimulus.sampleBitWidth = 32
