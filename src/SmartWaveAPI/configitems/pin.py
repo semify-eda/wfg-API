@@ -33,7 +33,7 @@ class Pin:
         self._device.writeToDevice(bytes([
             Command.Pin.value,
             self.id(),
-            1, # pin input enabled by default
+            1,  # pin input enabled by default
             1 if self.pullup else 0
         ]))
 
@@ -72,4 +72,3 @@ class Pin:
             self._inputLevel = value
             if self.inputLevelCallback:
                 self.inputLevelCallback(self._inputLevel)
-

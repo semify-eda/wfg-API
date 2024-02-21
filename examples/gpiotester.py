@@ -6,7 +6,7 @@ import time
 def main():
     with SmartWave().connect() as sw:
         with sw.createGPIO(input_level_callback=lambda x: print("InputA: %d" % x), output_type=PinOutputType.PushPull) as gpioA:
-            with sw.createGPIO(pin_name="B1", input_level_callback=lambda x: print("InputB: %d" % x)) as gpioB:
+            with sw.createGPIO(pin_name="B1", input_level_callback=lambda x: print("InputB: %d" % x), name="GPIOB") as gpioB:
                 input()
                 print("A1")
                 gpioA.level = 1
@@ -14,6 +14,7 @@ def main():
                 input()
                 print("A0")
                 gpioA.level = 0
+                gpioA.name = "GPIOA"
 
                 input()
                 gpioA.outputType = PinOutputType.PushPull

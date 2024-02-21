@@ -159,7 +159,7 @@ class SPIDriver(Driver):
     def bitWidth(self, value: int):
         """Set the bit width of the SPI transmissions
 
-        :param int bitWidth: The bit width of the SPI transmissions
+        :param int value: The bit width of the SPI transmissions
         :raises AttributeError: If bitWidth is not between 1 and 32"""
         self.configure(bitWidth=value)
 

@@ -3,20 +3,23 @@ from SmartWaveAPI.configitems import Pin
 
 from typing import Dict
 
+from SmartWaveAPI.definitions import colorRGB565
+
+
 class Driver:
     """A hardware driver for a communication protocol"""
     driverType: DriverType = None
     color: str = None
 
-    def __init__(self, device, id: int):
+    def __init__(self, device, driver_id: int):
         """Create a new driver instance. Only to be called in the SmartWave.__init__() function.
 
         :param SmartWave device: The SmartWave device this driver belongs to
-        :param int id: The ID of this driver"""
-        self._id: int = id
+        :param int driver_id: The ID of this driver"""
+        self._id: int = driver_id
         self._device = device
         self.pins: Dict[str, Pin or None] = {}
-        pass
+        self.pinNumbers: Dict[str, int] = {}
 
     def __del__(self) -> None:
         """Destructor - return all resources to the device."""
@@ -36,16 +39,16 @@ class Driver:
                     self._id,
                     self.pinNumbers[pin],
                     self.pins[pin].id(),
-                    (self.colorRGB565() >> 8) & 0xff,
-                    self.colorRGB565() & 0xff,
+                    (colorRGB565(self.color) >> 8) & 0xff,
+                    colorRGB565(self.color) & 0xff,
                     len(pin),
                 ]) + bytes(pin, 'ASCII'))
 
-    def removePinConnection(self, pinName: str):
+    def removePinConnection(self, pin_name: str):
         """Remove the pin connection from the device.
 
-        :param str pinName: The name of the pin to remove"""
-        pin = self.pins[pinName]
+        :param str pin_name: The name of the pin to remove"""
+        pin = self.pins[pin_name]
         if pin is not None and self._device.isConnected():
             self._device.writeToDevice(bytes([
                 Command.DriverPinMatrix.value,
@@ -61,17 +64,6 @@ class Driver:
     def writePinsToDevice(self):
         """Write the configuration of each of this driver's pins to the device."""
         raise NotImplementedError
-
-    def colorRGB565(self) -> int:
-        """Convert this driver's color to an RGB565 value.
-
-        :return: this driver's color as an RGB565 value
-        :rtype: int"""
-        r = int(self.color[1:3], 16)
-        g = int(self.color[3:5], 16)
-        b = int(self.color[5:7], 16)
-
-        return ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)
 
     def getId(self) -> int:
         """Get the ID of this driver.

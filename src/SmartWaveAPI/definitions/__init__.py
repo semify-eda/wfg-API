@@ -7,3 +7,4 @@ from SmartWaveAPI.definitions.i2ctransaction import *
 from SmartWaveAPI.definitions.statusbit import *
 from SmartWaveAPI.definitions.stimulustype import *
 from SmartWaveAPI.definitions.pinoutputtype import *
+from SmartWaveAPI.definitions.rgb565 import *

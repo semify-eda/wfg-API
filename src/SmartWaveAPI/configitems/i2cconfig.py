@@ -10,27 +10,27 @@ class I2CConfig(Config):
     """A collection of data, driver and pins used to send data via I2C using the SmartWave."""
     def __init__(self,
                  device,
-                 sdaPin: Union[Pin, None] = None,
-                 sclPin: Union[Pin, None] = None,
-                 clockSpeed: Union[int, None] = None):
+                 sda_pin: Union[Pin, None] = None,
+                 scl_pin: Union[Pin, None] = None,
+                 clock_speed: Union[int, None] = None):
         """Create a new I2C Config object and write the configuration to the connected device.
 
         :param SmartWave device: The SmartWave device this config belongs to
-        :param Union[Pin, None] sdaPin: The pin to use for SDA
-        :param Union[Pin, None] sclPin: The pin to use for SCL
-        :param int clockSpeed: The transmission clock speed in Hz"""
+        :param Union[Pin, None] sda_pin: The pin to use for SDA
+        :param Union[Pin, None] scl_pin: The pin to use for SCL
+        :param int clock_speed: The transmission clock speed in Hz"""
         self._device = device
 
         self._readSemaphore = threading.Semaphore(0)
         self._latestReadValues: bytes = bytes()
 
         self._driver: I2CDriver = self._device.getNextAvailableI2CDriver()
-        self._driver.configure(clockSpeed=clockSpeed)
+        self._driver.configure(clock_speed=clock_speed)
 
-        self._driver.pins['SCL'] = sdaPin if sdaPin is not None else device.getNextAvailablePin()
+        self._driver.pins['SCL'] = sda_pin if sda_pin is not None else device.getNextAvailablePin()
         self._driver.pins['SCL'].pullup = True
 
-        self._driver.pins['SDA'] = sclPin if sclPin is not None else device.getNextAvailablePin()
+        self._driver.pins['SDA'] = scl_pin if scl_pin is not None else device.getNextAvailablePin()
         self._driver.pins['SDA'].pullup = True
 
         stimulus = device.getNextAvailableStimulus()
@@ -67,48 +67,49 @@ class I2CConfig(Config):
             # write new expected read number
             self.writeStimulusDriverConnectionToDevice()
 
-    def write(self, deviceId: int, data: bytes):
+    def write(self, device_id: int, data: bytes):
         """Write bytes over I2C with the connected device.
 
         If the same write transaction already exists on the device,
         the reconfiguration of the device is skipped.
 
-        :param int deviceId: The I2C device ID to write to
+        :param int device_id: The I2C device ID to write to
         :param bytes data: The bytes to write to the I2C bus"""
         self.setTransactions([
-            I2CWrite(deviceId, data)
+            I2CWrite(device_id, data)
         ])
         self._device.trigger()
 
-    def writeRegister(self, deviceId: int, address: bytes, value: bytes):
+    def writeRegister(self, device_id: int, address: bytes, value: bytes):
         """Write to a register on an I2C device.
 
         If the same write transaction already exists on the device,
         the reconfiguration of the device is skipped.
 
-        :param int deviceId: The I2C device ID to write to
+        :param int device_id: The I2C device ID to write to
         :param bytes address: The address bytes of the target I2C register
         :param bytes value: The value bytes of the target I2C register"""
-        self.write(deviceId, address + value)
+        self.write(device_id, address + value)
 
-    def _readCallback(self, recorderId: int, values: List[int]):
+    def _readCallback(self, recorder_id: int, values: List[int]):
         """Handle the result of an I2C read."""
-        if recorderId == self.getRecorderId():
+        if recorder_id == self.getRecorderId():
             self._latestReadValues = bytes(values)
             self._readSemaphore.release()
 
-    def read(self, deviceId: int, length: int, blocking: bool = True) -> Union[None, bytes]:
+    def read(self, device_id: int, length: int, blocking: bool = True) -> Union[None, bytes]:
         """Read bytes from an I2C device.
 
         If the same read transaction already exists on the device,
         the reconfiguration of the device is skipped.
 
-        :param int deviceId: The I2C device ID to read from
+        :param int device_id: The I2C device ID to read from
         :param int length: The number of bytes to read
         :param bool blocking: If true, wait for the response from the connected device
         :return: If blocking == True, return the bytes that were read over I2C. Else return None.
         :rtype: Union[bytes, None]
-        :raises Exception: If the blocking mode is requested and another callback for a readback operation is already registered"""
+        :raises Exception: If the blocking mode is requested and another callback
+        for a readback operation is already registered"""
         if blocking:
             if self._device.readbackCallback is not None:
                 raise Exception("Cannot configure a blocking read operation because there is already a readback "
@@ -117,9 +118,8 @@ class I2CConfig(Config):
             # acquire callback
             self._device.readbackCallback = self._readCallback
 
-
         self.setTransactions([
-            I2CRead(deviceId, length)
+            I2CRead(device_id, length)
         ])
         self._device.trigger()
 
@@ -134,19 +134,20 @@ class I2CConfig(Config):
 
         return None
 
-    def readRegister(self, deviceId: int, address: bytes, length: int, blocking: bool = True) -> Union[None, bytes]:
+    def readRegister(self, device_id: int, address: bytes, length: int, blocking: bool = True) -> Union[None, bytes]:
         """Read bytes from an I2C device at a specified address.
 
         If the same register transaction already exists on the device,
         the reconfiguration of the device is skipped.
 
-        :param int deviceId: The I2C device ID to read from
+        :param int device_id: The I2C device ID to read from
         :param bytes address: The address bytes where to read from on the I2C device
         :param int length: The number of bytes to read
         :param bool blocking: If true, wait for the response from the connected device
         :return: If blocking == True, return the bytes that were read over I2C. Else return None.
         :rtype: Union[List[int], None]
-        :raises Exception: If the blocking mode is requested and another callback for a readback operation is already registered"""
+        :raises Exception: If the blocking mode is requested and another callback
+        for a readback operation is already registered"""
         if blocking:
             if self._device.readbackCallback is not None:
                 raise Exception("Cannot configure a blocking read operation because there is already a readback "
@@ -155,10 +156,9 @@ class I2CConfig(Config):
             # acquire callback
             self._device.readbackCallback = self._readCallback
 
-
         self.setTransactions([
-            I2CWrite(deviceId, address),
-            I2CRead(deviceId, length)
+            I2CWrite(device_id, address),
+            I2CRead(device_id, length)
         ])
         self._device.trigger()
 

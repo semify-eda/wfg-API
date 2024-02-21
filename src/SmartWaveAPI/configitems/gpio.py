@@ -1,5 +1,5 @@
 from SmartWaveAPI.configitems import Pin
-from SmartWaveAPI.definitions import Command, DriverType, PinOutputType
+from SmartWaveAPI.definitions import Command, DriverType, PinOutputType, colorRGB565
 
 from typing import Literal, Optional, Callable
 
@@ -31,7 +31,7 @@ class GPIO:
 
         self._name: str = name
         self._level: Literal[0, 1] = level
-        self._output_type: PinOutputType = output_type
+        self._outputType: PinOutputType = output_type
         self._pullup: bool = pullup
 
         self.configure(name, level, pullup, output_type)
@@ -80,21 +80,10 @@ class GPIO:
             self._outputType.value,
             self._level,
             self._pin.id(),
-            (self.colorRGB565() >> 8) & 0xff,
-            self.colorRGB565() & 0xff,
+            (colorRGB565(self.color) >> 8) & 0xff,
+            colorRGB565(self.color) & 0xff,
             len(self._name)
         ]) + bytes(self._name, 'ASCII'))
-
-    def colorRGB565(self) -> int:
-        """Convert this driver's color to an RGB565 value.
-
-        :return: this driver's color as an RGB565 value
-        :rtype: int"""
-        r = int(self.color[1:3], 16)
-        g = int(self.color[3:5], 16)
-        b = int(self.color[5:7], 16)
-
-        return ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)
 
     def delete(self):
         """Delete this GPIO pin and return all resources to the device."""
@@ -177,7 +166,8 @@ class GPIO:
 
         Caution: this overrides any input level callback that was registered on this GPIO, or the connected pin.
 
-        :param Optional[Callable[[Literal[0, 1]], None]] input_level_callback: The input level callback, or None to unset."""
+        :param Optional[Callable[[Literal[0, 1]], None]] input_level_callback:
+        The input level callback, or None to unset."""
         self._pin.inputLevelCallback = input_level_callback
 
     @property
@@ -187,4 +177,3 @@ class GPIO:
         :return: Current input level.
         :rtype: Literal[0, 1]"""
         return self._pin.inputLevel
-
