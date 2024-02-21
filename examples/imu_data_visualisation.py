@@ -274,7 +274,7 @@ def main():
             z_axis_lsb = i2c_imu.readRegister(i2c_imu_addr, 0x2C.to_bytes(1, 'big'), 1)
             z_axis_msb = i2c_imu.readRegister(i2c_imu_addr, 0x2D.to_bytes(1, 'big'), 1)
             z_axis = (z_axis_msb[0] << 8) + z_axis_lsb[0]
-            tc_z_axis = twos_comp(z_axis, 16)q
+            tc_z_axis = twos_comp(z_axis, 16)
 
             # Linear acceleration conversion
             # convert from g to m/s^2 1 g-unit = 9.80665
