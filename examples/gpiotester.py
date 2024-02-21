@@ -7,14 +7,16 @@ def main():
     with SmartWave().connect() as sw:
         with sw.createGPIO(input_level_callback=lambda x: print("InputA: %d" % x), output_type=PinOutputType.PushPull) as gpioA:
             with sw.createGPIO(pin_name="B1", input_level_callback=lambda x: print("InputB: %d" % x)) as gpioB:
-                # gpioA.outputType = PinOutputType.PushPull
                 input()
-                print("pullup A")
-                gpioA.pullup = True
+                print("A1")
+                gpioA.level = 1
 
                 input()
-                print("pullupB")
-                gpioB.pullup = True
+                print("A0")
+                gpioA.level = 0
+
+                input()
+                gpioA.outputType = PinOutputType.PushPull
 
                 input()
                 print("A1")
@@ -23,6 +25,33 @@ def main():
                 input()
                 print("A0")
                 gpioA.level = 0
+                print("Alevel", gpioA.inputLevel)
+
+                input()
+                print("pullup A")
+                gpioA.pullup = True
+
+
+                input()
+                print("A1")
+                gpioA.level = 1
+
+                input()
+                print("A0")
+                gpioA.level = 0
+
+                input()
+                print("noOutA")
+                gpioA.outputType = PinOutputType.Disable
+
+                input()
+                print("pullupB")
+                gpioB.pullup = True
+
+                input()
+                print("noPullup")
+                gpioA.pullup = False
+                gpioB.pullup = False
 
                 input()
                 print("A open drain")

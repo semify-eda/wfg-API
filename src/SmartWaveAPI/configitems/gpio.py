@@ -32,13 +32,9 @@ class GPIO:
         self._name: str = name
         self._level: Literal[0, 1] = level
         self._output_type: PinOutputType = output_type
+        self._pullup: bool = pullup
 
         self.configure(name, level, pullup, output_type)
-
-        self._level: Literal[0, 1] = 0
-        self._pullup: bool = False
-        self._outputType: PinOutputType = PinOutputType.Disable
-
         self.inputLevelCallback = input_level_callback
 
     def __del__(self):
@@ -183,4 +179,12 @@ class GPIO:
 
         :param Optional[Callable[[Literal[0, 1]], None]] input_level_callback: The input level callback, or None to unset."""
         self._pin.inputLevelCallback = input_level_callback
+
+    @property
+    def inputLevel(self) -> Literal[0, 1]:
+        """Get the current input level.
+
+        :return: Current input level.
+        :rtype: Literal[0, 1]"""
+        return self._pin.inputLevel
 
