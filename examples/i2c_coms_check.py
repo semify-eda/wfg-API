@@ -3,15 +3,14 @@ Test script to check I2C communication setup
 """
 import sys
 import logging
-import numpy as np
 from datetime import datetime
+from typing import Union
+import numpy as np
 
 from SmartWaveAPI import SmartWave
-from SmartWaveAPI.configitems import *
-from SmartWaveAPI.definitions import *
 
 
-def i2c_addr_sweep(i2c):
+def i2c_addr_sweep(i2c) -> Union[None, int]:
     """
     Sweep all the possible I2C addresses and wait for the ACK.
     :param i2c: SmartWave I2C object
@@ -27,15 +26,14 @@ def i2c_addr_sweep(i2c):
             if addr == i2c_addr_list[-1]:
                 logging.warning("Couldn't reach device.")
             continue
-        else:
-            i2c_addr = i2c_addr_list[addr]
-            logging.info(f"Connection was successful. I2C address is: {i2c_addr:#0x}")
-            break
+        i2c_addr = i2c_addr_list[addr]
+        logging.info(f"Connection was successful. I2C address is: {i2c_addr:#0x}")
+        break
 
     return i2c_addr
 
 
-def read_dev_id(i2c, i2c_addr, reg_pointer):
+def read_dev_id(i2c, i2c_addr: int, reg_pointer: bytes) -> int:
     """
     Read a user specified register of the target device for identification
     :param i2c:  SmartWave I2C object
