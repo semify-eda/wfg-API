@@ -4,15 +4,15 @@ import time
 cycle_time = 0.001
 def main():
     with (SmartWave().connect() as sw):
-        sw.createSPIConfig(misoPinName="B1", mosiPinName="B2", ssPinName="B3", sclkPinName="B4")
+        sw.createSPIConfig(miso_pin_name="B1", mosi_pin_name="B2", ss_pin_name="B3", sclk_pin_name="B4")
         with sw.createSPIConfig(
-                bitWidth=16,
-                misoPinName="A1",
-                mosiPinName="A2",
-                sclkPinName="A3",
-                ssPinName="A4",
-                clockSpeed=2e6,
-                bitNumbering="MSB") as spi:
+                bit_width=16,
+                miso_pin_name="A1",
+                mosi_pin_name="A2",
+                sclk_pin_name="A3",
+                ss_pin_name="A4",
+                clock_speed=2e6,
+                bit_numbering="MSB") as spi:
             whoami = spi.write([0x8f00])[0]
             print(whoami)
 

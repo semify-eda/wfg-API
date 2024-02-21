@@ -7,26 +7,26 @@ class SPIConfig(Config):
     """A collection of data, driver and pins used to send data via SPI using the SmartWave."""
     def __init__(self,
                  device,
-                 sclkPin: Union[Pin, None] = None,
-                 mosiPin: Union[Pin, None] = None,
-                 misoPin: Union[Pin, None] = None,
-                 ssPin: Union[Pin, None] = None,
+                 sclk_pin: Union[Pin, None] = None,
+                 mosi_pin: Union[Pin, None] = None,
+                 miso_pin: Union[Pin, None] = None,
+                 ss_pin: Union[Pin, None] = None,
                  clockspeed: Union[int, None] = None,
-                 bitWidth:  Union[int, None] = None,
-                 bitNumbering: Union[Literal["MSB", "LSB"], None] = None,
+                 bit_width:  Union[int, None] = None,
+                 bit_numbering: Union[Literal["MSB", "LSB"], None] = None,
                  cspol: Union[Literal[0, 1], None] = None,
                  cpol: Union[Literal[0, 1], None] = None,
                  cphase: Union[Literal[0, 1], None] = None):
         """Create a new SPI Config object and write the configuration to the connected device.
 
         :param SmartWave device: The SmartWave device this config belongs to
-        :param Union[Pin, None] sclkPin: The pin to use for SCLK
-        :param Union[Pin, None] mosiPin: The pin to use for MOSI
-        :param Union[Pin, None] misoPin: The pin to use for MISO
-        :param Union[Pin, None] ssPin: The pin to use for SS
+        :param Union[Pin, None] sclk_pin: The pin to use for SCLK
+        :param Union[Pin, None] mosi_pin: The pin to use for MOSI
+        :param Union[Pin, None] miso_pin: The pin to use for MISO
+        :param Union[Pin, None] ss_pin: The pin to use for SS
         :param int clockspeed: The transmission clock speed in Hz
-        :param int bitWidth: The bit width of the SPI transmissions
-        :param Literal["MSB", "LSB"] bitNumbering: Whether to transmit MSB-first or LSB-first
+        :param int bit_width: The bit width of the SPI transmissions
+        :param Literal["MSB", "LSB"] bit_numbering: Whether to transmit MSB-first or LSB-first
         :param Literal[0, 1] cspol: The polarity of the chipselect pin
         :param Literal[0, 1] cpol: The polarity of the clock pin
         :param Literal[0, 1] cphase: The phase of the clock"""
@@ -38,17 +38,17 @@ class SPIConfig(Config):
         self._driver: SPIDriver = self._device.getNextAvailableSPIDriver()
         self._driver.configure(
             clockSpeed=clockspeed,
-            bitWidth=bitWidth,
-            bitNumbering=bitNumbering,
+            bitWidth=bit_width,
+            bitNumbering=bit_numbering,
             cspol=cspol,
             cpol=cpol,
             cphase=cphase
         )
 
-        self._driver.pins['SCLK'] = sclkPin if sclkPin is not None else device.getNextAvailablePin()
-        self._driver.pins['MOSI'] = mosiPin if mosiPin is not None else device.getNextAvailablePin()
-        self._driver.pins['MISO'] = misoPin if misoPin is not None else device.getNextAvailablePin()
-        self._driver.pins['SS'] = ssPin if ssPin is not None else device.getNextAvailablePin()
+        self._driver.pins['SCLK'] = sclk_pin if sclk_pin is not None else device.getNextAvailablePin()
+        self._driver.pins['MOSI'] = mosi_pin if mosi_pin is not None else device.getNextAvailablePin()
+        self._driver.pins['MISO'] = miso_pin if miso_pin is not None else device.getNextAvailablePin()
+        self._driver.pins['SS'] = ss_pin if ss_pin is not None else device.getNextAvailablePin()
 
         stimulus = device.getNextAvailableStimulus()
         stimulus.sampleBitWidth = 32
@@ -83,25 +83,25 @@ class SPIConfig(Config):
             # write new expected read number
             self.writeStimulusDriverConnectionToDevice()
 
-    def _readCallback(self, recorderId: int, values: List[int]):
+    def _readCallback(self, recorder_id: int, values: List[int]):
         """Handle the result of an SPI read."""
-        if recorderId == self.getRecorderId():
+        if recorder_id == self.getRecorderId():
             self._latestReadValues = values
             self._readSemaphore.release()
 
-    def write(self, data: List[int], blockingRead: bool = True) -> Union[None, List[int]]:
+    def write(self, data: List[int], blocking_read: bool = True) -> Union[None, List[int]]:
         """Write data over SPI with the connected device.
 
         If the data is not new, the reconfiguration of the device is skipped.
 
         :param List[int] data: The data to write
-        :param bool blockingRead: If true, wait for the response from the connected device
+        :param bool blocking_read: If true, wait for the response from the connected device
         :return: If blockingRead == True, return the values that were read over SPI. Else return None.
         :rtype: Union[None, List[int]]
         :raises Exception: If the blocking read mode is requested and another callback for a
             readback operation is already registered."""
 
-        if blockingRead:
+        if blocking_read:
             if self._device.readbackCallback is not None:
                 raise Exception("Cannot configure a blocking read operation because there is already "
                                 "a readback callback registered on the device")
@@ -112,7 +112,7 @@ class SPIConfig(Config):
         self.setData(data)
         self._device.trigger()
 
-        if blockingRead:
+        if blocking_read:
             # wait for readback
             self._readSemaphore.acquire()
 

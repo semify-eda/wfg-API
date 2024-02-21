@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TriggerMode(Enum):
     """Specifies the behavior of the trigger on the device."""
     Single = 0x00
