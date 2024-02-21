@@ -72,12 +72,10 @@ class Config:
         :rtype: int"""
         return self._stimulus.getId()
 
-
     def delete(self):
         """Delete this configuration and return all resources to the device."""
         self._driver.delete()
         self._stimulus.delete()
-
 
     def _getReadNumber(self) -> int:
         """Get the number of samples to read back from the device.

@@ -4,12 +4,12 @@ import threading
 import time
 import os
 
-from typing import List, Union, Callable, Literal, Optional
+from typing import List, Union, Callable, Literal, Optional, Dict
 
-from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config, SPIDriver
+from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config, SPIDriver, GPIO
 from SmartWaveAPI.configitems.i2cconfig import I2CConfig
 from SmartWaveAPI.configitems.spiconfig import SPIConfig
-from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode, TriggerMode
+from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode, TriggerMode, PinOutputType
 
 
 class SmartWave(object):
@@ -68,13 +68,17 @@ class SmartWave(object):
             Pin(self, "B", 10),
         ]
 
+        self._allPins: List[Pin] = []
+        for pin in self._availablePins:
+            self._allPins.append(pin)
+
         self.configEntries: List[Config] = []
 
         self._heartbeatThread: Union[threading.Thread, None] = None
         self._readingThread: Union[threading.Thread, None] = None
         self._serialLock = threading.Lock()
         self.killWithParentThread = True
-        self._parentThread = threading.currentThread()
+        self._parentThread = threading.current_thread()
 
         self.idleCallback: Union[Callable[[], None], None] = None
         self.runningCallback: Union[Callable[[], None], None] = None
@@ -85,8 +89,7 @@ class SmartWave(object):
         self.firmwareUpdateFailedCallback: Union[Callable[[], None], None] = None
         self.readbackCallback: Union[Callable[[int, List[int]], None], None] = None
         self.singleAddressReadCallback: Union[Callable[[int], None], None] = None
-        self.pinsStatusCallback: Union[Callable[[int, int], None], None] = None
-        self.firwareUpdateStatusCallback: Union[Callable[[bool, int], None], None] = None
+        self.firmwareUpdateStatusCallback: Union[Callable[[bool, int], None], None] = None
 
         self._latestFpgaRead: int = 0
         self._fpgaReadSemaphore = threading.Semaphore(0)
@@ -202,17 +205,18 @@ class SmartWave(object):
                     elif statusbit == Statusbit.PinsStatus.value:
                         pinsA = int.from_bytes(self._serialPort.read(1), 'big')
                         pinsB = int.from_bytes(self._serialPort.read(1), 'big')
+                        allPins = pinsA | (pinsB << 8)
 
-                        if self.pinsStatusCallback is not None:
-                            self.pinsStatusCallback(pinsA, pinsB)
+                        for pinId in range(16):
+                            self._allPins[pinId].inputLevel = 1 if (allPins & (1 << pinId)) else 0
 
                     elif statusbit == Statusbit.FirmwareUpdateStatus.value:
                         byte = int.from_bytes(self._serialPort.read(1), 'big')
                         isMicrocontroller: bool = (byte & 8) == 1
                         status: int = byte & 0xef
 
-                        if self.firwareUpdateStatusCallback is not None:
-                            self.firwareUpdateStatusCallback(isMicrocontroller, status)
+                        if self.firmwareUpdateStatusCallback is not None:
+                            self.firmwareUpdateStatusCallback(isMicrocontroller, status)
 
                     else:
                         print("Unknown Status bit: %d" % statusbit)
@@ -226,36 +230,36 @@ class SmartWave(object):
 
             self._serialLock.release()
 
-    def _connectToSpecifiedPort(self, portName: str, reset: bool, requestInfo: bool, configureGeneral: bool):
+    def _connectToSpecifiedPort(self, port_name: str, reset: bool, request_info: bool, configure_general: bool):
         """Try to connect to the specified port.
 
-        :param str portName: The port to connect to
+        :param str port_name: The port to connect to
         :param bool reset: Reset the device after connection
-        :param bool requestInfo: Request info from the device after connection
-        :param bool configureGeneral: Configure general with the default values
+        :param bool request_info: Request info from the device after connection
+        :param bool configure_general: Configure general with the default values
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no connection to the device could be established"""
         try:
             self._serialLock.acquire()
             if self._serialPort is None:
-                self._serialPort = serial.Serial(portName, baudrate=115200, exclusive=True, timeout=1)
+                self._serialPort = serial.Serial(port_name, baudrate=115200, exclusive=True, timeout=1)
             else:
-                self._serialPort.port = portName
+                self._serialPort.port = port_name
 
             self._serialLock.release()
 
         except (ConnectionRefusedError, serial.SerialException):
             self._serialLock.release()
-            raise ConnectionRefusedError("Could not connect to serial port %s" % portName)
+            raise ConnectionRefusedError("Could not connect to serial port %s" % port_name)
 
         if reset:
             self.reset()
 
-        if configureGeneral:
+        if configure_general:
             self.configGeneral()
 
-        if requestInfo:
+        if request_info:
             self.requestInfo()
 
         self._heartbeatThread = threading.Thread(target=self._heartbeat)
@@ -267,12 +271,12 @@ class SmartWave(object):
             entry.writeToDevice()
         return
 
-    def scanAndConnect(self, reset: bool = True, requestInfo: bool = True, configureGeneral: bool = True):
+    def scanAndConnect(self, reset: bool = True, request_info: bool = True, configure_general: bool = True):
         """Scan all serial ports on the PC and connect to a SmartWave device if one is found.
 
         :param bool reset: Reset the device after connection
-        :param bool requestInfo: Request info from the device after connection
-        :param bool configureGeneral: Configure general with the default values
+        :param bool request_info: Request info from the device after connection
+        :param bool configure_general: Configure general with the default values
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no suitable device is found"""
@@ -282,7 +286,7 @@ class SmartWave(object):
         for port in ports:
             if port.vid == SmartWave.VID and port.pid == SmartWave.PID:
                 try:
-                    self._connectToSpecifiedPort(port.device, reset, requestInfo, configureGeneral)
+                    self._connectToSpecifiedPort(port.device, reset, request_info, configure_general)
                     return self
                 except ConnectionRefusedError:
                     # try another device
@@ -291,52 +295,52 @@ class SmartWave(object):
         raise ConnectionRefusedError("Could not find a suitable device to connect to")
 
     def connect(self,
-                portName: str = None,
+                port_name: str = None,
                 reset: bool = True,
-                requestInfo: bool = True,
-                configureGeneral: bool = True):
+                request_info: bool = True,
+                configure_general: bool = True):
         """Try to connect to a SmartWave device at the specified port.
 
-        :param str portName: The name of the port to connect to
+        :param str port_name: The name of the port to connect to
         :param bool reset: Reset the device after connection
-        :param bool requestInfo: Request info from the device after connection
-        :param bool configureGeneral: Configure general with the default values
+        :param bool request_info: Request info from the device after connection
+        :param bool configure_general: Configure general with the default values
         :return: Self
         :rtype: SmartWave
         :raises ConnectionRefusedError: If no connection could be established with the specified port
         :raises AttributeError: If the device at the specified port is not a SmartWave device"""
-        if portName is None:
+        if port_name is None:
             return self.scanAndConnect(reset)
 
         ports = serial.tools.list_ports.comports()
         for port in ports:
-            if port.device == portName:
+            if port.device == port_name:
                 if port.vid != SmartWave.VID or port.pid != SmartWave.PID:
                     raise AttributeError("The device at the specified port %s is not a SmartWave device" % port)
 
-                self._connectToSpecifiedPort(portName, reset, requestInfo, configureGeneral)
+                self._connectToSpecifiedPort(port_name, reset, request_info, configure_general)
                 return self
 
         raise ConnectionRefusedError("Could not find specified serial port")
 
-    def writeToDevice(self, data: bytes, acquireLock: bool = True):
+    def writeToDevice(self, data: bytes, acquire_lock: bool = True):
         """Write bare data to the connected device.
 
         :param bytes data: the data to write
-        :param bool acquireLock: Whether to acquire lock for serial resource.
+        :param bool acquire_lock: Whether to acquire lock for serial resource.
             Setting this to False may have adverse side effects.
         :raises Exception: If the serial connection is not active"""
 
-        if acquireLock:
+        if acquire_lock:
             self._serialLock.acquire()
         if self._serialPort is None:
-            if acquireLock:
+            if acquire_lock:
                 self._serialLock.release()
             raise Exception("Not connected to a device")
 
         self._serialPort.write(data)
 
-        if acquireLock:
+        if acquire_lock:
             self._serialLock.release()
 
     def isConnected(self) -> bool:
@@ -375,17 +379,17 @@ class SmartWave(object):
 
     def configGeneral(self,
                       vddio: Union[float, None] = None,
-                      triggerMode: Union[TriggerMode, None] = None):
+                      trigger_mode: Union[TriggerMode, None] = None):
         """Configure general information on the connected device.
 
         :param float vddio: The IO voltage of the connected device (accurate to 0.01V)
-        :param TriggerMode triggerMode: The trigger mode of the output device
+        :param TriggerMode trigger_mode: The trigger mode of the output device
             (i.e. whether it runs once or continuously)
 
         :raises AttributeError: if vddio is not betweeen 1.8V and 5.0V"""
 
-        if triggerMode is not None:
-            self._triggerMode = triggerMode
+        if trigger_mode is not None:
+            self._triggerMode = trigger_mode
 
         if vddio is not None:
             if vddio < 1.8:
@@ -431,11 +435,11 @@ class SmartWave(object):
         return self._triggerMode
 
     @triggerMode.setter
-    def triggerMode(self, new_triggerMode: TriggerMode):
+    def triggerMode(self, new_trigger_mode: TriggerMode):
         """Set the current trigger mode of the connected device.
 
-        :param TriggerMode new_triggerMode: The new triggermode"""
-        self.configGeneral(triggerMode=new_triggerMode)
+        :param TriggerMode new_trigger_mode: The new triggermode"""
+        self.configGeneral(trigger_mode=new_trigger_mode)
 
     def requestInfo(self):
         """Request the device information from the connected device."""
@@ -556,68 +560,111 @@ class SmartWave(object):
         self._availableStimuli.append(stimulus)
         return len(self._availableStimuli)
 
-    def createI2CConfig(self, sdaPinName: Union[str, None] = None, sclPinName: Union[str, None] = None,
-                        clockSpeed: Union[int, None] = None) -> I2CConfig:
+    def createI2CConfig(self,
+                        sda_pin_name: Optional[str] = None,
+                        scl_pin_name: Optional[str] = None,
+                        clock_speed: Optional[int] = None) -> I2CConfig:
         """Create an I2C Configuration object.
 
-        :param str sdaPinName: The name of the pin to use for SDA
-        :param str sclPinName: The name of the pin to use for SCL
-        :param int clockSpeed: The I2C clock speed in Hz
+        :param str sda_pin_name: The name of the pin to use for SDA
+        :param str scl_pin_name: The name of the pin to use for SCL
+        :param int clock_speed: The I2C clock speed in Hz
         :return: An I2C Configuration with the specified settings
         :rtype: I2CConfig"""
-        sdaPin = self.getPin(sdaPinName) if sdaPinName else None
-        sclPin = self.getPin(sclPinName) if sclPinName else None
+        sdaPin = self.getPin(sda_pin_name) if sda_pin_name else None
+        sclPin = self.getPin(scl_pin_name) if scl_pin_name else None
 
-        config: I2CConfig = I2CConfig(self, sdaPin, sclPin, clockSpeed)
+        config: I2CConfig = I2CConfig(self, sdaPin, sclPin, clock_speed)
         self.configEntries.append(config)
 
         return config
 
     def createSPIConfig(self,
-                        sclkPinName: Union[str, None] = None,
-                        mosiPinName: Union[str, None] = None,
-                        misoPinName: Union[str, None] = None,
-                        ssPinName: Union[str, None] = None,
-                        clockSpeed: Union[int, None] = None,
-                        bitWidth: Union[int, None] = None,
-                        bitNumbering: Union[Literal["MSB", "LSB"], None] = None,
-                        cspol: Union[Literal[0, 1], None] = None,
-                        cpol: Union[Literal[0, 1], None] = None,
-                        cphase: Union[Literal[0, 1], None] = None):
+                        sclk_pin_name: Optional[str] = None,
+                        mosi_pin_name: Optional[str] = None,
+                        miso_pin_name: Optional[str] = None,
+                        ss_pin_name: Optional[str] = None,
+                        clock_speed: Optional[int] = None,
+                        bit_width: Optional[int] = None,
+                        bit_numbering: Optional[Literal["MSB", "LSB"]] = None,
+                        cspol: Optional[Literal[0, 1]] = None,
+                        cpol: Optional[Literal[0, 1]] = None,
+                        cphase: Optional[Literal[0, 1]] = None):
         """Create an SPI Configuration object.
 
-        :param str sclkPinName: The name of the pin to use for SCLK
-        :param str mosiPinName: The name of the pin to use for MOSI
-        :param str misoPinName: The name of the pin to use for MISO
-        :param str ssPinName: The name of the pin to use for SS
-        :param int clockSpeed: The transmission clock speed in Hz
-        :param int bitWidth: The bit width of the SPI transmissions
-        :param Literal["MSB", "LSB"] bitNumbering: Whether to transmit MSB-first or LSB-first
+        :param str sclk_pin_name: The name of the pin to use for SCLK
+        :param str mosi_pin_name: The name of the pin to use for MOSI
+        :param str miso_pin_name: The name of the pin to use for MISO
+        :param str ss_pin_name: The name of the pin to use for SS
+        :param int clock_speed: The transmission clock speed in Hz
+        :param int bit_width: The bit width of the SPI transmissions
+        :param Literal["MSB", "LSB"] bit_numbering: Whether to transmit MSB-first or LSB-first
         :param Literal[0, 1] cspol: The polarity of the chipselect pin
         :param Literal[0, 1] cpol: The polarity of the clock pin
         :param Literal[0, 1] cphase: The phase of the clock
         :return: An SPI Configuration with the specified settings
         :rtype: SPIConfig
         """
-        sclkPin = self.getPin(sclkPinName) if sclkPinName else None
-        misoPin = self.getPin(misoPinName) if misoPinName else None
-        mosiPin = self.getPin(mosiPinName) if mosiPinName else None
-        ssPin = self.getPin(ssPinName) if ssPinName else None
+        sclkPin = self.getPin(sclk_pin_name) if sclk_pin_name else None
+        misoPin = self.getPin(miso_pin_name) if miso_pin_name else None
+        mosiPin = self.getPin(mosi_pin_name) if mosi_pin_name else None
+        ssPin = self.getPin(ss_pin_name) if ss_pin_name else None
 
         config: SPIConfig = SPIConfig(self,
                                       sclkPin,
                                       mosiPin,
                                       misoPin,
                                       ssPin,
-                                      clockSpeed,
-                                      bitWidth,
-                                      bitNumbering,
+                                      clock_speed,
+                                      bit_width,
+                                      bit_numbering,
                                       cspol,
                                       cpol,
                                       cphase)
         self.configEntries.append(config)
 
         return config
+    
+    def createGPIO(self,
+                   pin_name: Optional[str] = None,
+                   name: Optional[str] = None,
+                   level: Optional[Literal[0, 1]] = None,
+                   pullup: Optional[bool] = None,
+                   output_type: Optional[PinOutputType] = None,
+                   input_level_callback: Optional[Callable[[Literal[0, 1]], None]] = None) -> GPIO:
+        """Create a GPIO configuration object.
+
+        :param str pin_name: The name of the pin to use, eg "A1"
+        :param str name: The name of the GPIO pin, as displayed on the device, eg "GPIO"
+        :param Literal[0, 1] level: The initial level of the pin
+        :param bool pullup: Whether to enable a pullup resistor on the pin
+        :param PinOutputType output_type: The output type of the pin
+        :param Callable[[Literal[0, 1]], None] input_level_callback:
+        A callable to be run whenever the input level of the pin is changed.
+
+        :return: A GPIO configuration object
+        :rtype: GPIO"""
+        pin = self.getPin(pin_name) if pin_name else self.getNextAvailablePin()
+
+        args: Dict[str, any] = {}
+
+        if name is not None:
+            args["name"] = name
+
+        if level is not None:
+            args["level"] = level
+
+        if pullup is not None:
+            args["pullup"] = pullup
+
+        if output_type is not None:
+            args["output_type"] = output_type
+
+        if input_level_callback is not None:
+            args["input_level_callback"] = input_level_callback
+
+        gpio: GPIO = GPIO(self, pin, **args)
+        return gpio
 
     def removeConfig(self, config: Config):
         """Remove a config from the device.
@@ -676,17 +723,17 @@ class SmartWave(object):
 
         return None
 
-    def updateFirmware(self, firmwarePath: Optional[str] = None):
+    def updateFirmware(self, firmware_path: Optional[str] = None):
         """Update the microcontroller firmware with a given firmware, or to the newest version.
 
         This also checks the firmware file for plausibility and calculates the checksum.
 
-        :param Optional[str] firmwarePath: The path to the new firmware. If unspecified, upload newest
+        :param Optional[str] firmware_path: The path to the new firmware. If unspecified, upload newest
             packaged firmware.
         :raises FileNotFoundError: If the firmware file could not be found
         :raises Exception: If the firmware file is incompatible with the bootloader
         :raises Exception: If the firmware size is incompatible with the bootloader"""
-        f = open(firmwarePath if firmwarePath else
+        f = open(firmware_path if firmware_path else
                  os.path.join(os.path.dirname(os.path.abspath(__file__)), "newest_firmware.bin"), "rb")
         f_check = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "SBL_sample.bin"), "rb")
 
@@ -746,17 +793,17 @@ class SmartWave(object):
 
         self.writeToDevice(commands + data + checksumArray)
 
-    def updateFPGABitstream(self, bitstreamPath: Optional[str] = None):
+    def updateFPGABitstream(self, bitstream_path: Optional[str] = None):
         """Update the FPGA bitstream with a given bitstream, or to the newest version.
 
         Also checks the bitstream file for plausibility and calculates the checksum.
 
-        :param Optional[str] bitstreamPath: The path to the bitstream. If unspecified,
+        :param Optional[str] bitstream_path: The path to the bitstream. If unspecified,
             upload newest packaged bitstream.
         :raises FileNotFoundError: If the bitstream file could not be found
         :raises Exception: If the bitstream file is of the wrong size"""
 
-        f = open(bitstreamPath if bitstreamPath else
+        f = open(bitstream_path if bitstream_path else
                  os.path.join(os.path.dirname(os.path.abspath(__file__)), "newest_fpga_bitstream.bin"), "rb")
 
         # size check

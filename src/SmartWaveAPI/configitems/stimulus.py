@@ -6,13 +6,13 @@ class Stimulus(object):
     """A hardware stimulus on the SmartWave device"""
     stimulusType: int = StimulusType.Arbitrary.value
 
-    def __init__(self, device, id: int):
+    def __init__(self, device, stimulus_id: int):
         """Create a new Stimulus instance. Only to be called in SmartWave.__init__() function.
 
         :param SmartWave device: the SmartWave device this stimulus belongs to
-        :param int id: the ID of this stimulus"""
+        :param int stimulus_id: the ID of this stimulus"""
         self._device = device
-        self._id = id
+        self._id = stimulus_id
         self.sampleBitWidth: int = 8
         self.triggerMode: TriggerMode = TriggerMode.Single
         self.samples: List[int] = [0xa, 0xb]
@@ -34,7 +34,7 @@ class Stimulus(object):
 
         self._device.writeToDevice(bytes([
             Command.Stimulus.value,
-            self.stimulusType, # only arbitrary stimulus supported right now
+            self.stimulusType,  # only arbitrary stimulus supported right now
             self._id,
             self.sampleBitWidth,
             0 if self.triggerMode == TriggerMode.Toggle else 1,
