@@ -37,8 +37,9 @@ sem_light_grey = '#6d848c'
 def axl_conf(i2c, i2c_addr, odr='208Hz', fs='2g'):
     """
     Method used to configure the accelerometer control register
-    :param i2c: i2c object for SmartWave connection
-    :param i2c_addr: default I2C address of the ASM330LHHXG1 IMU Sensor
+
+    :param i2c: I2C object for SmartWave connection to the IMU sensor
+    :param i2c_addr: Default I2C address of the ASM330LHHXG1 IMU Sensor
     :param odr: Accelerometer output data rate selection (in Hz)
     :param fs: Accelerometer full-scale selection.
     :return: None
@@ -52,8 +53,9 @@ def axl_conf(i2c, i2c_addr, odr='208Hz', fs='2g'):
 def gyro_conf(i2c, i2c_addr, odr='12.5Hz', fs_g='250_dps', fs_125='fs_g', fs_4000='4000_dps'):
     """
     Method used to configure the gyroscope control register
-    :param i2c: i2c object for SmartWave connection
-    :param i2c_addr: default I2C address of the ASM330LHHXG1 IMU Sensor
+
+    :param i2c: I2C object for SmartWave connection to the IMU sensor
+    :param i2c_addr: Default I2C address of the ASM330LHHXG1 IMU Sensor
     :param odr: Gyroscope output data rate selection (in Hz)
     :param fs_g: Gyroscope chain full-scale selection
     :param fs_125: Selects gyroscope chain full-scale ±125 dps
@@ -69,7 +71,8 @@ def gyro_conf(i2c, i2c_addr, odr='12.5Hz', fs_g='250_dps', fs_125='fs_g', fs_400
 
 def twos_comp(val, bits=16):
     """
-    Compute the two's complement of register value
+    Compute the two's complement of the given register value
+
     :param val: Input data
     :param bits: Bit length
     :return: Two's complement of the input data
@@ -80,6 +83,15 @@ def twos_comp(val, bits=16):
 
 
 def io_exp_front_back(i2c, i2c_addr, res):
+    """
+    This method uses the IO expander to control the LEDs,
+    visualizing the movement of the IMU sensor based on positional values read from its registers.
+
+    :param i2c: I2C object for SmartWave connection to the IO expander
+    :param i2c_addr: Default I2C address of the IO expander
+    :param res: Positional value from the ASM330LHHXG1 IMU Sensor
+    :return: None
+    """
     # Tilting forwards
     if -1 < res < 1:
         i2c.write(i2c_addr, [0xff, 0xff])
@@ -104,6 +116,15 @@ def io_exp_front_back(i2c, i2c_addr, res):
 
 
 def io_exp_left_right(i2c, i2c_addr, res):
+    """
+    This method uses the IO expander to control the LEDs,
+    visualizing the movement of the IMU sensor based on positional values read from its registers.
+
+    :param i2c: I2C object for SmartWave connection to the IO expander
+    :param i2c_addr: Default I2C address of the IO expander
+    :param res: Positional value from the ASM330LHHXG1 IMU Sensor
+    :return: None
+    """
     # Tilting left
     if -1 < res < 1:
         i2c.write(i2c_addr, [0xff, 0xff])
