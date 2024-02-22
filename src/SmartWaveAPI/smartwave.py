@@ -6,10 +6,10 @@ import os
 
 from typing import List, Union, Callable, Literal, Optional, Dict
 
-from SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config, SPIDriver, GPIO
-from SmartWaveAPI.configitems.i2cconfig import I2CConfig
-from SmartWaveAPI.configitems.spiconfig import SPIConfig
-from SmartWaveAPI.definitions import Command, Statusbit, ErrorCode, TriggerMode, PinOutputType
+from src.SmartWaveAPI.configitems import Pin, I2CDriver, Stimulus, Config, SPIDriver, GPIO
+from src.SmartWaveAPI.configitems.i2cconfig import I2CConfig
+from src.SmartWaveAPI.configitems.spiconfig import SPIConfig
+from src.SmartWaveAPI.definitions import Command, Statusbit, ErrorCode, TriggerMode, PinOutputType
 
 
 class SmartWave(object):

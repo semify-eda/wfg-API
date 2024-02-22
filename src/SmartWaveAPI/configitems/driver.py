@@ -3,7 +3,7 @@ from SmartWaveAPI.configitems import Pin
 
 from typing import Dict
 
-from SmartWaveAPI.definitions import colorRGB565
+from src.SmartWaveAPI.definitions import colorRGB565
 
 
 class Driver:

@@ -1,5 +1,5 @@
-from SmartWaveAPI.configitems import Pin
-from SmartWaveAPI.definitions import Command, DriverType, PinOutputType, colorRGB565
+from src.SmartWaveAPI.configitems import Pin
+from src.SmartWaveAPI.definitions import Command, DriverType, PinOutputType, colorRGB565
 
 from typing import Literal, Optional, Callable
 

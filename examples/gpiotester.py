@@ -1,6 +1,6 @@
-from SmartWaveAPI import SmartWave
-from SmartWaveAPI.definitions import PinOutputType
-from SmartWaveAPI.configitems import GPIO
+from src.SmartWaveAPI import SmartWave
+from src.SmartWaveAPI.definitions import PinOutputType
+from src.SmartWaveAPI.configitems import GPIO
 import time
 
 def main():
