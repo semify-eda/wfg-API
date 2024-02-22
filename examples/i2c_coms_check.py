@@ -136,7 +136,7 @@ def i2c_addr_sweep(i2c) -> Union[None, int]:
     dummy_byte = (0).to_bytes(1, 'big')
     i2c_addr_list = np.arange(0, 127)
     for addr in i2c_addr_list:
-        i2c.write(int(i2c_addr_list[addr]), dummy_byte)      # TODO: replace with read/write function to return ACK
+        i2c.write(int(i2c_addr_list[addr]), dummy_byte)  # TODO: replace with read/write function to return ACK
         ack = i2c.read(int(i2c_addr_list[addr]), 1)
         if ack[0] == 0xff:
             if addr == i2c_addr_list[-1]:
@@ -176,12 +176,21 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: bytes, length:
     :param length: Register length as bytes
     :return: None
     """
-    i2c.writeRegister(i2c_addr, reg_pointer, reg_val)
-    logging.info(f"Value written: {reg_val[0]:#0x} to address {reg_pointer[0]:#0x}")
-    reg_read_back = i2c.readRegister(i2c_addr, reg_pointer, length)
-    logging.info(f"Value read back: {reg_read_back[0]:#0x} from address {reg_pointer[0]:#0x}")
+    max_shift = (length - 1) * 8
+    data_to_write = 0
+    for pos in range(length):
+        data_to_write |= reg_val[pos] << (max_shift - (pos * 8))
 
-    if reg_val[0] != reg_read_back[0]:
+    i2c.writeRegister(i2c_addr, reg_pointer, data_to_write.to_bytes(length, 'big'))
+    logging.info(f"Value written: {data_to_write:#0x} to address {reg_pointer[0]:#0x}")
+
+    reg_read_back = i2c.readRegister(i2c_addr, reg_pointer, length)
+    data_read_back = 0
+    for pos in range(length):
+        data_read_back |= reg_read_back[pos] << (max_shift - (pos * 8))
+    logging.info(f"Value read back: {data_read_back:#0x} from address {reg_pointer[0]:#0x}")
+
+    if data_to_write != data_read_back:
         logging.warning("The value read back from the register does not match the written value")
         raise ValueError("Terminating code.")
 
@@ -247,15 +256,18 @@ def main():
                         raise ValueError("Couldn't reach device. Terminating code.")
 
             logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
-            user_reg = int(input("Please enter the register address in HEX that you want to read: "), base=16)
-            reg_pointer = user_reg.to_bytes(1, 'big')
+            user_reg = input("Please enter the register address in HEX that you want to read: ")
+            reg_pointer = bytes.fromhex(user_reg)
             read_dev_id(i2c, i2c_dev_addr, reg_pointer)
 
-            user_reg = int(input("Please enter the register address in HEX that you want to modify: "), base=16)
-            user_val = int(input("Please enter the value in HEX that you want to write: "), base=16)
-            reg_pointer = user_reg.to_bytes(1, 'big')
-            reg_value = user_val.to_bytes(1, 'big')
-            register_r_w(i2c, i2c_dev_addr, reg_pointer, reg_value)
+            user_reg = input("Please enter the register address in HEX that you want to modify: ")
+            user_val = input("Please enter the value in HEX that you want to write: ")
+            reg_pointer = bytes.fromhex(user_reg)
+            reg_value = bytes.fromhex(user_val)
+            register_r_w(i2c, i2c_dev_addr, reg_pointer, reg_value, length=len(reg_value))
+
+            logging.info(f"I2C checklist was successfully completed. "
+                         f"The log files can be found at {os.path.abspath(directory)}")
 
 
 if __name__ == "__main__":
