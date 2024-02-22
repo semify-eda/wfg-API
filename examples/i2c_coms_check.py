@@ -211,10 +211,11 @@ def main():
     if not os.path.exists(directory):
         os.mkdir(directory)
 
-    date_time = datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
+    date_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S")
     file_name = f'I2C_coms_check_{date_time}.log'
     fq_fn = os.path.join(directory, file_name)
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
+                        datefmt="%Y-%m-%d %H:%M:%S",
                         encoding='utf-8', level=logging.DEBUG,
                         handlers=[logging.StreamHandler(sys.stdout),
                                   logging.FileHandler(filename=fq_fn)]
