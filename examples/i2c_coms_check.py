@@ -128,7 +128,7 @@ def gpio_short(gpio_a, gpio_b) -> None:
 def i2c_addr_sweep(i2c) -> Union[None, int]:
     """
     Sweep all the possible I2C addresses and wait for the ACK.
-    
+
     :param i2c: SmartWave I2C object
     :return: device specific I2C address
     """
@@ -198,7 +198,7 @@ def main():
     :return: none
     """
 
-    directory = "./i2c_logs"
+    directory = "./i2c_check_logs"
     if not os.path.exists(directory):
         os.mkdir(directory)
 
@@ -228,7 +228,7 @@ def main():
 
         with sw.createI2CConfig(scl, sda, fast_clk) as i2c:
             logging.info(f"SCL is set to pin: {scl} | SDA is set to pin: {sda} "
-                         f"| I2C clock running at {fast_clk//1e3} kHz")
+                         f"| I2C clock running at {fast_clk // 1e3} kHz")
             logging.info("Trying to connect to the target device")
             i2c_dev_addr = i2c_addr_sweep(i2c)
             if i2c_dev_addr is None:
@@ -237,7 +237,7 @@ def main():
                 logging.debug(f"I2C is running at {i2c.clockSpeed // 1e3} kHz")
                 i2c_dev_addr = i2c_addr_sweep(i2c)
                 if i2c_dev_addr is None:
-                    logging.debug("Please swap the SDA / SCL lines and retry")
+                    logging.debug("Please swap the SDA / SCL lines and retry")  # TODO: Automate (?)
                     retry = input("Press 'R' to retry or 'Q' to quit: ")
                     if retry.upper() == 'R':
                         i2c_dev_addr = i2c_addr_sweep(i2c)
@@ -252,7 +252,7 @@ def main():
             read_dev_id(i2c, i2c_dev_addr, reg_pointer)
 
             user_reg = int(input("Please enter the register address in HEX that you want to modify: "), base=16)
-            user_val = int(input("Please enter the register value in HEX that you want to write: "), base=16)
+            user_val = int(input("Please enter the value in HEX that you want to write: "), base=16)
             reg_pointer = user_reg.to_bytes(1, 'big')
             reg_value = user_val.to_bytes(1, 'big')
             register_r_w(i2c, i2c_dev_addr, reg_pointer, reg_value)
