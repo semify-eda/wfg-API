@@ -5,6 +5,7 @@ import sys
 import os
 import logging
 import time
+import argparse
 from datetime import datetime
 from typing import Union, Optional
 import numpy as np
@@ -25,13 +26,11 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     errors = 0
     # Test initial condition
     pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    output_level_a = gpio_a.level
     input_level_a = gpio_a.inputLevel
     pin_output_type_b = str(gpio_b.outputType).split('.')[1]
     input_level_b = gpio_b.inputLevel
-    output_level_b = gpio_b.level
-    logging.info(f"Initial output level of SCL pin: {output_level_a} with push-pull: {pin_output_type_a}")
-    logging.info(f"Initial output level of SDA pin: {output_level_b} with push-pull: {pin_output_type_b}")
+    logging.info(f"Initial output level of SCL pin: {input_level_a} with push-pull: {pin_output_type_a}")
+    logging.info(f"Initial output level of SDA pin: {input_level_b} with push-pull: {pin_output_type_b}")
 
     # SCL and SDA pulled down
     logging.info("Set both SCL and SDA in pull-down mode.")
@@ -50,15 +49,16 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     time.sleep(500e-3)
     input_level_b = gpio_b.inputLevel
     output_level_b = gpio_b.level
-    logging.info(f"Output level of SCL pin: {output_level_a} with output type: {pin_output_type_a} "
+
+    logging.info(f"Input level of SCL pin: {input_level_a} with output type: {pin_output_type_a} "
                  f"and pull-up set to: {gpio_a.pullup}")
-    logging.info(f"Output level of SDA pin: {output_level_b} with output type: {pin_output_type_b} "
+    logging.info(f"Input level of SDA pin: {input_level_b} with output type: {pin_output_type_b} "
                  f"and pull-up set to: {gpio_b.pullup}")
 
-    if not output_level_a:
+    if not input_level_a:
         logging.error("The SCL pin couldn't be pulled high")
         errors += 1
-    if not output_level_b:
+    if not input_level_b:
         logging.error("The SDA pin couldn't be pulled high")
         errors += 1
 
@@ -77,15 +77,16 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     time.sleep(500e-3)
     input_level_b = gpio_b.inputLevel
     output_level_b = gpio_b.level
-    logging.info(f"Output level of SCL pin: {output_level_a} with output type: {pin_output_type_a} "
+
+    logging.info(f"Input level of SCL pin: {input_level_a} with output type: {pin_output_type_a} "
                  f"and pull-up set to: {gpio_a.pullup}")
-    logging.info(f"Output level of SDA pin: {output_level_b} with output type: {pin_output_type_b} "
+    logging.info(f"Input level of SDA pin: {input_level_b} with output type: {pin_output_type_b} "
                  f"and pull-up set to: {gpio_b.pullup}")
 
-    if output_level_a:
+    if input_level_a:
         logging.error("The SCL pin couldn't be pulled low")
         errors += 1
-    if output_level_b:
+    if input_level_b:
         logging.error("The SDA pin couldn't be pulled low")
         errors += 1
 
@@ -105,8 +106,8 @@ def gpio_short(gpio_a, gpio_b) -> None:
     input_level_b = gpio_b.inputLevel
     output_level_a = gpio_a.level
     output_level_b = gpio_b.level
-    logging.info(f"Initial output level of SCL pin: {output_level_a}")
-    logging.info(f"Initial output level of SDA pin: {output_level_b}")
+    logging.info(f"Initial output level of SCL pin: {input_level_a}")
+    logging.info(f"Initial output level of SDA pin: {input_level_b}")
 
     logging.info("Set SCL low and SDA high.")
     gpio_a.level = 0
@@ -116,10 +117,10 @@ def gpio_short(gpio_a, gpio_b) -> None:
     input_level_b = gpio_b.inputLevel
     output_level_a = gpio_a.level
     output_level_b = gpio_b.level
-    logging.info(f"Output level of SCL pin: {output_level_a}")
-    logging.info(f"Output level of SDA pin: {output_level_b}")
+    logging.info(f"Output level of SCL pin: {input_level_a}")
+    logging.info(f"Output level of SDA pin: {input_level_b}")
 
-    if output_level_a == output_level_b:
+    if input_level_a == input_level_b:
         logging.critical("There is a short between SCL and SDA.")
         raise ValueError("Terminating code.")
 
@@ -131,10 +132,10 @@ def gpio_short(gpio_a, gpio_b) -> None:
     input_level_b = gpio_b.inputLevel
     output_level_a = gpio_a.level
     output_level_b = gpio_b.level
-    logging.info(f"Output level of SCL pin: {output_level_a}")
-    logging.info(f"Output level of SDA pin: {output_level_b}")
+    logging.info(f"Output level of SCL pin: {input_level_a}")
+    logging.info(f"Output level of SDA pin: {input_level_b}")
 
-    if output_level_a == output_level_b:
+    if input_level_a == input_level_b:
         logging.critical("There is a short between SCL and SDA.")
         raise ValueError("Terminating code.")
 
