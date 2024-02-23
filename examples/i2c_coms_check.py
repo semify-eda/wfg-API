@@ -222,6 +222,12 @@ def main():
     :return: none
     """
 
+    parser = argparse.ArgumentParser(description="Access Registers.")
+    parser.add_argument("-id", "--unique_id", type=str, help="Register address of unique device ID in HEX")
+    parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX")
+    parser.add_argument("-rv", "--reg_value", type=str, help="Register value to write in HEX")
+    args = parser.parse_args()
+
     directory = "./i2c_check_logs"
     if not os.path.exists(directory):
         os.mkdir(directory)
@@ -273,16 +279,25 @@ def main():
                         logging.error("Couldn't reach device. Terminating code.")
                         raise ValueError("Terminating code.")
 
-            logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
-            user_reg = input("Please enter the register address in HEX that you want to read: ")
-            reg_pointer = bytes.fromhex(user_reg)
-            read_dev_id(i2c, i2c_dev_addr, reg_pointer)
+            # logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
+            # user_reg = input("Please enter the register address in HEX that you want to read: ")
+            # unique_id = bytes.fromhex(user_reg)
 
-            user_reg = input("Please enter the register address in HEX that you want to modify: ")
-            user_val = input("Please enter the value in HEX that you want to write: ")
-            reg_pointer = bytes.fromhex(user_reg)
-            reg_value = bytes.fromhex(user_val)
-            register_r_w(i2c, i2c_dev_addr, reg_pointer, reg_value, length=len(reg_value))
+            if args.unique_id:
+                logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
+                unique_id = bytes.fromhex(args.unique_id)
+                read_dev_id(i2c, i2c_dev_addr, unique_id)
+
+            # user_reg = input("Please enter the register address in HEX that you want to modify: ")
+            # user_val = input("Please enter the value in HEX that you want to write: ")
+            # reg_pointer = bytes.fromhex(user_reg)
+            # reg_value = bytes.fromhex(user_val)
+
+            if args.reg_pointer:
+                logging.info("Perform a register write / read operation on target device.")
+                reg_pointer = bytes.fromhex(args.reg_pointer)
+                reg_value = bytes.fromhex(args.reg_value)
+                register_r_w(i2c, i2c_dev_addr, reg_pointer, reg_value, length=len(reg_value))
 
             logging.info(f"I2C checklist was successfully completed. "
                          f"The log files can be found at {os.path.abspath(directory)}")
