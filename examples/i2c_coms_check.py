@@ -25,9 +25,11 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     errors = 0
     # Test initial condition
     pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    output_level_a = gpio_a.inputLevel
+    output_level_a = gpio_a.level
+    input_level_a = gpio_a.inputLevel
     pin_output_type_b = str(gpio_b.outputType).split('.')[1]
-    output_level_b = gpio_b.inputLevel
+    input_level_b = gpio_b.inputLevel
+    output_level_b = gpio_b.level
     logging.info(f"Initial output level of SCL pin: {output_level_a} with push-pull: {pin_output_type_a}")
     logging.info(f"Initial output level of SDA pin: {output_level_b} with push-pull: {pin_output_type_b}")
 
@@ -38,25 +40,26 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     gpio_a.pullup = False
     pin_output_type_a = str(gpio_a.outputType).split('.')[1]
     time.sleep(500e-3)
-    output_level_a = gpio_a.inputLevel
+    input_level_a = gpio_a.inputLevel
+    output_level_a = gpio_a.level
 
     gpio_b.level = 1
     gpio_b.outputType = PinOutputType.PushPull
     gpio_b.pullup = False
     pin_output_type_b = str(gpio_b.outputType).split('.')[1]
     time.sleep(500e-3)
-    output_level_b = gpio_b.inputLevel
-
+    input_level_b = gpio_b.inputLevel
+    output_level_b = gpio_b.level
     logging.info(f"Output level of SCL pin: {output_level_a} with output type: {pin_output_type_a} "
                  f"and pull-up set to: {gpio_a.pullup}")
     logging.info(f"Output level of SDA pin: {output_level_b} with output type: {pin_output_type_b} "
                  f"and pull-up set to: {gpio_b.pullup}")
 
     if not output_level_a:
-        logging.warning("The SCL pin couldn't be pulled high")
+        logging.error("The SCL pin couldn't be pulled high")
         errors += 1
     if not output_level_b:
-        logging.warning("The SDA pin couldn't be pulled high")
+        logging.error("The SDA pin couldn't be pulled high")
         errors += 1
 
     # SCL and SDA pulled up
@@ -65,24 +68,25 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     pin_output_type_a = str(gpio_a.outputType).split('.')[1]
     gpio_a.pullup = True
     time.sleep(500e-3)
-    output_level_a = gpio_a.inputLevel
+    input_level_a = gpio_a.inputLevel
+    output_level_a = gpio_a.level
 
     gpio_b.level = 0
     pin_output_type_b = str(gpio_b.outputType).split('.')[1]
     gpio_b.pullup = True
     time.sleep(500e-3)
-    output_level_b = gpio_b.inputLevel
-
+    input_level_b = gpio_b.inputLevel
+    output_level_b = gpio_b.level
     logging.info(f"Output level of SCL pin: {output_level_a} with output type: {pin_output_type_a} "
                  f"and pull-up set to: {gpio_a.pullup}")
     logging.info(f"Output level of SDA pin: {output_level_b} with output type: {pin_output_type_b} "
                  f"and pull-up set to: {gpio_b.pullup}")
 
     if output_level_a:
-        logging.warning("The SCL pin couldn't be pulled low")
+        logging.error("The SCL pin couldn't be pulled low")
         errors += 1
     if output_level_b:
-        logging.warning("The SDA pin couldn't be pulled low")
+        logging.error("The SDA pin couldn't be pulled low")
         errors += 1
 
     if errors > 0:
@@ -97,8 +101,10 @@ def gpio_short(gpio_a, gpio_b) -> None:
     :param gpio_b: SmartWave GPIO_B object
     :return: None
     """
-    output_level_a = gpio_a.inputLevel
-    output_level_b = gpio_b.inputLevel
+    input_level_a = gpio_a.inputLevel
+    input_level_b = gpio_b.inputLevel
+    output_level_a = gpio_a.level
+    output_level_b = gpio_b.level
     logging.info(f"Initial output level of SCL pin: {output_level_a}")
     logging.info(f"Initial output level of SDA pin: {output_level_b}")
 
@@ -106,22 +112,30 @@ def gpio_short(gpio_a, gpio_b) -> None:
     gpio_a.level = 0
     gpio_b.level = 1
     time.sleep(500e-3)
-    output_level_a = gpio_a.inputLevel
-    output_level_b = gpio_b.inputLevel
+    input_level_a = gpio_a.inputLevel
+    input_level_b = gpio_b.inputLevel
+    output_level_a = gpio_a.level
+    output_level_b = gpio_b.level
     logging.info(f"Output level of SCL pin: {output_level_a}")
     logging.info(f"Output level of SDA pin: {output_level_b}")
+
+    if output_level_a == output_level_b:
+        logging.critical("There is a short between SCL and SDA.")
+        raise ValueError("Terminating code.")
 
     logging.info("Set SCL high and SDA low.")
     gpio_a.level = 1
     gpio_b.level = 0
     time.sleep(500e-3)
-    output_level_a = gpio_a.inputLevel
-    output_level_b = gpio_b.inputLevel
+    input_level_a = gpio_a.inputLevel
+    input_level_b = gpio_b.inputLevel
+    output_level_a = gpio_a.level
+    output_level_b = gpio_b.level
     logging.info(f"Output level of SCL pin: {output_level_a}")
     logging.info(f"Output level of SDA pin: {output_level_b}")
 
     if output_level_a == output_level_b:
-        logging.warning("There is a short between SCL and SDA.")
+        logging.critical("There is a short between SCL and SDA.")
         raise ValueError("Terminating code.")
 
 
@@ -191,7 +205,7 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: bytes, length:
     logging.info(f"Value read back: {data_read_back:#0x} from address {reg_pointer[0]:#0x}")
 
     if data_to_write != data_read_back:
-        logging.warning("The value read back from the register does not match the written value")
+        logging.error("The value read back from the register does not match the written value")
         raise ValueError("Terminating code.")
 
 
@@ -252,9 +266,11 @@ def main():
                     if retry.upper() == 'R':
                         i2c_dev_addr = i2c_addr_sweep(i2c)
                         if i2c_dev_addr is None:
-                            raise ValueError("Couldn't reach device. Terminating code.")
+                            logging.error("Couldn't reach device. Terminating code.")
+                            raise ValueError("Terminating code.")
                     else:
-                        raise ValueError("Couldn't reach device. Terminating code.")
+                        logging.error("Couldn't reach device. Terminating code.")
+                        raise ValueError("Terminating code.")
 
             logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
             user_reg = input("Please enter the register address in HEX that you want to read: ")
