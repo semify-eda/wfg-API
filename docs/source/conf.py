@@ -23,7 +23,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.githubpages',
-    'myst_parser'
+    'myst_parser',
+    'recommonmark'
 ]
 
 source_suffix = {
