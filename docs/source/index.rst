@@ -9,8 +9,9 @@ Welcome to SmartWave API's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   README.md
    modules
-   README <readme_link>
 
 
 Indices and tables
