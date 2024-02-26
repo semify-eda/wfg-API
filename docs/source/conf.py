@@ -23,15 +23,9 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.githubpages',
-    'myst_parser',
     'recommonmark'
 ]
 
-source_suffix = {
-    '.rst': 'restructuredtext',
-    '.txt': 'markdown',
-    '.md': 'markdown',
-}
 
 templates_path = ['_templates']
 exclude_patterns = ['_build']
