@@ -23,7 +23,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.githubpages',
-    'recommonmark'
+    'myst_parser'
 ]
 
 

@@ -167,7 +167,7 @@ def main():
             i2c_io_exp.write(i2c_io_exp_addr, 0xff.to_bytes(2, 'big'))
 
         # Check if connection to the target device was successful
-        if imu_id[0] == 0xff:
+        if (imu_id[0] == 0xff) or (imu_id[0] == 0x00):
             raise ValueError("Couldn't reach device. Terminating code.")
         else:
             print(f"Connection was successful. Device ID: {imu_id[0]:#0x}")
@@ -179,7 +179,7 @@ def main():
         # Import semify logo for plotting
         file = "semify_logo.png"
         img = Image.open(file)
-        resize = img.resize((np.array(img.size) / 17).astype(int))
+        resize = img.resize((np.array(img.size) / 19).astype(int))  # / 17
 
         # Default settings for plotting
         plt.rcParams["figure.facecolor"] = sem_grey
@@ -345,7 +345,9 @@ def main():
                                            blit=True,
                                            cache_frame_data=False)
 
-            plt.figimage(resize, xo=1100, yo=880, origin='upper')  # TODO: dynamic positioning of image
+            # plt.figimage(resize, xo=1100, yo=880, origin='upper')  # TODO: dynamic positioning of image
+            plt.figimage(resize, xo=1120, yo=970, origin='upper')  # For full-screen video capture
+            plt.get_current_fig_manager().full_screen_toggle()
             plt.show()
     # sw.disconnect()
 
