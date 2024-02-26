@@ -22,8 +22,15 @@ author = 'semify GmbH'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.githubpages'
+    'sphinx.ext.githubpages',
+    'myst_parser'
 ]
+
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.txt': 'markdown',
+    '.md': 'markdown',
+}
 
 templates_path = ['_templates']
 exclude_patterns = ['_build']

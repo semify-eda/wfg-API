@@ -104,8 +104,8 @@ def gpio_short(gpio_a, gpio_b) -> None:
     """
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    output_level_a = gpio_a.level
-    output_level_b = gpio_b.level
+    # output_level_a = gpio_a.level
+    # output_level_b = gpio_b.level
     logging.info(f"Initial output level of SCL pin: {input_level_a}")
     logging.info(f"Initial output level of SDA pin: {input_level_b}")
 
@@ -115,8 +115,8 @@ def gpio_short(gpio_a, gpio_b) -> None:
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    output_level_a = gpio_a.level
-    output_level_b = gpio_b.level
+    # output_level_a = gpio_a.level
+    # output_level_b = gpio_b.level
     logging.info(f"Output level of SCL pin: {input_level_a}")
     logging.info(f"Output level of SDA pin: {input_level_b}")
 
@@ -130,8 +130,8 @@ def gpio_short(gpio_a, gpio_b) -> None:
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    output_level_a = gpio_a.level
-    output_level_b = gpio_b.level
+    # output_level_a = gpio_a.level
+    # output_level_b = gpio_b.level
     logging.info(f"Output level of SCL pin: {input_level_a}")
     logging.info(f"Output level of SDA pin: {input_level_b}")
 
@@ -223,9 +223,9 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description="Access Registers.")
-    parser.add_argument("-id", "--unique_id", type=str, help="Register address of unique device ID in HEX")
-    parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX")
-    parser.add_argument("-rv", "--reg_value", type=str, help="Register value to write in HEX")
+    parser.add_argument("-id", "--unique_id", type=str, help="Register address of unique device ID in HEX format.")
+    parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX format.")
+    parser.add_argument("-rv", "--reg_value", type=str, help="Register value to write in HEX format.")
     args = parser.parse_args()
 
     directory = "./i2c_check_logs"
