@@ -1,6 +1,7 @@
 """
 Demo script for the ASM330LHHXG1 IMU Sensor
 """
+import time
 
 import numpy as np
 from PIL import Image
@@ -33,8 +34,12 @@ sem_blue = '#43788c'
 sem_dark_blue = '#2b4c59'
 sem_light_grey = '#6d848c'
 
+avg = 1
+avg_x = 0
+avg_y = 0
 
-def axl_conf(i2c, i2c_addr, odr='208Hz', fs='2g'):
+
+def axl_conf(i2c, i2c_addr, odr='12.5Hz', fs='2g'):
     """
     Method used to configure the accelerometer control register
 
@@ -98,7 +103,7 @@ def main():
         if IO_EXPANDER:
             i2c_io_exp_addr = 0x20
             i2c_io_exp = sw.createI2CConfig("B2", "B1", int(200e3))
-            i2c_io_exp.write(i2c_io_exp_addr, 0xff.to_bytes(2, 'big'))
+            i2c_io_exp.write(i2c_io_exp_addr, [0xff, 0xff])
 
         # Check if connection to the target device was successful
         if (imu_id[0] == 0xff) or (imu_id[0] == 0x00):
@@ -181,6 +186,8 @@ def main():
             :param ys: List that contains data for plotting the linear rate of change
             :return: Data for plotting
             """
+            global avg, avg_x, avg_y
+
             pitch_lsb = i2c_imu.readRegister(i2c_imu_addr, 0x22.to_bytes(1, 'big'), 1)
             pitch_msb = i2c_imu.readRegister(i2c_imu_addr, 0x23.to_bytes(1, 'big'), 1)
             pitch = (pitch_msb[0] << 8) + pitch_lsb[0]
@@ -239,9 +246,6 @@ def main():
             # print(f"X_adc: {pitch:.3f}     Y_adc: {roll:.3f}    Z_adc:: {yaw:.3f}")
             # print(f"X_a: {x_res:.3f} m/s^2    Y_a: {y_res:.3f} m/s^2   Z_a: {z_res:.3f} m/s^2\n")
 
-            if IO_EXPANDER:
-                io_led_toggle(i2c_io_exp, i2c_io_exp_addr, x_res, y_res)
-
             ys[0].append(y_res)
             ys[0] = ys[0][-x_len:]
             line[0].set_ydata(ys[0])
@@ -253,6 +257,18 @@ def main():
             ys[2].append(z_res)
             ys[2] = ys[2][-x_len:]
             line[2].set_ydata(ys[2])
+
+            if IO_EXPANDER:
+                if avg % 2 != 0:
+                    avg_x = avg_x + x_res
+                    avg_y = avg_y + y_res
+                if avg % 2 == 0:
+                    avg_x = (x_res + avg_x) / 2
+                    avg_y = (y_res + avg_y) / 2
+                    io_led_toggle(i2c_io_exp, i2c_io_exp_addr, avg_x, avg_y)
+                    avg_x = 0
+                    avg_y = 0
+                avg += 1
 
             return line
 
@@ -274,7 +290,7 @@ def main():
             # This requires the animate function to be modified to only return line
             anim = animation.FuncAnimation(fig, animate,
                                            fargs=(ys,),
-                                           interval=10,
+                                           interval=1,
                                            blit=True,
                                            cache_frame_data=False)
 
