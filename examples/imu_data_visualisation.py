@@ -82,72 +82,6 @@ def twos_comp(val, bits=16):
     return val
 
 
-def io_exp_front_back(i2c, i2c_addr, res):
-    """
-    This method uses the IO expander to control the LEDs,
-    visualizing the movement of the IMU sensor based on positional values read from its registers.
-
-    :param i2c: I2C object for SmartWave connection to the IO expander
-    :param i2c_addr: Default I2C address of the IO expander
-    :param res: Positional value from the ASM330LHHXG1 IMU Sensor
-    :return: None
-    """
-    # Tilting forwards
-    if -1 < res < 1:
-        i2c.write(i2c_addr, [0xff, 0xff])
-    if 1 < res < 3:
-        i2c.write(i2c_addr, io_exp_front[0])
-    if 3 < res < 6:
-        i2c.write(i2c_addr, io_exp_front[1])
-    if 6 < res < 8:
-        i2c.write(i2c_addr, io_exp_front[2])
-    if res > 8:
-        i2c.write(i2c_addr, io_exp_front[3])
-
-    # Tilting backwards
-    if -3 < res < -1:
-        i2c.write(i2c_addr, io_exp_back[0])
-    if -6 < res < -3:
-        i2c.write(i2c_addr, io_exp_back[1])
-    if -8 < res < -6:
-        i2c.write(i2c_addr, io_exp_back[2])
-    if res < -8:
-        i2c.write(i2c_addr, io_exp_back[3])
-
-
-def io_exp_left_right(i2c, i2c_addr, res):
-    """
-    This method uses the IO expander to control the LEDs,
-    visualizing the movement of the IMU sensor based on positional values read from its registers.
-
-    :param i2c: I2C object for SmartWave connection to the IO expander
-    :param i2c_addr: Default I2C address of the IO expander
-    :param res: Positional value from the ASM330LHHXG1 IMU Sensor
-    :return: None
-    """
-    # Tilting left
-    if -1 < res < 1:
-        i2c.write(i2c_addr, [0xff, 0xff])
-    if 1 < res < 3:
-        i2c.write(i2c_addr, io_exp_left[0])
-    if 3 < res < 6:
-        i2c.write(i2c_addr, io_exp_left[1])
-    if 6 < res < 8:
-        i2c.write(i2c_addr, io_exp_left[2])
-    if res > 8:
-        i2c.write(i2c_addr, io_exp_left[3])
-
-    # Tilting right
-    if -3 < res < -1:
-        i2c.write(i2c_addr, io_exp_right[0])
-    if -6 < res < -3:
-        i2c.write(i2c_addr, io_exp_right[1])
-    if -8 < res < -6:
-        i2c.write(i2c_addr, io_exp_right[2])
-    if res < -8:
-        i2c.write(i2c_addr, io_exp_right[3])
-
-
 def main():
     """
     The main function handles the connection to SmartWave and the ASM330LHHXG1 IMU Sensor. It configures the
@@ -306,8 +240,7 @@ def main():
             # print(f"X_a: {x_res:.3f} m/s^2    Y_a: {y_res:.3f} m/s^2   Z_a: {z_res:.3f} m/s^2\n")
 
             if IO_EXPANDER:
-                io_exp_front_back(i2c_io_exp, i2c_io_exp_addr, y_res)
-                # io_exp_left_right(i2c_io_exp, i2c_io_exp_addr, y_res)
+                io_led_toggle(i2c_io_exp, i2c_io_exp_addr, x_res, y_res)
 
             ys[0].append(y_res)
             ys[0] = ys[0][-x_len:]
@@ -349,7 +282,6 @@ def main():
             plt.figimage(resize, xo=1120, yo=970, origin='upper')  # For full-screen video capture
             plt.get_current_fig_manager().full_screen_toggle()
             plt.show()
-    # sw.disconnect()
 
 
 if __name__ == "__main__":

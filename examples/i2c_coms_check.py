@@ -168,7 +168,7 @@ def read_dev_id(i2c, i2c_addr: int, reg_pointer: bytes, length: Optional[int] = 
     """
     Read a user specified register of the target device for identification
 
-    :param i2c:  SmartWave I2C object
+    :param i2c: SmartWave I2C object
     :param i2c_addr: Device Specific I2C address
     :param reg_pointer: User defined register address
     :param length: Register length as bytes
@@ -222,7 +222,10 @@ def main():
     :return: none
     """
 
+    # Command line arguments provided by the user
     parser = argparse.ArgumentParser(description="Access Registers.")
+    parser.add_argument("-scl", "--scl_pin", type=str, help="Select the desired SCL Pin", default='A1')
+    parser.add_argument("-sda", "--sda_pin", type=str, help="Select the desired SDA Pin", default='A2')
     parser.add_argument("-id", "--unique_id", type=str, help="Register address of unique device ID in HEX format.")
     parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX format.")
     parser.add_argument("-rv", "--reg_value", type=str, help="Register value to write in HEX format.")
@@ -242,15 +245,15 @@ def main():
                                   logging.FileHandler(filename=fq_fn)]
                         )
 
-    scl = 'A1'
-    sda = 'A2'
+    scl = args.scl_pin
+    sda = args.sda_pin
     fast_clk = int(400e3)
     slow_clk = int(100e3)
 
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
-        with sw.createGPIO(pin_name="A1", name="SCL") as gpio_A:
-            with sw.createGPIO(pin_name="A2", name="SDA") as gpio_B:
+        with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
+            with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
                 logging.info(f"Create a GPIO instance on target pins {scl} and {sda}")
                 logging.info("Test if SCL and SDA can be pulled-down and pulled-up.")
                 gpio_high_low(gpio_A, gpio_B)
@@ -279,19 +282,10 @@ def main():
                         logging.error("Couldn't reach device. Terminating code.")
                         raise ValueError("Terminating code.")
 
-            # logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
-            # user_reg = input("Please enter the register address in HEX that you want to read: ")
-            # unique_id = bytes.fromhex(user_reg)
-
             if args.unique_id:
                 logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
                 unique_id = bytes.fromhex(args.unique_id)
                 read_dev_id(i2c, i2c_dev_addr, unique_id)
-
-            # user_reg = input("Please enter the register address in HEX that you want to modify: ")
-            # user_val = input("Please enter the value in HEX that you want to write: ")
-            # reg_pointer = bytes.fromhex(user_reg)
-            # reg_value = bytes.fromhex(user_val)
 
             if args.reg_pointer:
                 logging.info("Perform a register write / read operation on target device.")
