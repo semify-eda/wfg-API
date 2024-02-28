@@ -282,7 +282,7 @@ def main():
                                            blit=True,
                                            cache_frame_data=False)
 
-            plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 250, yo=int(fig.bbox.ymax) + 220q)
+            plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 250, yo=int(fig.bbox.ymax) + 220)
             plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 650, yo=int(fig.bbox.ymax) + 220)
             # plt.figimage(resize, origin='upper')
             plt.get_current_fig_manager().full_screen_toggle()
