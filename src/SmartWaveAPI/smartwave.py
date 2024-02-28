@@ -80,16 +80,19 @@ class SmartWave(object):
         self.killWithParentThread = True
         self._parentThread = threading.current_thread()
 
-        self.idleCallback: Union[Callable[[], None], None] = None
-        self.runningCallback: Union[Callable[[], None], None] = None
-        self.errorCallback: Union[Callable[[ErrorCode], None], None] = None
-        self.infoCallback: Union[Callable[[tuple, tuple, tuple, int], None], None] = None
-        self.debugCallback: Union[Callable[[str], None], None] = None
-        self.firmwareUpdateOKCallback: Union[Callable[[], None], None] = None
-        self.firmwareUpdateFailedCallback: Union[Callable[[], None], None] = None
-        self.readbackCallback: Union[Callable[[int, List[int]], None], None] = None
-        self.singleAddressReadCallback: Union[Callable[[int], None], None] = None
-        self.firmwareUpdateStatusCallback: Union[Callable[[bool, int], None], None] = None
+        self.idleCallback: Optional[Callable[[], None]] = None
+        self.runningCallback: Optional[Callable[[], None]] = None
+        self.errorCallback: Optional[Callable[[ErrorCode], None]] = None
+        self.infoCallback: Optional[Callable[[tuple, tuple, tuple, int], None]] = None
+        self.debugCallback: Optional[Callable[[str], None]] = None
+        self.firmwareUpdateOKCallback: Optional[Callable[[], None]] = None
+        self.firmwareUpdateFailedCallback: Optional[Callable[[], None]] = None
+        self.readbackCallback: Optional[Callable[[int, List[int]], None]] = None
+        self.singleAddressReadCallback: Optional[Callable[[int], None]] = None
+        self.firmwareUpdateStatusCallback: Optional[Callable[[bool, int], None]] = \
+            lambda isUc, status : print("%s update status: %d%%" % ("Microcontroller" if isUc else "FPGA", status))
+
+        self._bitstreamUpdateSemaphore = threading.Semaphore(0)
 
         self._latestFpgaRead: int = 0
         self._fpgaReadSemaphore = threading.Semaphore(0)
@@ -213,10 +216,14 @@ class SmartWave(object):
                     elif statusbit == Statusbit.FirmwareUpdateStatus.value:
                         byte = int.from_bytes(self._serialPort.read(1), 'big')
                         isMicrocontroller: bool = (byte & 8) == 1
-                        status: int = byte & 0xef
+                        status: int = byte & 0x7f
+
+                        if not isMicrocontroller and status == 0x7f:
+                            self._bitstreamUpdateSemaphore.release()
 
                         if self.firmwareUpdateStatusCallback is not None:
-                            self.firmwareUpdateStatusCallback(isMicrocontroller, status)
+                            self.firmwareUpdateStatusCallback(isMicrocontroller, min(status, 100))
+
 
                     else:
                         print("Unknown Status bit: %d" % statusbit)
@@ -323,12 +330,17 @@ class SmartWave(object):
 
         raise ConnectionRefusedError("Could not find specified serial port")
 
-    def writeToDevice(self, data: bytes, acquire_lock: bool = True):
+    def writeToDevice(self,
+                      data: bytes,
+                      acquire_lock: bool = True,
+                      progress_callback: Optional[Callable[[int], None]] = None):
         """Write bare data to the connected device.
 
         :param bytes data: the data to write
         :param bool acquire_lock: Whether to acquire lock for serial resource.
             Setting this to False may have adverse side effects.
+        :param Optional[Callable[[int], None]] progress_callback: a callback to tell the progress of the transaction.
+            Gives the progress in percent.
         :raises Exception: If the serial connection is not active"""
 
         if acquire_lock:
@@ -338,7 +350,18 @@ class SmartWave(object):
                 self._serialLock.release()
             raise Exception("Not connected to a device")
 
-        self._serialPort.write(data)
+        chunkSize = 100
+        progress = 0
+        i = 0
+        while i < len(data):
+            self._serialPort.write(data[i:i+chunkSize])
+            i += chunkSize
+
+            if progress_callback is not None:
+                new_progress = (i * 100) // len(data)
+                if new_progress != progress:
+                    progress_callback(new_progress)
+                    progress = new_progress
 
         if acquire_lock:
             self._serialLock.release()
@@ -793,13 +816,14 @@ class SmartWave(object):
 
         self.writeToDevice(commands + data + checksumArray)
 
-    def updateFPGABitstream(self, bitstream_path: Optional[str] = None):
+    def updateFPGABitstream(self, bitstream_path: Optional[str] = None, blocking: bool = True):
         """Update the FPGA bitstream with a given bitstream, or to the newest version.
 
         Also checks the bitstream file for plausibility and calculates the checksum.
 
         :param Optional[str] bitstream_path: The path to the bitstream. If unspecified,
             upload newest packaged bitstream.
+        :param bool blocking: Whether to wait until the bitstream update is finished
         :raises FileNotFoundError: If the bitstream file could not be found
         :raises Exception: If the bitstream file is of the wrong size"""
 
@@ -835,4 +859,8 @@ class SmartWave(object):
         checksumArray = checksum.to_bytes(4, "big")
         f.close()
 
-        self.writeToDevice(commands + data + checksumArray)
+        self.writeToDevice(commands + data + checksumArray,
+                           progress_callback=lambda p : print("FPGA bitstream transfer status: %d%%" % p))
+
+        if blocking:
+            self._bitstreamUpdateSemaphore.acquire()
