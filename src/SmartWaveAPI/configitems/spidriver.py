@@ -45,11 +45,11 @@ class SPIDriver(Driver):
             "SCLK": None,
             "MOSI": None,
             "MISO": None,
-            "SS": None,
+            "CS": None,
         }
         self.pinNumbers: Dict[str, int] = {
             "SCLK": 0,
-            "SS": 1,
+            "CS": 1,
             "MOSI": 2,
             "MISO": 3,
         }

@@ -583,7 +583,7 @@ class SmartWave(object):
                         sclk_pin_name: Optional[str] = None,
                         mosi_pin_name: Optional[str] = None,
                         miso_pin_name: Optional[str] = None,
-                        ss_pin_name: Optional[str] = None,
+                        cs_pin_name: Optional[str] = None,
                         clock_speed: Optional[int] = None,
                         bit_width: Optional[int] = None,
                         bit_numbering: Optional[Literal["MSB", "LSB"]] = None,
@@ -595,7 +595,7 @@ class SmartWave(object):
         :param str sclk_pin_name: The name of the pin to use for SCLK
         :param str mosi_pin_name: The name of the pin to use for MOSI
         :param str miso_pin_name: The name of the pin to use for MISO
-        :param str ss_pin_name: The name of the pin to use for SS
+        :param str cs_pin_name: The name of the pin to use for CS
         :param int clock_speed: The transmission clock speed in Hz
         :param int bit_width: The bit width of the SPI transmissions
         :param Literal["MSB", "LSB"] bit_numbering: Whether to transmit MSB-first or LSB-first
@@ -608,13 +608,13 @@ class SmartWave(object):
         sclkPin = self.getPin(sclk_pin_name) if sclk_pin_name else None
         misoPin = self.getPin(miso_pin_name) if miso_pin_name else None
         mosiPin = self.getPin(mosi_pin_name) if mosi_pin_name else None
-        ssPin = self.getPin(ss_pin_name) if ss_pin_name else None
+        csPin = self.getPin(cs_pin_name) if cs_pin_name else None
 
         config: SPIConfig = SPIConfig(self,
                                       sclkPin,
                                       mosiPin,
                                       misoPin,
-                                      ssPin,
+                                      csPin,
                                       clock_speed,
                                       bit_width,
                                       bit_numbering,
