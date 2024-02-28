@@ -34,10 +34,6 @@ sem_blue = '#43788c'
 sem_dark_blue = '#2b4c59'
 sem_light_grey = '#6d848c'
 
-avg = 1
-avg_x = 0
-avg_y = 0
-
 
 def axl_conf(i2c, i2c_addr, odr='12.5Hz', fs='2g'):
     """
@@ -186,7 +182,6 @@ def main():
             :param ys: List that contains data for plotting the linear rate of change
             :return: Data for plotting
             """
-            global avg, avg_x, avg_y
 
             pitch_lsb = i2c_imu.readRegister(i2c_imu_addr, 0x22.to_bytes(1, 'big'), 1)
             pitch_msb = i2c_imu.readRegister(i2c_imu_addr, 0x23.to_bytes(1, 'big'), 1)
@@ -259,16 +254,7 @@ def main():
             line[2].set_ydata(ys[2])
 
             if IO_EXPANDER:
-                if avg % 2 != 0:
-                    avg_x = avg_x + x_res
-                    avg_y = avg_y + y_res
-                if avg % 2 == 0:
-                    avg_x = (x_res + avg_x) / 2
-                    avg_y = (y_res + avg_y) / 2
-                    io_led_toggle(i2c_io_exp, i2c_io_exp_addr, avg_x, avg_y)
-                    avg_x = 0
-                    avg_y = 0
-                avg += 1
+                io_led_toggle(i2c_io_exp, i2c_io_exp_addr, x_res, y_res)
 
             return line
 
