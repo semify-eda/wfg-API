@@ -17,7 +17,9 @@ from SmartWaveAPI import SmartWave
 from imu_conf_lib import *
 
 matplotlib.use('TkAgg')
-# This only required if the ffmpeg is not part of the system PATH - note that the file location might be different for other users
+
+# This only required if the ffmpeg is not part of the system PATH
+# note that the file location might be different for other users
 matplotlib.rcParams['animation.ffmpeg_path'] = r"C:\resources\ffmpeg-master-latest-win64-gpl\bin\ffmpeg.exe"
 
 # If True, a video is captured of the plotting
@@ -280,8 +282,8 @@ def main():
                                            blit=True,
                                            cache_frame_data=False)
 
-            # plt.figimage(resize, xo=1100, yo=880, origin='upper')  # TODO: dynamic positioning of image
-            plt.figimage(resize, xo=1120, yo=970, origin='upper')  # For full-screen video capture
+            plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 250, yo=int(fig.bbox.ymax) + 220, origin='upper')
+            plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 650, yo=int(fig.bbox.ymax) + 220, origin='upper')
             plt.get_current_fig_manager().full_screen_toggle()
             plt.show()
 
