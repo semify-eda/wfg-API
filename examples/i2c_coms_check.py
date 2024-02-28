@@ -26,57 +26,25 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     errors = 0
     # Test initial condition
     pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    input_level_a = gpio_a.inputLevel
     pin_output_type_b = str(gpio_b.outputType).split('.')[1]
+    input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    logging.info(f"Initial output level of SCL pin: {input_level_a} with push-pull: {pin_output_type_a}")
-    logging.info(f"Initial output level of SDA pin: {input_level_b} with push-pull: {pin_output_type_b}")
+    logging.info(f"Initial output level of SCL pin: {input_level_a} with output type: {pin_output_type_a}")
+    logging.info(f"Initial output level of SDA pin: {input_level_b} with output type: {pin_output_type_b}")
 
     # SCL and SDA pulled down
     logging.info("Set both SCL and SDA in pull-down mode.")
-    gpio_a.level = 1
     gpio_a.outputType = PinOutputType.PushPull
-    gpio_a.pullup = False
     pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    time.sleep(500e-3)
-    input_level_a = gpio_a.inputLevel
-    output_level_a = gpio_a.level
-
-    gpio_b.level = 1
     gpio_b.outputType = PinOutputType.PushPull
-    gpio_b.pullup = False
     pin_output_type_b = str(gpio_b.outputType).split('.')[1]
-    time.sleep(500e-3)
-    input_level_b = gpio_b.inputLevel
-    output_level_b = gpio_b.level
-
-    logging.info(f"Input level of SCL pin: {input_level_a} with output type: {pin_output_type_a} "
-                 f"and pull-up set to: {gpio_a.pullup}")
-    logging.info(f"Input level of SDA pin: {input_level_b} with output type: {pin_output_type_b} "
-                 f"and pull-up set to: {gpio_b.pullup}")
-
-    if not input_level_a:
-        logging.error("The SCL pin couldn't be pulled high")
-        errors += 1
-    if not input_level_b:
-        logging.error("The SDA pin couldn't be pulled high")
-        errors += 1
-
-    # SCL and SDA pulled up
-    logging.info("Set both SCL and SDA in pull-up mode.")
+    gpio_a.pullup = False
+    gpio_b.pullup = False
     gpio_a.level = 0
-    pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    gpio_a.pullup = True
+    gpio_b.level = 0
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
-    output_level_a = gpio_a.level
-
-    gpio_b.level = 0
-    pin_output_type_b = str(gpio_b.outputType).split('.')[1]
-    gpio_b.pullup = True
-    time.sleep(500e-3)
     input_level_b = gpio_b.inputLevel
-    output_level_b = gpio_b.level
 
     logging.info(f"Input level of SCL pin: {input_level_a} with output type: {pin_output_type_a} "
                  f"and pull-up set to: {gpio_a.pullup}")
@@ -84,9 +52,35 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
                  f"and pull-up set to: {gpio_b.pullup}")
 
     if input_level_a:
-        logging.error("The SCL pin couldn't be pulled low")
+        logging.error("The SCL pin couldn't be pulled high")
         errors += 1
     if input_level_b:
+        logging.error("The SDA pin couldn't be pulled high")
+        errors += 1
+
+    # SCL and SDA pulled up
+    logging.info("Set both SCL and SDA in pull-up mode.")
+    gpio_a.outputType = PinOutputType.PushPull
+    pin_output_type_a = str(gpio_a.outputType).split('.')[1]
+    gpio_b.outputType = PinOutputType.PushPull
+    pin_output_type_b = str(gpio_b.outputType).split('.')[1]
+    gpio_a.pullup = True
+    gpio_b.pullup = True
+    gpio_a.level = 1
+    gpio_b.level = 1
+    time.sleep(500e-3)
+    input_level_a = gpio_a.inputLevel
+    input_level_b = gpio_b.inputLevel
+
+    logging.info(f"Input level of SCL pin: {input_level_a} with output type: {pin_output_type_a} "
+                 f"and pull-up set to: {gpio_a.pullup}")
+    logging.info(f"Input level of SDA pin: {input_level_b} with output type: {pin_output_type_b} "
+                 f"and pull-up set to: {gpio_b.pullup}")
+
+    if not input_level_a:
+        logging.error("The SCL pin couldn't be pulled low")
+        errors += 1
+    if not input_level_b:
         logging.error("The SDA pin couldn't be pulled low")
         errors += 1
 
@@ -102,10 +96,12 @@ def gpio_short(gpio_a, gpio_b) -> None:
     :param gpio_b: SmartWave GPIO_B object
     :return: None
     """
+    # TODO: Due to HW limitations, currently we can only check if a pin is shorted to GND
+
+    gpio_a.outputType = PinOutputType.OpenDrain
+    gpio_b.outputType = PinOutputType.OpenDrain
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    # output_level_a = gpio_a.level
-    # output_level_b = gpio_b.level
     logging.info(f"Initial output level of SCL pin: {input_level_a}")
     logging.info(f"Initial output level of SDA pin: {input_level_b}")
 
@@ -115,8 +111,6 @@ def gpio_short(gpio_a, gpio_b) -> None:
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    # output_level_a = gpio_a.level
-    # output_level_b = gpio_b.level
     logging.info(f"Output level of SCL pin: {input_level_a}")
     logging.info(f"Output level of SDA pin: {input_level_b}")
 
@@ -130,8 +124,6 @@ def gpio_short(gpio_a, gpio_b) -> None:
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    # output_level_a = gpio_a.level
-    # output_level_b = gpio_b.level
     logging.info(f"Output level of SCL pin: {input_level_a}")
     logging.info(f"Output level of SDA pin: {input_level_b}")
 
