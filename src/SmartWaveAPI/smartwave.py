@@ -382,20 +382,21 @@ class SmartWave(object):
                       trigger_mode: Union[TriggerMode, None] = None):
         """Configure general information on the connected device.
 
-        :param float vddio: The IO voltage of the connected device (accurate to 0.01V)
+        :param float vddio: The IO voltage of the connected device (accurate to 0.01V).
+            Can be set between 1.6V and 5V, or to 0 to disable output.
         :param TriggerMode trigger_mode: The trigger mode of the output device
             (i.e. whether it runs once or continuously)
 
-        :raises AttributeError: if vddio is not betweeen 1.8V and 5.0V"""
+        :raises AttributeError: if vddio is not betweeen 1.6V and 5.0V, or exactly 0"""
 
         if trigger_mode is not None:
             self._triggerMode = trigger_mode
 
         if vddio is not None:
-            if vddio < 1.8:
-                raise AttributeError("VDDIO needs to be above 1.8V")
+            if vddio < 1.6 and vddio != 0:  # allow exactly 0 to disable VDDIO
+                raise AttributeError("VDDIO needs to be 1.6V or higher, or exactly 0 to disable")
             if vddio > 5:
-                raise AttributeError("VDDIO needs to be below 5V")
+                raise AttributeError("VDDIO needs to be 5V or lower")
             self._vddio = vddio
 
         vddioWord = int(self._vddio / 0.01)
@@ -423,7 +424,8 @@ class SmartWave(object):
         """Set the IO voltage of the connected device.
 
         :param float new_vddio: The new VDDIO of the device
-        :raises ValueError: If the new VDDIO is not between 1.8V and 5.0V"""
+            Can be set between 1.6V and 5V, or to 0 to disable output.
+        :raises ValueError: if vddio is not betweeen 1.6V and 5.0V, or exactly 0"""
         self.configGeneral(vddio=new_vddio)
 
     @property
