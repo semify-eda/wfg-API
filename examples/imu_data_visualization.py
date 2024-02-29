@@ -294,5 +294,6 @@ if __name__ == "__main__":
     process.start()
     while process.is_alive():
         if keyboard.is_pressed('q'):
+            print("Terminating code.")
             process.terminate()
             break
