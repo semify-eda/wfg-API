@@ -1,8 +1,6 @@
 """
 Demo script for the ASM330LHHXG1 IMU Sensor
 """
-import time
-
 import numpy as np
 from PIL import Image
 import matplotlib
@@ -95,7 +93,6 @@ def main():
     with SmartWave().connect() as sw:
         i2c_imu_addr = 0x6a  # Default I2C address
         i2c_imu = sw.createI2CConfig("A1", "A2", int(200e3))
-        i2c_imu.writeRegister(i2c_imu_addr, 0x10.to_bytes(1, 'big'), 0b00010000.to_bytes(1, 'big'))
         imu_id = i2c_imu.readRegister(i2c_imu_addr, 0x0f.to_bytes(1, 'big'), 1)
 
         if IO_EXPANDER:
@@ -144,7 +141,7 @@ def main():
 
         for ax in [ax1, ax2, ax3]:
             ax.set_ylim(-20, 20)
-            ax.set_ylabel("Force (m/s^2)", color=sem_white)
+            ax.set_ylabel("Acceleration (m/s^2)", color=sem_white)
             ax.set_xlabel("Samples", color=sem_white)
             ax.tick_params(labelcolor=sem_white)
             ax.grid()

@@ -457,4 +457,3 @@ def io_led_toggle(i2c, i2c_addr, x_res, y_res):
         i2c.write(i2c_addr, [io_exp_front[3][1], io_exp_side[2][0]])
     elif (x_res >= 8) and (y_res >= 8):
         i2c.write(i2c_addr, [io_exp_front[3][1], io_exp_side[3][0]])
-
