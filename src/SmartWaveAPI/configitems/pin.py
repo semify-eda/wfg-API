@@ -24,6 +24,10 @@ class Pin:
         """Destructor - return all resources to the device."""
         self.delete()
 
+    def __str__(self):
+        """String representation of a pin."""
+        return self._bank + str(self._number)
+
     def id(self) -> int:
         """Calculate the numerical ID of this pin."""
         return ((ord(self._bank[0]) - ord("A") + 0xa) << 4) + self._number
