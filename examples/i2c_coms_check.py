@@ -10,9 +10,8 @@ from datetime import datetime
 from typing import Union, Optional
 import numpy as np
 
-# TODO: Change SmartWaveAPI import when the GPIO config has been added to the python package
-from src.SmartWaveAPI import SmartWave
-from src.SmartWaveAPI.definitions import PinOutputType
+from SmartWaveAPI import SmartWave
+from SmartWaveAPI.definitions import PinOutputType
 
 
 def gpio_high_low(gpio_a, gpio_b) -> None:
