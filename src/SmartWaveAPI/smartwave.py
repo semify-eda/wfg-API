@@ -756,6 +756,9 @@ class SmartWave(object):
         :raises FileNotFoundError: If the firmware file could not be found
         :raises Exception: If the firmware file is incompatible with the bootloader
         :raises Exception: If the firmware size is incompatible with the bootloader"""
+
+        print("Updating firmware - do not disconnect your device. The device will disconnect and restart after the update is finished.")
+
         f = open(firmware_path if firmware_path else
                  os.path.join(os.path.dirname(os.path.abspath(__file__)), "newest_firmware.bin"), "rb")
         f_check = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "SBL_sample.bin"), "rb")
@@ -827,6 +830,7 @@ class SmartWave(object):
         :raises FileNotFoundError: If the bitstream file could not be found
         :raises Exception: If the bitstream file is of the wrong size"""
 
+        print("Updating Bitstream - do not disconnect your device.")
         f = open(bitstream_path if bitstream_path else
                  os.path.join(os.path.dirname(os.path.abspath(__file__)), "newest_fpga_bitstream.bin"), "rb")
 
