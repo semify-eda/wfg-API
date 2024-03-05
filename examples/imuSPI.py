@@ -4,18 +4,18 @@ import time
 cycle_time = 0.001
 def main():
     with (SmartWave().connect() as sw):
-        sw.createSPIConfig(miso_pin_name="B1", mosi_pin_name="B2", ss_pin_name="B3", sclk_pin_name="B4")
+        sw.createSPIConfig(miso_pin_name="B1", mosi_pin_name="B2", cs_pin_name="B3", sclk_pin_name="B4")
         with sw.createSPIConfig(
                 bit_width=16,
                 miso_pin_name="A1",
                 mosi_pin_name="A2",
                 sclk_pin_name="A3",
-                ss_pin_name="A4",
-                clock_speed=2e6,
+                cs_pin_name="A4",
+                clock_speed=int(2e6),
                 bit_numbering="MSB") as spi:
             whoami = spi.write([0x8f00])[0]
             print(whoami)
-
+            input()
             spi.write([0x1010])
 
             start = time.time()
@@ -27,6 +27,7 @@ def main():
                 val = val if val < 0x8000 else val - 0x10000
                 print(val)
                 next_time += cycle_time
+                input()
 
             print(time.time() - start)
 
