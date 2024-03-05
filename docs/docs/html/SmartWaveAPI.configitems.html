@@ -46,6 +46,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">SmartWaveAPI</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">wfg-API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="SmartWaveAPI.html">SmartWaveAPI package</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI">Module contents</a></li>
@@ -232,6 +233,12 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.configitems.i2cconfig.</span></span><span class="sig-name descname"><span class="pre">I2CConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdaPin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SmartWaveAPI.configitems.pin.Pin" title="SmartWaveAPI.configitems.pin.Pin"><span class="pre">Pin</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sclPin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SmartWaveAPI.configitems.pin.Pin" title="SmartWaveAPI.configitems.pin.Pin"><span class="pre">Pin</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clockSpeed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SmartWaveAPI.configitems.config.Config" title="SmartWaveAPI.configitems.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></p>
 <p>A collection of data, driver and pins used to send data via I2C using the SmartWave.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.clockSpeed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clockSpeed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.clockSpeed" title="Link to this definition"></a></dt>
+<dd><p>The driver’s transmission clock speed in Hz</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.read">
 <span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deviceId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocking</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.read" title="Link to this definition"></a></dt>
@@ -339,11 +346,31 @@ the reconfiguration of the device is skipped.</p>
 <dt class="sig sig-object py" id="SmartWaveAPI.configitems.i2cdriver.I2CDriver">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.configitems.i2cdriver.</span></span><span class="sig-name descname"><span class="pre">I2CDriver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clockSpeed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">400000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SmartWaveAPI.configitems.driver.Driver" title="SmartWaveAPI.configitems.driver.Driver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Driver</span></code></a></p>
-<p>An hardware I2C driver on the SmartWave device</p>
+<p>A hardware I2C driver on the SmartWave device</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.clockSpeed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clockSpeed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.clockSpeed" title="Link to this definition"></a></dt>
+<dd><p>The transmission clock speed in Hz</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.color">
 <span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#a54be2'</span></em><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.color" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.configure">
+<span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clockSpeed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.configure" title="Link to this definition"></a></dt>
+<dd><p>Configure the settings of this driver and write them to the connected device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>clockSpeed</strong> (<em>int</em>) – The transmission clock speed in Hz</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AttributeError</strong> – If clockSpeed is not available on the device</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.delete">

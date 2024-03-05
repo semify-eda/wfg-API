@@ -43,6 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">SmartWaveAPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">wfg-API</a></li>
 </ul>
 
@@ -103,6 +104,12 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="SmartWaveAPI.configitems.html#SmartWaveAPI.configitems.i2cconfig.I2CConfig.clockSpeed">clockSpeed (SmartWaveAPI.configitems.i2cconfig.I2CConfig property)</a>
+
+      <ul>
+        <li><a href="SmartWaveAPI.configitems.html#SmartWaveAPI.configitems.i2cdriver.I2CDriver.clockSpeed">(SmartWaveAPI.configitems.i2cdriver.I2CDriver property)</a>
+</li>
+      </ul></li>
       <li><a href="SmartWaveAPI.configitems.html#SmartWaveAPI.configitems.driver.Driver.color">color (SmartWaveAPI.configitems.driver.Driver attribute)</a>
 
       <ul>
@@ -111,15 +118,21 @@
       </ul></li>
       <li><a href="SmartWaveAPI.configitems.html#SmartWaveAPI.configitems.driver.Driver.colorRGB565">colorRGB565() (SmartWaveAPI.configitems.driver.Driver method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.command.Command">Command (class in SmartWaveAPI.definitions.command)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="SmartWaveAPI.configitems.html#SmartWaveAPI.configitems.config.Config">Config (class in SmartWaveAPI.configitems.config)</a>
+</li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.configGeneral">configGeneral() (SmartWaveAPI.smartwave.SmartWave method)</a>
+</li>
+      <li><a href="SmartWaveAPI.configitems.html#SmartWaveAPI.configitems.i2cdriver.I2CDriver.configure">configure() (SmartWaveAPI.configitems.i2cdriver.I2CDriver method)</a>
 </li>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.connect">connect() (SmartWaveAPI.smartwave.SmartWave method)</a>
 </li>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.createI2CConfig">createI2CConfig() (SmartWaveAPI.smartwave.SmartWave method)</a>
+</li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.createSPIConfig">createSPIConfig() (SmartWaveAPI.smartwave.SmartWave method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -181,6 +194,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.statusbit.ErrorCode.FirmwareCorrupt">FirmwareCorrupt (SmartWaveAPI.definitions.statusbit.ErrorCode attribute)</a>
 </li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FirmwareEnd">FirmwareEnd (SmartWaveAPI.smartwave.SmartWave attribute)</a>
+</li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FirmwareStart">FirmwareStart (SmartWaveAPI.smartwave.SmartWave attribute)</a>
+</li>
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.command.Command.FirmwareUpdate">FirmwareUpdate (SmartWaveAPI.definitions.command.Command attribute)</a>
 </li>
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.statusbit.Statusbit.FirmwareUpdateFailed">FirmwareUpdateFailed (SmartWaveAPI.definitions.statusbit.Statusbit attribute)</a>
@@ -189,8 +206,14 @@
 </li>
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.statusbit.Statusbit.FirmwareUpdateStatus">FirmwareUpdateStatus (SmartWaveAPI.definitions.statusbit.Statusbit attribute)</a>
 </li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FPGABitstreamEnd">FPGABitstreamEnd (SmartWaveAPI.smartwave.SmartWave attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FPGABitstreamStart">FPGABitstreamStart (SmartWaveAPI.smartwave.SmartWave attribute)</a>
+</li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FPGAClockDivided">FPGAClockDivided (SmartWaveAPI.smartwave.SmartWave attribute)</a>
+</li>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FPGAClockSpeed">FPGAClockSpeed (SmartWaveAPI.smartwave.SmartWave attribute)</a>
 </li>
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.statusbit.ErrorCode.FPGACorrupt">FPGACorrupt (SmartWaveAPI.definitions.statusbit.ErrorCode attribute)</a>
@@ -221,11 +244,13 @@
         <li><a href="SmartWaveAPI.configitems.html#SmartWaveAPI.configitems.stimulus.Stimulus.getId">(SmartWaveAPI.configitems.stimulus.Stimulus method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getNextAvailableI2CDriver">getNextAvailableI2CDriver() (SmartWaveAPI.smartwave.SmartWave method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getNextAvailablePin">getNextAvailablePin() (SmartWaveAPI.smartwave.SmartWave method)</a>
+</li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getNextAvailableSPIDriver">getNextAvailableSPIDriver() (SmartWaveAPI.smartwave.SmartWave method)</a>
 </li>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getNextAvailableStimulus">getNextAvailableStimulus() (SmartWaveAPI.smartwave.SmartWave method)</a>
 </li>
@@ -380,6 +405,8 @@
 </li>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.returnPin">returnPin() (SmartWaveAPI.smartwave.SmartWave method)</a>
 </li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.returnSPIDriver">returnSPIDriver() (SmartWaveAPI.smartwave.SmartWave method)</a>
+</li>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.returnStimulus">returnStimulus() (SmartWaveAPI.smartwave.SmartWave method)</a>
 </li>
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.statusbit.Statusbit.Running">Running (SmartWaveAPI.definitions.statusbit.Statusbit attribute)</a>
@@ -390,6 +417,8 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.SBLStart">SBLStart (SmartWaveAPI.smartwave.SmartWave attribute)</a>
+</li>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.scanAndConnect">scanAndConnect() (SmartWaveAPI.smartwave.SmartWave method)</a>
 </li>
       <li><a href="SmartWaveAPI.configitems.html#SmartWaveAPI.configitems.i2cconfig.I2CConfig.setTransactions">setTransactions() (SmartWaveAPI.configitems.i2cconfig.I2CConfig method)</a>
@@ -548,6 +577,8 @@
 </li>
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.triggermode.TriggerMode">TriggerMode (class in SmartWaveAPI.definitions.triggermode)</a>
 </li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.triggerMode">triggerMode (SmartWaveAPI.smartwave.SmartWave property)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -557,10 +588,20 @@
       <li><a href="SmartWaveAPI.definitions.html#SmartWaveAPI.definitions.drivertype.DriverType.UART">UART (SmartWaveAPI.definitions.drivertype.DriverType attribute)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.updateFirmware">updateFirmware() (SmartWaveAPI.smartwave.SmartWave method)</a>
+</li>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.updateFPGABitstream">updateFPGABitstream() (SmartWaveAPI.smartwave.SmartWave method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.vddio">vddio (SmartWaveAPI.smartwave.SmartWave property)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.VID">VID (SmartWaveAPI.smartwave.SmartWave attribute)</a>
 </li>

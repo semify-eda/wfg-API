@@ -22,8 +22,10 @@ author = 'semify GmbH'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.githubpages'
+    'sphinx.ext.githubpages',
+    'myst_parser'
 ]
+
 
 templates_path = ['_templates']
 exclude_patterns = ['_build']
