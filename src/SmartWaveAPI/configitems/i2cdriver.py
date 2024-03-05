@@ -65,7 +65,9 @@ class I2CDriver(Driver):
         :raises AttributeError: If clockSpeed is not available on the device"""
         if clock_speed is not None:
             self._checkAndSetClockSpeed(clock_speed)
-        self.writeToDevice()
+
+        if self._device.isConnected():
+            self.writeToDevice()
 
     @property
     def clockSpeed(self) -> int:

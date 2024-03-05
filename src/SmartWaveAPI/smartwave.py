@@ -261,7 +261,7 @@ class SmartWave(object):
             raise ConnectionRefusedError("Could not connect to serial port %s" % port_name)
 
         if reset:
-            self.reset()
+            self._resetDevice()
 
         if configure_general:
             self.configGeneral()
@@ -396,6 +396,14 @@ class SmartWave(object):
 
     def reset(self):
         """Reset the configuration of the connected device."""
+        for configEntry in self.configEntries:
+            configEntry.delete()
+
+        if self.isConnected():
+            self._resetDevice()
+
+    def _resetDevice(self):
+        """Cause the connected device to clear all existing configurations, without affecting python software state."""
         self.writeToDevice(bytes([
             Command.Reset.value
         ]))
@@ -563,6 +571,8 @@ class SmartWave(object):
         :return: The new number of available pins
         :rtype: int"""
         self._availablePins.append(pin)
+        # sort pins so first pins always get used first
+        self._availablePins.sort(key=lambda p: p.id())
         return len(self._availablePins)
 
     def getNextAvailableStimulus(self) -> Stimulus:
