@@ -147,7 +147,11 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
         raise ValueError("Terminating code.")
 
     if addr_upper > 127:
-        logging.warning("Maximum value for the upper range can't be greater then 127!")
+        logging.warning("Maximum value for the upper range can't be greater than 127!")
+        raise ValueError("Terminating code.")
+
+    if addr_upper <= addr_lower:
+        logging.warning("The upper value can't be less than or equal to the lower value!")
         raise ValueError("Terminating code.")
 
     i2c_addr = None
