@@ -84,7 +84,7 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
         errors += 1
 
     if errors > 0:
-        raise ValueError("Terminating code.")
+        raise ConnectionError("Terminating code.")
 
 
 def gpio_short(gpio_a, gpio_b) -> None:
@@ -115,7 +115,7 @@ def gpio_short(gpio_a, gpio_b) -> None:
 
     if input_level_a == input_level_b:
         logging.critical("There is a short between SCL and SDA.")
-        raise ValueError("Terminating code.")
+        raise ConnectionError("Terminating code.")
 
     logging.info("Set SCL high and SDA low.")
     gpio_a.level = 1
@@ -128,7 +128,7 @@ def gpio_short(gpio_a, gpio_b) -> None:
 
     if input_level_a == input_level_b:
         logging.critical("There is a short between SCL and SDA.")
-        raise ValueError("Terminating code.")
+        raise ConnectionError("Terminating code.")
 
 
 def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
@@ -155,7 +155,11 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
     i2c_addr_list = np.arange(addr_lower, addr_upper + 1)
     for addr in range(len(i2c_addr_list)):
         i2c.write(int(i2c_addr_list[addr]), dummy_byte)  # TODO: replace with read/write function to return ACK
-        ack = i2c.read(int(i2c_addr_list[addr]), 1)  # TODO: read function should have a timeout error
+        ack = i2c.read(int(i2c_addr_list[addr]), 1)
+        if ack is None:
+            logging.warning("No device is connected to SmartWave.")
+            logging.warning("Check if all the wires are properly connected.")
+            raise ConnectionError
         if ack[0] == 0xff:
             if addr == i2c_addr_list[-1]:
                 logging.warning("Couldn't reach device.")
@@ -323,7 +327,7 @@ def main():
                     i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
                     if i2c_dev_addr is None:
                         logging.error("Couldn't reach device. Terminating code.")
-                        raise ValueError("Terminating code.")
+                        raise ConnectionError("Terminating code.")
 
                     """
                     logging.debug("Please swap the SDA / SCL lines and retry")  # TODO: Automate (?)
