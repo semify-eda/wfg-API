@@ -3,29 +3,33 @@ import threading
 from SmartWaveAPI.configitems import Config, I2CDriver, Pin
 from SmartWaveAPI.definitions import I2CTransaction, I2CWrite, I2CRead
 
-from typing import List, Union
+from typing import List, Union, Optional
 
 
 class I2CConfig(Config):
     """A collection of data, driver and pins used to send data via I2C using the SmartWave."""
     def __init__(self,
                  device,
-                 sda_pin: Union[Pin, None] = None,
-                 scl_pin: Union[Pin, None] = None,
-                 clock_speed: Union[int, None] = None):
+                 sda_pin: Optional[Pin] = None,
+                 scl_pin: Optional[Pin] = None,
+                 clock_speed: Optional[int] = None,
+                 scl_display_name: Optional[str] = None,
+                 sda_display_name: Optional[str] = None):
         """Create a new I2C Config object and write the configuration to the connected device.
 
         :param SmartWave device: The SmartWave device this config belongs to
-        :param Union[Pin, None] sda_pin: The pin to use for SDA
-        :param Union[Pin, None] scl_pin: The pin to use for SCL
-        :param int clock_speed: The transmission clock speed in Hz"""
+        :param Pin sda_pin: The pin to use for SDA. By default, the next unused pin is used.
+        :param Pin scl_pin: The pin to use for SCL. By default, the next unused pin is used.
+        :param int clock_speed: The transmission clock speed in Hz. Default: 400kHz
+        :param str scl_display_name: The name to display for the driver's SCL pin. Default: SCL
+        :param str sda_display_name: The name to display for the driver's SDA pin. Default: SDA"""
         self._device = device
 
         self._readSemaphore = threading.Semaphore(0)
         self._latestReadValues: bytes = bytes()
 
         self._driver: I2CDriver = self._device.getNextAvailableI2CDriver()
-        self._driver.configure(clock_speed=clock_speed)
+        self._driver.configure(clock_speed=clock_speed, scl_display_name=scl_display_name, sda_display_name=sda_display_name)
 
         self._driver.pins['SCL'] = sda_pin if sda_pin is not None else device.getNextAvailablePin()
         self._driver.pins['SCL'].pullup = True
@@ -212,3 +216,27 @@ class I2CConfig(Config):
         :param int value: The transmission clock speed in Hz
         :raises AttributeError: If clockSpeed is not available on the device"""
         self._driver.clockSpeed = value
+
+    @property
+    def sclDisplayName(self) -> str:
+        """The name to display for the driver's SCL pin"""
+        return self._driver.sclDisplayName
+
+    @sclDisplayName.setter
+    def sclDisplayName(self, value: str) -> None:
+        """Set the name to display for the driver's SCL pin.
+
+        :param str value: The name to display for the driver's SCL pin."""
+        self._driver.sclDisplayName = value
+
+    @property
+    def sdaDisplayName(self) -> str:
+        """The name to display for the driver's SDA pin"""
+        return self._driver.sdaDisplayName
+
+    @sdaDisplayName.setter
+    def sdaDisplayName(self, value: str) -> None:
+        """Set the name to display for the SDA pin.
+
+        :param str value: The name to display for the driver's SDA pin."""
+        self._driver.sdaDisplayName = value

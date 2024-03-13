@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Optional
 from .pin import Pin
 
 from SmartWaveAPI.configitems import Driver
@@ -27,6 +27,10 @@ class I2CDriver(Driver):
         self.pinNumbers: Dict[str, int] = {
             'SCL': 0,
             'SDA': 1
+        }
+        self._displayNames: Dict[str, str] = {
+            "SCL": "SCL",
+            "SDA": "SDA"
         }
 
     def __del__(self) -> None:
@@ -58,16 +62,28 @@ class I2CDriver(Driver):
             raise AttributeError("The desired clock speed is too low")
         self._clockSpeed = clock_speed
 
-    def configure(self, clock_speed: Union[int, None] = None):
+    def configure(self,
+                  clock_speed: Optional[int] = None,
+                  scl_display_name: Optional[str] = None,
+                  sda_display_name: Optional[str] = None):
         """Configure the settings of this driver and write them to the connected device.
         
         :param int clock_speed: The transmission clock speed in Hz
+        :param str scl_display_name: The name to display for the SCL pin
+        :param str sda_display_name: The name to display for the SDA pin
         :raises AttributeError: If clockSpeed is not available on the device"""
         if clock_speed is not None:
             self._checkAndSetClockSpeed(clock_speed)
 
+        if scl_display_name is not None:
+            self._displayNames["SCL"] = scl_display_name
+
+        if sda_display_name is not None:
+            self._displayNames["SDA"] = sda_display_name
+
         if self._device.isConnected():
             self.writeToDevice()
+            self.writePinConnectionsToDevice()
 
     @property
     def clockSpeed(self) -> int:
@@ -81,6 +97,30 @@ class I2CDriver(Driver):
         :param int value: The transmission clock speed in Hz
         :raises AttributeError: If clockSpeed is not available on the device"""
         self.configure(clock_speed=value)
+
+    @property
+    def sclDisplayName(self) -> str:
+        """The name to display for the SCL pin"""
+        return self._displayNames["SCL"]
+
+    @sclDisplayName.setter
+    def sclDisplayName(self, value: str) -> None:
+        """Set the name to display for the SCL pin.
+
+        :param str value: The name to display for the SCL pin."""
+        self.configure(scl_display_name=value)
+
+    @property
+    def sdaDisplayName(self) -> str:
+        """The name to display for the SDA pin"""
+        return self._displayNames["SDA"]
+
+    @sdaDisplayName.setter
+    def sdaDisplayName(self, value: str) -> None:
+        """Set the name to display for the SDA pin.
+
+        :param str value: The name to display for the SDA pin."""
+        self.configure(sda_display_name=value)
 
     def writePinsToDevice(self):
         """Write the configuration of each of this driver's pins to the device."""
