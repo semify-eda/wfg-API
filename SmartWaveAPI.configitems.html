@@ -43,6 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">SmartWaveAPI</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">wfg-API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="SmartWaveAPI.html">SmartWaveAPI package</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI">Module contents</a></li>
@@ -52,7 +53,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#smartwaveapi-smartwave-module">SmartWaveAPI.smartwave module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI.smartwave">SmartWaveAPI.smartwave module</a></li>
 </ul>
 </li>
 </ul>
@@ -89,24 +90,456 @@
 <h1>SmartWaveAPI.configitems package<a class="headerlink" href="#smartwaveapi-configitems-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-SmartWaveAPI.configitems">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-SmartWaveAPI.configitems" title="Permalink to this headline">¶</a></h2>
+<p>All the configuration items, such als pins, drivers, and stimuli, needed to configure a SmartWave device.</p>
 </div>
-<div class="section" id="smartwaveapi-configitems-config-module">
-<h2>SmartWaveAPI.configitems.config module<a class="headerlink" href="#smartwaveapi-configitems-config-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-SmartWaveAPI.configitems.config">
+<span id="smartwaveapi-configitems-config-module"></span><h2>SmartWaveAPI.configitems.config module<a class="headerlink" href="#module-SmartWaveAPI.configitems.config" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="SmartWaveAPI.configitems.config.Config">
+<em class="property">class </em><code class="sig-prename descclassname">SmartWaveAPI.configitems.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param">device</em>, <em class="sig-param">driver: SmartWaveAPI.configitems.driver.Driver</em>, <em class="sig-param">stimulus: SmartWaveAPI.configitems.stimulus.Stimulus</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.config.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A collection of data, driver and pins used to send data via a protocol using the SmartWave.</p>
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.config.Config.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.config.Config.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete this configuration and return all resources to the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.config.Config.getRecorderId">
+<code class="sig-name descname">getRecorderId</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#SmartWaveAPI.configitems.config.Config.getRecorderId" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ID of the recorder associated with this Config object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The recorder ID</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.config.Config.removeStimulusDriverConnection">
+<code class="sig-name descname">removeStimulusDriverConnection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.config.Config.removeStimulusDriverConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the connection between the stimulus and the driver on the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.config.Config.writeStimulusDriverConnectionToDevice">
+<code class="sig-name descname">writeStimulusDriverConnectionToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.config.Config.writeStimulusDriverConnectionToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure the connection between the stimulus and the driver on the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.config.Config.writeToDevice">
+<code class="sig-name descname">writeToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.config.Config.writeToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the configurations of all relevant objects to the device.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="smartwaveapi-configitems-driver-module">
-<h2>SmartWaveAPI.configitems.driver module<a class="headerlink" href="#smartwaveapi-configitems-driver-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-SmartWaveAPI.configitems.driver">
+<span id="smartwaveapi-configitems-driver-module"></span><h2>SmartWaveAPI.configitems.driver module<a class="headerlink" href="#module-SmartWaveAPI.configitems.driver" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="SmartWaveAPI.configitems.driver.Driver">
+<em class="property">class </em><code class="sig-prename descclassname">SmartWaveAPI.configitems.driver.</code><code class="sig-name descname">Driver</code><span class="sig-paren">(</span><em class="sig-param">device</em>, <em class="sig-param">driver_id: int</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A hardware driver for a communication protocol</p>
+<dl class="attribute">
+<dt id="SmartWaveAPI.configitems.driver.Driver.color">
+<code class="sig-name descname">color</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver.color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.driver.Driver.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete this driver along with its pins and return all resources to the device.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="SmartWaveAPI.configitems.driver.Driver.driverType">
+<code class="sig-name descname">driverType</code><em class="property">: SmartWaveAPI.definitions.drivertype.DriverType</em><em class="property"> = None</em><a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver.driverType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.driver.Driver.getId">
+<code class="sig-name descname">getId</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver.getId" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ID of this driver.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the ID of this driver</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.driver.Driver.removePinConnection">
+<code class="sig-name descname">removePinConnection</code><span class="sig-paren">(</span><em class="sig-param">pin_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver.removePinConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the pin connection from the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pin_name</strong> (<em>str</em>) – The name of the pin to remove</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.driver.Driver.writePinConnectionsToDevice">
+<code class="sig-name descname">writePinConnectionsToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver.writePinConnectionsToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the pin configuration (i.e. which pin does what) of this driver to the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.driver.Driver.writePinsToDevice">
+<code class="sig-name descname">writePinsToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver.writePinsToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the configuration of each of this driver’s pins to the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.driver.Driver.writeToDevice">
+<code class="sig-name descname">writeToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.driver.Driver.writeToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the configuration parameters of this driver to the device.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="smartwaveapi-configitems-i2cconfig-module">
-<h2>SmartWaveAPI.configitems.i2cconfig module<a class="headerlink" href="#smartwaveapi-configitems-i2cconfig-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-SmartWaveAPI.configitems.i2cconfig">
+<span id="smartwaveapi-configitems-i2cconfig-module"></span><h2>SmartWaveAPI.configitems.i2cconfig module<a class="headerlink" href="#module-SmartWaveAPI.configitems.i2cconfig" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig">
+<em class="property">class </em><code class="sig-prename descclassname">SmartWaveAPI.configitems.i2cconfig.</code><code class="sig-name descname">I2CConfig</code><span class="sig-paren">(</span><em class="sig-param">device</em>, <em class="sig-param">sda_pin: Optional[SmartWaveAPI.configitems.pin.Pin] = None</em>, <em class="sig-param">scl_pin: Optional[SmartWaveAPI.configitems.pin.Pin] = None</em>, <em class="sig-param">clock_speed: Optional[int] = None</em>, <em class="sig-param">scl_display_name: Optional[str] = None</em>, <em class="sig-param">sda_display_name: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SmartWaveAPI.configitems.config.Config" title="SmartWaveAPI.configitems.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">SmartWaveAPI.configitems.config.Config</span></code></a></p>
+<p>A collection of data, driver and pins used to send data via I2C using the SmartWave.</p>
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.clockSpeed">
+<em class="property">property </em><code class="sig-name descname">clockSpeed</code><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.clockSpeed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The driver’s transmission clock speed in Hz</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">device_id: int</em>, <em class="sig-param">length: int</em>, <em class="sig-param">blocking: bool = True</em>, <em class="sig-param">timeout: Optional[float] = 1.0</em><span class="sig-paren">)</span> &#x2192; Union[None, bytes]<a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read bytes from an I2C device.</p>
+<p>If the same read transaction already exists on the device,
+the reconfiguration of the device is skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_id</strong> (<em>int</em>) – The I2C device ID to read from</p></li>
+<li><p><strong>length</strong> (<em>int</em>) – The number of bytes to read</p></li>
+<li><p><strong>blocking</strong> (<em>bool</em>) – If true, wait for the response from the connected device</p></li>
+<li><p><strong>None</strong><strong>] </strong><strong>timeout</strong> (<em>Union</em><em>[</em><em>float</em><em>,</em>) – How long to wait for the response from the device in seconds.
+Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If blocking == True, return the bytes that were read over I2C. Else return None.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[bytes, None]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – If the blocking mode is requested and another callback</p>
+</dd>
+</dl>
+<p>for a readback operation is already registered
+:raises TimeoutError: If the timeout for reading back from the device is exceeded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.readRegister">
+<code class="sig-name descname">readRegister</code><span class="sig-paren">(</span><em class="sig-param">device_id: int</em>, <em class="sig-param">address: bytes</em>, <em class="sig-param">length: int</em>, <em class="sig-param">blocking: bool = True</em><span class="sig-paren">)</span> &#x2192; Union[None, bytes]<a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.readRegister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read bytes from an I2C device at a specified address.</p>
+<p>If the same register transaction already exists on the device,
+the reconfiguration of the device is skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_id</strong> (<em>int</em>) – The I2C device ID to read from</p></li>
+<li><p><strong>address</strong> (<em>bytes</em>) – The address bytes where to read from on the I2C device</p></li>
+<li><p><strong>length</strong> (<em>int</em>) – The number of bytes to read</p></li>
+<li><p><strong>blocking</strong> (<em>bool</em>) – If true, wait for the response from the connected device</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If blocking == True, return the bytes that were read over I2C. Else return None.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[List[int], None]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – If the blocking mode is requested and another callback</p>
+</dd>
+</dl>
+<p>for a readback operation is already registered</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.sclDisplayName">
+<em class="property">property </em><code class="sig-name descname">sclDisplayName</code><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.sclDisplayName" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name to display for the driver’s SCL pin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.sdaDisplayName">
+<em class="property">property </em><code class="sig-name descname">sdaDisplayName</code><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.sdaDisplayName" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name to display for the driver’s SDA pin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.setTransactions">
+<code class="sig-name descname">setTransactions</code><span class="sig-paren">(</span><em class="sig-param">transactions: List[Union[SmartWaveAPI.definitions.i2ctransaction.I2CWrite, SmartWaveAPI.definitions.i2ctransaction.I2CRead]]</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.setTransactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the list of transactions and send the configuration to the connected device.</p>
+<p>Also checks if the transactions were already the same, and skips reconfiguring the device if so.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>transactions</strong> (<em>List</em><em>[</em><em>I2CTransaction</em><em>]</em>) – The list of transactions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">device_id: int</em>, <em class="sig-param">data: bytes</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write bytes over I2C with the connected device.</p>
+<p>If the same write transaction already exists on the device,
+the reconfiguration of the device is skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_id</strong> (<em>int</em>) – The I2C device ID to write to</p></li>
+<li><p><strong>data</strong> (<em>bytes</em>) – The bytes to write to the I2C bus</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cconfig.I2CConfig.writeRegister">
+<code class="sig-name descname">writeRegister</code><span class="sig-paren">(</span><em class="sig-param">device_id: int</em>, <em class="sig-param">address: bytes</em>, <em class="sig-param">value: bytes</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig.writeRegister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write to a register on an I2C device.</p>
+<p>If the same write transaction already exists on the device,
+the reconfiguration of the device is skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_id</strong> (<em>int</em>) – The I2C device ID to write to</p></li>
+<li><p><strong>address</strong> (<em>bytes</em>) – The address bytes of the target I2C register</p></li>
+<li><p><strong>value</strong> (<em>bytes</em>) – The value bytes of the target I2C register</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="smartwaveapi-configitems-i2cdriver-module">
-<h2>SmartWaveAPI.configitems.i2cdriver module<a class="headerlink" href="#smartwaveapi-configitems-i2cdriver-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-SmartWaveAPI.configitems.i2cdriver">
+<span id="smartwaveapi-configitems-i2cdriver-module"></span><h2>SmartWaveAPI.configitems.i2cdriver module<a class="headerlink" href="#module-SmartWaveAPI.configitems.i2cdriver" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver">
+<em class="property">class </em><code class="sig-prename descclassname">SmartWaveAPI.configitems.i2cdriver.</code><code class="sig-name descname">I2CDriver</code><span class="sig-paren">(</span><em class="sig-param">device</em>, <em class="sig-param">driver_id: int</em>, <em class="sig-param">clock_speed: int = 400000.0</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#SmartWaveAPI.configitems.driver.Driver" title="SmartWaveAPI.configitems.driver.Driver"><code class="xref py py-class docutils literal notranslate"><span class="pre">SmartWaveAPI.configitems.driver.Driver</span></code></a></p>
+<p>A hardware I2C driver on the SmartWave device.</p>
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.clockSpeed">
+<em class="property">property </em><code class="sig-name descname">clockSpeed</code><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.clockSpeed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The transmission clock speed in Hz</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.color">
+<code class="sig-name descname">color</code><em class="property">: str</em><em class="property"> = '#a54be2'</em><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.configure">
+<code class="sig-name descname">configure</code><span class="sig-paren">(</span><em class="sig-param">clock_speed: Optional[int] = None</em>, <em class="sig-param">scl_display_name: Optional[str] = None</em>, <em class="sig-param">sda_display_name: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.configure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure the settings of this driver and write them to the connected device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clock_speed</strong> (<em>int</em>) – The transmission clock speed in Hz</p></li>
+<li><p><strong>scl_display_name</strong> (<em>str</em>) – The name to display for the SCL pin</p></li>
+<li><p><strong>sda_display_name</strong> (<em>str</em>) – The name to display for the SDA pin</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>AttributeError</strong> – If clockSpeed is not available on the device</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unconfigure this driver along with its pins and return all resources to the device.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.driverType">
+<code class="sig-name descname">driverType</code><em class="property"> = 1</em><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.driverType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.generateSamples">
+<code class="sig-name descname">generateSamples</code><span class="sig-paren">(</span><em class="sig-param">transactions: List[Union[SmartWaveAPI.definitions.i2ctransaction.I2CWrite, SmartWaveAPI.definitions.i2ctransaction.I2CRead]]</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.generateSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a stream of bytes for the SmartWave to interpret as I2C Transactions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>transactions</strong> (<em>I2CTransaction</em>) – List of I2C transactions</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of samples for the SmartWave to interpret as I2C Transactions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.sclDisplayName">
+<em class="property">property </em><code class="sig-name descname">sclDisplayName</code><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.sclDisplayName" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name to display for the SCL pin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.sdaDisplayName">
+<em class="property">property </em><code class="sig-name descname">sdaDisplayName</code><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.sdaDisplayName" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name to display for the SDA pin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.writePinsToDevice">
+<code class="sig-name descname">writePinsToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.writePinsToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the configuration of each of this driver’s pins to the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.i2cdriver.I2CDriver.writeToDevice">
+<code class="sig-name descname">writeToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver.writeToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the configuration parameters of this driver to the device.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="smartwaveapi-configitems-pin-module">
-<h2>SmartWaveAPI.configitems.pin module<a class="headerlink" href="#smartwaveapi-configitems-pin-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-SmartWaveAPI.configitems.pin">
+<span id="smartwaveapi-configitems-pin-module"></span><h2>SmartWaveAPI.configitems.pin module<a class="headerlink" href="#module-SmartWaveAPI.configitems.pin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="SmartWaveAPI.configitems.pin.Pin">
+<em class="property">class </em><code class="sig-prename descclassname">SmartWaveAPI.configitems.pin.</code><code class="sig-name descname">Pin</code><span class="sig-paren">(</span><em class="sig-param">device, bank: Literal[A, B], number: int</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.pin.Pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A hardware pin on the SmartWave device</p>
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.pin.Pin.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.pin.Pin.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unconfigure this pin and return its resources to the device.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.pin.Pin.getBank">
+<code class="sig-name descname">getBank</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#SmartWaveAPI.configitems.pin.Pin.getBank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the bank this pin belongs to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The bank this pin belongs to</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.pin.Pin.getNumber">
+<code class="sig-name descname">getNumber</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#SmartWaveAPI.configitems.pin.Pin.getNumber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of this pin</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The number of this pin</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.pin.Pin.id">
+<code class="sig-name descname">id</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#SmartWaveAPI.configitems.pin.Pin.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the numerical ID of this pin.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.pin.Pin.inputLevel">
+<em class="property">property </em><code class="sig-name descname">inputLevel</code><a class="headerlink" href="#SmartWaveAPI.configitems.pin.Pin.inputLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current input level of the pin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The current input level.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Literal[0, 1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.pin.Pin.writeToDevice">
+<code class="sig-name descname">writeToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.pin.Pin.writeToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the configuration parameters of this pin to the device.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="smartwaveapi-configitems-stimulus-module">
-<h2>SmartWaveAPI.configitems.stimulus module<a class="headerlink" href="#smartwaveapi-configitems-stimulus-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-SmartWaveAPI.configitems.stimulus">
+<span id="smartwaveapi-configitems-stimulus-module"></span><h2>SmartWaveAPI.configitems.stimulus module<a class="headerlink" href="#module-SmartWaveAPI.configitems.stimulus" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="SmartWaveAPI.configitems.stimulus.Stimulus">
+<em class="property">class </em><code class="sig-prename descclassname">SmartWaveAPI.configitems.stimulus.</code><code class="sig-name descname">Stimulus</code><span class="sig-paren">(</span><em class="sig-param">device</em>, <em class="sig-param">stimulus_id: int</em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.stimulus.Stimulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A hardware stimulus on the SmartWave device</p>
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.stimulus.Stimulus.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.stimulus.Stimulus.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.stimulus.Stimulus.getId">
+<code class="sig-name descname">getId</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#SmartWaveAPI.configitems.stimulus.Stimulus.getId" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ID of this stimulus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the ID of this stimulus</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="SmartWaveAPI.configitems.stimulus.Stimulus.stimulusType">
+<code class="sig-name descname">stimulusType</code><em class="property">: int</em><em class="property"> = 0</em><a class="headerlink" href="#SmartWaveAPI.configitems.stimulus.Stimulus.stimulusType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SmartWaveAPI.configitems.stimulus.Stimulus.writeToDevice">
+<code class="sig-name descname">writeToDevice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.stimulus.Stimulus.writeToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the configuration parameters of this pin to the device.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
