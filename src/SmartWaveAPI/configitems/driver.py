@@ -20,7 +20,7 @@ class Driver:
         self._device = device
         self.pins: Dict[str, Pin or None] = {}
         self.pinNumbers: Dict[str, int] = {}
-        self._pinNames: Dict[str, str] = {}
+        self._displayNames: Dict[str, str] = {}
 
     def __del__(self) -> None:
         """Destructor - return all resources to the device."""
@@ -42,8 +42,8 @@ class Driver:
                     self.pins[pin].id(),
                     (colorRGB565(self.color) >> 8) & 0xff,
                     colorRGB565(self.color) & 0xff,
-                    len(pin),
-                ]) + bytes(self._pinNames[pin], 'ASCII'))
+                    len(self._displayNames[pin]),
+                ]) + bytes(self._displayNames[pin], 'ASCII'))
 
     def removePinConnection(self, pin_name: str):
         """Remove the pin connection from the device.

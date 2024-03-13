@@ -53,7 +53,7 @@ class SPIDriver(Driver):
             "MOSI": 2,
             "MISO": 3,
         }
-        self._pinNames: Dict[str, str] = {
+        self._displayNames: Dict[str, str] = {
             "SCLK": "SCLK",
             "MOSI": "MOSI",
             "MISO": "MISO",
@@ -111,10 +111,10 @@ class SPIDriver(Driver):
                   cspol: Optional[Literal[0, 1]] = None,
                   cpol: Optional[Literal[0, 1]] = None,
                   cphase: Optional[Literal[0, 1]] = None,
-                  sclk_pin_name: Optional[str] = None,
-                  mosi_pin_name: Optional[str] = None,
-                  miso_pin_name: Optional[str] = None,
-                  cs_pin_name: Optional[str] = None,
+                  sclk_display_name: Optional[str] = None,
+                  mosi_display_name: Optional[str] = None,
+                  miso_display_name: Optional[str] = None,
+                  cs_display_name: Optional[str] = None,
                   ):
         """Configure the settings of this driver and write them to the connected device.
 
@@ -124,10 +124,10 @@ class SPIDriver(Driver):
         :param Literal[0, 1] cspol: The polarity of the chipselect pin
         :param Literal[0, 1] cpol: The polarity of the clock pin
         :param Literal[0, 1] cphase: The phase of the clock
-        :param str sclk_pin_name: The name to display for the SCLK pin
-        :param str mosi_pin_name: The name to display for the MOSI pin
-        :param str miso_pin_name: The name to display for the MISO pin
-        :param str cs_pin_name: The name to display for the CS pin
+        :param str sclk_display_name: The name to display for the SCLK pin
+        :param str mosi_display_name: The name to display for the MOSI pin
+        :param str miso_display_name: The name to display for the MISO pin
+        :param str cs_display_name: The name to display for the CS pin
 
         :raises AttributeError: If clockSpeed is not available on the device
         :raises AttributeError: If bitWidth is not between 1 and 32"""
@@ -150,17 +150,17 @@ class SPIDriver(Driver):
         if cphase is not None:
             self._cphase = cphase
 
-        if sclk_pin_name is not None:
-            self._pinNames["SCLK"] = sclk_pin_name
+        if sclk_display_name is not None:
+            self._displayNames["SCLK"] = sclk_display_name
 
-        if mosi_pin_name is not None:
-            self._pinNames["MOSI"] = mosi_pin_name
+        if mosi_display_name is not None:
+            self._displayNames["MOSI"] = mosi_display_name
 
-        if miso_pin_name is not None:
-            self._pinNames["MISO"] = miso_pin_name
+        if miso_display_name is not None:
+            self._displayNames["MISO"] = miso_display_name
 
-        if cs_pin_name is not None:
-            self._pinNames["CS"] = cs_pin_name
+        if cs_display_name is not None:
+            self._displayNames["CS"] = cs_display_name
 
         if self._device.isConnected():
             self.writeToDevice()
@@ -239,6 +239,54 @@ class SPIDriver(Driver):
 
         :param Literal[0, 1] value: The polarity of the clock pin"""
         self.configure(cphase=value)
+
+    @property
+    def sclkDisplayName(self) -> str:
+        """The name to display for the SCLK pin."""
+        return self._displayNames["SCLK"]
+
+    @sclkDisplayName.setter
+    def sclkDisplayName(self, value: str) -> None:
+        """Set the name to display for the SCLK pin.
+
+        :param str value: The name to display for the SCLK pin."""
+        self.configure(sclk_display_name=value)
+
+    @property
+    def misoDisplayName(self) -> str:
+        """The name to display for the MISO pin."""
+        return self._displayNames["MISO"]
+
+    @misoDisplayName.setter
+    def misoDisplayName(self, value: str) -> None:
+        """Set the name to display for the MISO pin.
+
+        :param str value: The name to display for the MISO pin."""
+        self.configure(miso_display_name=value)
+
+    @property
+    def mosiDisplayName(self) -> str:
+        """The name to display for the MOSI pin."""
+        return self._displayNames["MOSI"]
+
+    @mosiDisplayName.setter
+    def mosiDisplayName(self, value: str) -> None:
+        """Set the name to display for the MOSI pin.
+
+        :param str value: The name to display for the MOSI pin."""
+        self.configure(mosi_display_name=value)
+
+    @property
+    def csDisplayName(self) -> str:
+        """The name to display for the CS pin."""
+        return self._displayNames["CS"]
+
+    @csDisplayName.setter
+    def csDisplayName(self, value: str) -> None:
+        """Set the name to display for the CS pin.
+
+        :param str value: The name to display for the CS pin."""
+        self.configure(cs_display_name=value)
 
     def writePinsToDevice(self):
         """Write the configuration of each of this driver's pins to the device."""

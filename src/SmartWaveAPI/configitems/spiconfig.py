@@ -1,5 +1,5 @@
 from typing import Union
-from SmartWaveAPI.configitems import Pin, Config, SPIDriver, Literal, List
+from SmartWaveAPI.configitems import Pin, Config, SPIDriver, Literal, List, Optional
 import threading
 
 
@@ -7,29 +7,37 @@ class SPIConfig(Config):
     """A collection of data, driver and pins used to send data via SPI using the SmartWave."""
     def __init__(self,
                  device,
-                 sclk_pin: Union[Pin, None] = None,
-                 mosi_pin: Union[Pin, None] = None,
-                 miso_pin: Union[Pin, None] = None,
-                 cs_pin: Union[Pin, None] = None,
-                 clockspeed: Union[int, None] = None,
-                 bit_width:  Union[int, None] = None,
-                 bit_numbering: Union[Literal["MSB", "LSB"], None] = None,
-                 cspol: Union[Literal[0, 1], None] = None,
-                 cpol: Union[Literal[0, 1], None] = None,
-                 cphase: Union[Literal[0, 1], None] = None):
+                 sclk_pin: Optional[Pin] = None,
+                 mosi_pin: Optional[Pin] = None,
+                 miso_pin: Optional[Pin] = None,
+                 cs_pin: Optional[Pin] = None,
+                 clockspeed: Optional[int] = None,
+                 bit_width:  Optional[int] = None,
+                 bit_numbering: Optional[Literal["MSB", "LSB"]] = None,
+                 cspol: Optional[Literal[0, 1]] = None,
+                 cpol: Optional[Literal[0, 1]] = None,
+                 cphase: Optional[Literal[0, 1]] = None,
+                 sclk_display_name: Optional[str] = None,
+                 mosi_display_name: Optional[str] = None,
+                 miso_display_name: Optional[str] = None,
+                 cs_display_name: Optional[str] = None):
         """Create a new SPI Config object and write the configuration to the connected device.
 
         :param SmartWave device: The SmartWave device this config belongs to
-        :param Union[Pin, None] sclk_pin: The pin to use for SCLK
-        :param Union[Pin, None] mosi_pin: The pin to use for MOSI
-        :param Union[Pin, None] miso_pin: The pin to use for MISO
-        :param Union[Pin, None] cs_pin: The pin to use for CS
+        :param Optional[Pin] sclk_pin: The pin to use for SCLK. By default, the next unused pin is used.
+        :param Optional[Pin] mosi_pin: The pin to use for MOSI. By default, the next unused pin is used.
+        :param Optional[Pin] miso_pin: The pin to use for MISO. By default, the next unused pin is used.
+        :param Optional[Pin] cs_pin: The pin to use for CS. By default, the next unused pin is used.
         :param int clockspeed: The transmission clock speed in Hz
         :param int bit_width: The bit width of the SPI transmissions
         :param Literal["MSB", "LSB"] bit_numbering: Whether to transmit MSB-first or LSB-first
         :param Literal[0, 1] cspol: The polarity of the chipselect pin
         :param Literal[0, 1] cpol: The polarity of the clock pin
-        :param Literal[0, 1] cphase: The phase of the clock"""
+        :param Literal[0, 1] cphase: The phase of the clock
+        :param str sclk_display_name: The name to display for the driver's SCLK pin. Default: SCLK
+        :param str mosi_display_name: The name to display for the driver's MOSI pin. Default: MOSI
+        :param str miso_display_name: The name to display for the driver's MISO pin. Default: MISO
+        :param str cs_display_name: The name to display for the driver's CS pin. Default: CS"""
         self._device = device
 
         self._readSemaphore = threading.Semaphore(0)
@@ -42,7 +50,11 @@ class SPIConfig(Config):
             bitNumbering=bit_numbering,
             cspol=cspol,
             cpol=cpol,
-            cphase=cphase
+            cphase=cphase,
+            sclk_display_name=sclk_display_name,
+            mosi_display_name=mosi_display_name,
+            miso_display_name=miso_display_name,
+            cs_display_name=cs_display_name
         )
 
         self._driver.pins['SCLK'] = sclk_pin if sclk_pin is not None else device.getNextAvailablePin()
@@ -203,3 +215,52 @@ class SPIConfig(Config):
 
         :param Literal[0, 1] value: The polarity of the clock pin"""
         self._driver.cphase = value
+
+    @property
+    def sclkDisplayName(self) -> str:
+        """The name to display for the driver's SCLK pin."""
+        return self._driver.sclkDisplayName
+
+    @sclkDisplayName.setter
+    def sclkDisplayName(self, value: str) -> None:
+        """Set the name to display for the driver's SCLK pin.
+
+        :param str value: The name to display for the driver's SCLK pin."""
+        self._driver.sclkDisplayName = value
+
+    @property
+    def misoDisplayName(self) -> str:
+        """The name to display for the driver's MISO pin."""
+        return self._driver.misoDisplayName
+
+    @misoDisplayName.setter
+    def misoDisplayName(self, value: str) -> None:
+        """Set the name to display for the driver's MISO pin.
+
+        :param str value: The name to display for the driver's MISO pin."""
+        self._driver.misoDisplayName = value
+
+    @property
+    def mosiDisplayName(self) -> str:
+        """The name to display for the driver's MOSI pin."""
+        return self._driver.mosiDisplayName
+
+    @mosiDisplayName.setter
+    def mosiDisplayName(self, value: str) -> None:
+        """Set the name to display for the driver's MOSI pin.
+
+        :param str value: The name to display for the driver's MOSI pin."""
+        self._driver.mosiDisplayName = value
+
+    @property
+    def csDisplayName(self) -> str:
+        """The name to display for the driver's CS pin."""
+        return self._driver.csDisplayName
+
+    @csDisplayName.setter
+    def csDisplayName(self, value: str) -> None:
+        """Set the name to display for the driver's CS pin.
+
+        :param str value: The name to display for the driver's CS pin."""
+        self.csDisplayName = value
+

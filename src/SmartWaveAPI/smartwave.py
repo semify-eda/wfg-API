@@ -598,18 +598,22 @@ class SmartWave(object):
     def createI2CConfig(self,
                         sda_pin_name: Optional[str] = None,
                         scl_pin_name: Optional[str] = None,
-                        clock_speed: Optional[int] = None) -> I2CConfig:
+                        clock_speed: Optional[int] = None,
+                        scl_display_name: Optional[str] = None,
+                        sda_display_name: Optional[str] = None) -> I2CConfig:
         """Create an I2C Configuration object.
 
-        :param str sda_pin_name: The name of the pin to use for SDA
-        :param str scl_pin_name: The name of the pin to use for SCL
-        :param int clock_speed: The I2C clock speed in Hz
+        :param str sda_pin_name: The pin to use for SDA, eg "A1". By default, the next unused pin is used.
+        :param str scl_pin_name: The pin to use for SCL, eg "A2". By default, the next unused pin is used.
+        :param int clock_speed: The transmission clock speed in Hz. Default: 400kHz
+        :param str scl_display_name: The name to display for the driver's SCL pin. Default: SCL
+        :param str sda_display_name: The name to display for the driver's SDA pin. Default: SDA
         :return: An I2C Configuration with the specified settings
         :rtype: I2CConfig"""
         sdaPin = self.getPin(sda_pin_name) if sda_pin_name else None
         sclPin = self.getPin(scl_pin_name) if scl_pin_name else None
 
-        config: I2CConfig = I2CConfig(self, sdaPin, sclPin, clock_speed)
+        config: I2CConfig = I2CConfig(self, sdaPin, sclPin, clock_speed, scl_display_name, sda_display_name)
         self.configEntries.append(config)
 
         return config
@@ -624,7 +628,11 @@ class SmartWave(object):
                         bit_numbering: Optional[Literal["MSB", "LSB"]] = None,
                         cspol: Optional[Literal[0, 1]] = None,
                         cpol: Optional[Literal[0, 1]] = None,
-                        cphase: Optional[Literal[0, 1]] = None):
+                        cphase: Optional[Literal[0, 1]] = None,
+                        sclk_display_name: Optional[str] = None,
+                        mosi_display_name: Optional[str] = None,
+                        miso_display_name: Optional[str] = None,
+                        cs_display_name: Optional[str] = None):
         """Create an SPI Configuration object.
 
         :param str sclk_pin_name: The name of the pin to use for SCLK
@@ -637,6 +645,11 @@ class SmartWave(object):
         :param Literal[0, 1] cspol: The polarity of the chipselect pin
         :param Literal[0, 1] cpol: The polarity of the clock pin
         :param Literal[0, 1] cphase: The phase of the clock
+        :param str sclk_display_name: The name to display for the driver's SCLK pin. Default: SCLK
+        :param str mosi_display_name: The name to display for the driver's MOSI pin. Default: MOSI
+        :param str miso_display_name: The name to display for the driver's MISO pin. Default: MISO
+        :param str cs_display_name: The name to display for the driver's CS pin. Default: CS
+
         :return: An SPI Configuration with the specified settings
         :rtype: SPIConfig
         """
@@ -655,7 +668,11 @@ class SmartWave(object):
                                       bit_numbering,
                                       cspol,
                                       cpol,
-                                      cphase)
+                                      cphase,
+                                      sclk_display_name,
+                                      mosi_display_name,
+                                      miso_display_name,
+                                      cs_display_name)
         self.configEntries.append(config)
 
         return config
