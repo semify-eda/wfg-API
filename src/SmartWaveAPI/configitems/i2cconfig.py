@@ -97,7 +97,12 @@ class I2CConfig(Config):
             self._latestReadValues = bytes(values)
             self._readSemaphore.release()
 
-    def read(self, device_id: int, length: int, blocking: bool = True) -> Union[None, bytes]:
+    def read(self,
+             device_id: int,
+             length: int,
+             blocking: bool = True,
+             timeout: Union[float, None] = 1.0
+             ) -> Union[None, bytes]:
         """Read bytes from an I2C device.
 
         If the same read transaction already exists on the device,
@@ -106,10 +111,14 @@ class I2CConfig(Config):
         :param int device_id: The I2C device ID to read from
         :param int length: The number of bytes to read
         :param bool blocking: If true, wait for the response from the connected device
+        :param Union[float, None] timeout: How long to wait for the response from the device in seconds.
+            Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.
+
         :return: If blocking == True, return the bytes that were read over I2C. Else return None.
         :rtype: Union[bytes, None]
         :raises Exception: If the blocking mode is requested and another callback
-        for a readback operation is already registered"""
+        for a readback operation is already registered
+        :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
         if blocking:
             if self._device.readbackCallback is not None:
                 raise Exception("Cannot configure a blocking read operation because there is already a readback "
@@ -125,12 +134,17 @@ class I2CConfig(Config):
 
         if blocking:
             # wait for readback
-            self._readSemaphore.acquire()
+            if self._readSemaphore.acquire(timeout=timeout):
+                # readback successful
 
-            # release callback
-            self._device.readbackCallback = None
+                # release callback
+                self._device.readbackCallback = None
 
-            return self._latestReadValues
+                return self._latestReadValues
+            else:
+                # timeout expired
+                self._device.readbackCallback = None
+                raise TimeoutError("Timeout waiting for readback from device.")
 
         return None
 

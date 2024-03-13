@@ -89,17 +89,25 @@ class SPIConfig(Config):
             self._latestReadValues = values
             self._readSemaphore.release()
 
-    def write(self, data: List[int], blocking_read: bool = True) -> Union[None, List[int]]:
+    def write(self,
+              data: List[int],
+              blocking_read: bool = True,
+              timeout: Union[float, None] = 1.0
+              ) -> Union[None, List[int]]:
         """Write data over SPI with the connected device.
 
         If the data is not new, the reconfiguration of the device is skipped.
 
         :param List[int] data: The data to write
         :param bool blocking_read: If true, wait for the response from the connected device
+        :param float timeout: How long to wait for the response from the device in seconds.
+            Ignored if blocking_read is set to False, default 1s, set to None to deactivate timeout.
+
         :return: If blockingRead == True, return the values that were read over SPI. Else return None.
         :rtype: Union[None, List[int]]
         :raises Exception: If the blocking read mode is requested and another callback for a
-            readback operation is already registered."""
+            readback operation is already registered.
+        :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
 
         if blocking_read:
             if self._device.readbackCallback is not None:
@@ -114,12 +122,17 @@ class SPIConfig(Config):
 
         if blocking_read:
             # wait for readback
-            self._readSemaphore.acquire()
+            if self._readSemaphore.acquire(timeout=timeout):
+                # readback successful
 
-            # release callback
-            self._device.readbackCallback = None
+                # release callback
+                self._device.readbackCallback = None
 
-            return self._latestReadValues
+                return self._latestReadValues
+            else:
+                # timeout expired
+                self._device.readbackCallback = None
+                raise TimeoutError("Timeout waiting for readback from device.")
 
         return None
 
