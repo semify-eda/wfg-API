@@ -1,4 +1,4 @@
-from typing import Dict, Literal, Union
+from typing import Dict, Literal, Optional
 
 from SmartWaveAPI.configitems import Driver, Pin
 from SmartWaveAPI.definitions import DriverType, Command
@@ -53,6 +53,12 @@ class SPIDriver(Driver):
             "MOSI": 2,
             "MISO": 3,
         }
+        self._pinNames: Dict[str, str] = {
+            "SCLK": "SCLK",
+            "MOSI": "MOSI",
+            "MISO": "MISO",
+            "CS": "CS",
+        }
 
     def __del__(self) -> None:
         """Destructor - return all resources to the device."""
@@ -99,12 +105,17 @@ class SPIDriver(Driver):
         self._bitWidth = bitWidth
 
     def configure(self,
-                  clockSpeed: Union[int, None] = None,
-                  bitWidth: Union[int, None] = None,
-                  bitNumbering: Union[Literal["MSB", "LSB"], None] = None,
-                  cspol: Union[Literal[0, 1], None] = None,
-                  cpol: Union[Literal[0, 1], None] = None,
-                  cphase: Union[Literal[0, 1], None] = None):
+                  clockSpeed: Optional[int] = None,
+                  bitWidth: Optional[int] = None,
+                  bitNumbering: Optional[Literal["MSB", "LSB"]] = None,
+                  cspol: Optional[Literal[0, 1]] = None,
+                  cpol: Optional[Literal[0, 1]] = None,
+                  cphase: Optional[Literal[0, 1]] = None,
+                  sclk_pin_name: Optional[str] = None,
+                  mosi_pin_name: Optional[str] = None,
+                  miso_pin_name: Optional[str] = None,
+                  cs_pin_name: Optional[str] = None,
+                  ):
         """Configure the settings of this driver and write them to the connected device.
 
         :param int clockSpeed: The transmission clock speed in Hz
@@ -113,6 +124,10 @@ class SPIDriver(Driver):
         :param Literal[0, 1] cspol: The polarity of the chipselect pin
         :param Literal[0, 1] cpol: The polarity of the clock pin
         :param Literal[0, 1] cphase: The phase of the clock
+        :param str sclk_pin_name: The name to display for the SCLK pin
+        :param str mosi_pin_name: The name to display for the MOSI pin
+        :param str miso_pin_name: The name to display for the MISO pin
+        :param str cs_pin_name: The name to display for the CS pin
 
         :raises AttributeError: If clockSpeed is not available on the device
         :raises AttributeError: If bitWidth is not between 1 and 32"""
@@ -135,7 +150,21 @@ class SPIDriver(Driver):
         if cphase is not None:
             self._cphase = cphase
 
-        self.writeToDevice()
+        if sclk_pin_name is not None:
+            self._pinNames["SCLK"] = sclk_pin_name
+
+        if mosi_pin_name is not None:
+            self._pinNames["MOSI"] = mosi_pin_name
+
+        if miso_pin_name is not None:
+            self._pinNames["MISO"] = miso_pin_name
+
+        if cs_pin_name is not None:
+            self._pinNames["CS"] = cs_pin_name
+
+        if self._device.isConnected():
+            self.writeToDevice()
+            self.writePinConnectionsToDevice()
 
     @property
     def clockSpeed(self) -> int:
