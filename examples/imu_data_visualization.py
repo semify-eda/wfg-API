@@ -2,13 +2,14 @@
 Demo script for the ASM330LHHXG1 IMU Sensor
 """
 import numpy as np
+import scipy.signal as signal
 from PIL import Image
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 import keyboard
-
+import pyaudio
 from multiprocessing import Process
 
 from SmartWaveAPI import SmartWave
@@ -16,16 +17,11 @@ from imu_conf_lib import *
 
 matplotlib.use('TkAgg')
 
-# This only required if the ffmpeg is not part of the system PATH
-# note that the file location might be different for other users
-matplotlib.rcParams['animation.ffmpeg_path'] = r"C:\resources\ffmpeg-master-latest-win64-gpl\bin\ffmpeg.exe"
-
-# If True, a video is captured of the plotting
-# If False, the data is visualized in real-time
-SAVE_VIDEO = False
-
 # If set to true, include the io-expander for visualization
 IO_EXPANDER = True
+
+# If set to true, the script generates and plays a sine wave according to the IMU sensor data
+PLAY_SOUND = True
 
 # Color scheme for plotting
 sem_grey = '#323c40'
@@ -35,7 +31,7 @@ sem_dark_blue = '#2b4c59'
 sem_light_grey = '#6d848c'
 
 
-def axl_conf(i2c, i2c_addr, odr='12.5Hz', fs='2g'):
+def axl_conf(i2c, i2c_addr, odr: str = '12.5Hz', fs: str = '2g') -> None:
     """
     Method used to configure the accelerometer control register
 
@@ -51,7 +47,8 @@ def axl_conf(i2c, i2c_addr, odr='12.5Hz', fs='2g'):
     print(f"Accelerometer control register value: {ctrl1_xl[0]:08b}")
 
 
-def gyro_conf(i2c, i2c_addr, odr='12.5Hz', fs_g='250_dps', fs_125='fs_g', fs_4000='4000_dps'):
+def gyro_conf(i2c, i2c_addr, odr: str = '12.5Hz', fs_g: str = '250_dps',
+              fs_125: str = 'fs_g', fs_4000: str = '4000_dps') -> None:
     """
     Method used to configure the gyroscope control register
 
@@ -70,7 +67,7 @@ def gyro_conf(i2c, i2c_addr, odr='12.5Hz', fs_g='250_dps', fs_125='fs_g', fs_400
     print(f"Gyroscope control register value: {ctrl2_g[0]:08b}")
 
 
-def twos_comp(val, bits=16):
+def twos_comp(val, bits: int = 16):
     """
     Compute the two's complement of the given register value
 
@@ -81,6 +78,39 @@ def twos_comp(val, bits=16):
     if (val & (1 << (bits - 1))) != 0:
         val = val - (1 << bits)
     return val
+
+
+def generate_sound(frequency: int = 440, duration: float = 1, harmonics: int = 0, pitch_shift: int = 0):
+    """
+    Generate a sinusoidal signal from the user defined parameters
+    :param frequency: Fundamental frequency of the sine wave
+    :param duration: Duration of the signal in seconds
+    :param harmonics: Number of harmonics to add to the signal
+    :param pitch_shift: Pitch shift in octaves (positive for increase, negative for decrease)
+    :return: None
+    """
+
+    fs = 44100    # Sampling frequency
+    # Scale the period of the signal according to the pitch shift
+    if pitch_shift < 0:
+        duration = duration / (2 ** (pitch_shift * -1))
+
+    if pitch_shift > 0:
+        duration = duration * 2 ** pitch_shift
+
+    # Generate the fundamental sine wave
+    t = np.linspace(0, duration, int(fs * duration), endpoint=False)
+    signal_wave = np.sin(2 * np.pi * frequency * t)
+
+    for harmonic in range(2, harmonics + 1):
+        if harmonic % 2 == 1:
+            signal_wave += np.sin(2 * np.pi * frequency * harmonic * t) / harmonic
+
+    if pitch_shift != 0:
+        resample_factor = 2 ** -pitch_shift
+        signal_wave = signal.resample(signal_wave, int(len(signal_wave) * resample_factor))
+
+    return signal_wave
 
 
 def main():
@@ -240,11 +270,11 @@ def main():
             # print(f"X_adc: {pitch:.3f}     Y_adc: {roll:.3f}    Z_adc:: {yaw:.3f}")
             # print(f"X_a: {x_res:.3f} m/s^2    Y_a: {y_res:.3f} m/s^2   Z_a: {z_res:.3f} m/s^2\n")
 
-            ys[0].append(y_res)
+            ys[0].append(x_res)
             ys[0] = ys[0][-x_len:]
             line[0].set_ydata(ys[0])
 
-            ys[1].append(x_res)
+            ys[1].append(y_res)
             ys[1] = ys[1][-x_len:]
             line[1].set_ydata(ys[1])
 
@@ -255,35 +285,35 @@ def main():
             if IO_EXPANDER:
                 io_led_toggle(i2c_io_exp, i2c_io_exp_addr, x_res, y_res)
 
+            if PLAY_SOUND:
+                frequency = 440
+                duration = 0.1
+
+                harmonics, pitch_shift = sound_modulation(x_res, y_res)
+
+                signal_wave = generate_sound(frequency, duration, harmonics, pitch_shift)
+
+                p = pyaudio.PyAudio()
+                stream = p.open(format=pyaudio.paFloat32,
+                                channels=1,
+                                rate=44100,
+                                output=True)
+                stream.write(signal_wave.astype(np.float32).tobytes())
+                stream.stop_stream()
+
             return line
 
-        if SAVE_VIDEO:
-            anim = animation.FuncAnimation(fig, animate,
-                                           fargs=(ys,),
-                                           interval=1,
-                                           repeat=True,
-                                           save_count=5000
-                                           )
+        anim = animation.FuncAnimation(fig, animate,
+                                       fargs=(ys,),
+                                       interval=1,
+                                       blit=True,
+                                       cache_frame_data=False)
 
-            file_loc = "imu.mp4"    # Saves mp4 in current working directory, update if needed
-            write_vid = animation.FFMpegWriter(fps=10, extra_args=['-vcodec', 'libx264'])
-            anim.save(file_loc, writer=write_vid)
-
-        else:
-            # If blit set to False, the cube gets updated real-time, but the animation becomes very slow
-            # If blit is set to True, the cube won't be plotted along with the accelerometer data.
-            # This requires the animate function to be modified to only return line
-            anim = animation.FuncAnimation(fig, animate,
-                                           fargs=(ys,),
-                                           interval=1,
-                                           blit=True,
-                                           cache_frame_data=False)
-
-            plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 250, yo=int(fig.bbox.ymax) + 220)
-            plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 650, yo=int(fig.bbox.ymax) + 220)
-            # plt.figimage(resize, origin='upper')
-            plt.get_current_fig_manager().full_screen_toggle()
-            plt.show()
+        # plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 250, yo=int(fig.bbox.ymax) + 220)
+        # plt.figimage(resize, xo=int(fig.bbox.xmax // 2) + 650, yo=int(fig.bbox.ymax) + 220)
+        plt.figimage(resize, origin='upper')
+        # plt.get_current_fig_manager().full_screen_toggle()
+        plt.show()
 
 
 if __name__ == "__main__":

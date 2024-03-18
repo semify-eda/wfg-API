@@ -457,3 +457,548 @@ def io_led_toggle(i2c, i2c_addr, x_res, y_res):
         i2c.write(i2c_addr, [io_exp_front[3][1], io_exp_side[2][0]])
     elif (x_res >= 8) and (y_res >= 8):
         i2c.write(i2c_addr, [io_exp_front[3][1], io_exp_side[3][0]])
+
+
+def sound_modulation(x_res, y_res):
+    harmonics = 0
+    pitch_shift = 0
+
+    if (-1 < y_res < 1) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 0
+
+    # Tilting Forwards and Left
+    elif (-3 < y_res < -1) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 3
+    elif (y_res < -8) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 4
+
+    elif (-3 < y_res < -1) and (1 < x_res < 3):
+        harmonics = 3
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (1 < x_res < 3):
+        harmonics = 3
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (1 < x_res < 3):
+        harmonics = 3
+        pitch_shift = 3
+    elif (y_res < -8) and (1 < x_res < 3):
+        harmonics = 3
+        pitch_shift = 4
+
+    elif (-3 < y_res < -1) and (3 < x_res < 6):
+        harmonics = 5
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (3 < x_res < 6):
+        harmonics = 5
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (3 < x_res < 6):
+        harmonics = 5
+        pitch_shift = 3
+    elif (y_res < -8) and (3 < x_res < 6):
+        harmonics = 5
+        pitch_shift = 4
+
+    elif (-3 < y_res < -1) and (6 < x_res < 8):
+        harmonics = 7
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (6 < x_res < 8):
+        harmonics = 7
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (6 < x_res < 8):
+        harmonics = 7
+        pitch_shift = 3
+    elif (y_res < -8) and (6 < x_res < 8):
+        harmonics = 7
+        pitch_shift = 4
+
+    elif (-3 < y_res < -1) and (x_res >= 8):
+        harmonics = 9
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (x_res > 8):
+        harmonics = 9
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (x_res >= 8):
+        harmonics = 9
+        pitch_shift = 3
+    elif (y_res < -8) and (x_res >= 8):
+        harmonics = 9
+        pitch_shift = 4
+
+    # Tilting Forwards and Right
+    elif (-3 < y_res < -1) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 3
+    elif (y_res < -8) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = 4
+
+    elif (-3 < y_res < -1) and (-3 < x_res < -1):
+        harmonics = 3
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (-3 < x_res < -1):
+        harmonics = 3
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (-3 < x_res < -1):
+        harmonics = 3
+        pitch_shift = 3
+    elif (y_res < -8) and (-3 < x_res < -1):
+        harmonics = 3
+        pitch_shift = 4
+
+    elif (-3 < y_res < -1) and (-6 < x_res < -3):
+        harmonics = 5
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (-6 < x_res < -3):
+        harmonics = 5
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (-6 < x_res < -3):
+        harmonics = 5
+        pitch_shift = 3
+    elif (y_res < -8) and (-6 < x_res < -3):
+        harmonics = 5
+        pitch_shift = 4
+
+    elif (-3 < y_res < -1) and (-8 < x_res < -6):
+        harmonics = 7
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (-8 < x_res < -6):
+        harmonics = 7
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (-8 < x_res < -6):
+        harmonics = 7
+        pitch_shift = 3
+    elif (y_res < -8) and (-8 < x_res < -6):
+        harmonics = 7
+        pitch_shift = 4
+
+    elif (-3 < y_res < -1) and (x_res < -8):
+        harmonics = 9
+        pitch_shift = 1
+    elif (-6 < y_res < -3) and (x_res < -8):
+        harmonics = 9
+        pitch_shift = 2
+    elif (-8 < y_res < -6) and (x_res < -8):
+        harmonics = 9
+        pitch_shift = 3
+    elif (y_res < -8) and (x_res < -8):
+        harmonics = 9
+        pitch_shift = 4
+
+    #########################################################################
+
+    # Tilting Right and Forwards
+    elif (-3 < x_res < -1) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = -2
+    elif (-8 < x_res < -6) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = -3
+    elif (x_res < -8) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = -4
+
+    elif (-3 < x_res < -1) and (-3 < y_res < -1):
+        harmonics = 3
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (-3 < y_res < -1):
+        harmonics = 3
+        pitch_shift = -2
+    elif (-8 < x_res < -6) and (-3 < y_res < -1):
+        harmonics = 3
+        pitch_shift = -3
+    elif (x_res < -8) and (-3 < y_res < -1):
+        harmonics = 3
+        pitch_shift = -4
+
+    elif (-3 < x_res < -1) and (-6 < y_res < -3):
+        harmonics = 5
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (-6 < y_res < -3):
+        harmonics = 5
+        pitch_shift = -2
+    elif (-8 < x_res < -6) and (-6 < y_res < -3):
+        harmonics = 5
+        pitch_shift = -3
+    elif (x_res < -8) and (-6 < y_res < -3):
+        harmonics = 5
+        pitch_shift = -4
+
+    elif (-3 < x_res < -1) and (-8 < y_res < -6):
+        harmonics = 7
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (-8 < y_res < -6):
+        harmonics = 7
+        pitch_shift = -2
+    elif (-8 < x_res < -6) and (-8 < y_res < -6):
+        harmonics = 7
+        pitch_shift = -3
+    elif (x_res < -8) and (-8 < y_res < -6):
+        harmonics = 7
+        pitch_shift = -4
+
+    elif (-3 < x_res < -1) and (y_res < -8):
+        harmonics = 9
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (y_res < -8):
+        harmonics = 9
+        pitch_shift = -2
+    elif (-7 < x_res < -6) and (y_res < -8):
+        harmonics = 9
+        pitch_shift = -3
+    elif (x_res < -8) and (y_res < -8):
+        harmonics = 9
+        pitch_shift = -4
+
+    # Tilting Left and Forwards
+    elif (1 < x_res < 3) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = 3
+    elif (x_res >= 8) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = 4
+
+    elif (1 < x_res < 3) and (-3 < y_res < -1):
+        harmonics = 3
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (-3 < y_res < -1):
+        harmonics = 3
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (-3 < y_res < -1):
+        harmonics = 3
+        pitch_shift = 3
+    elif (x_res >= 8) and (-3 < y_res < -1):
+        harmonics = 3
+        pitch_shift = 4
+
+    elif (1 < x_res < 3) and (-6 < y_res < -3):
+        harmonics = 5
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (-6 < y_res < -3):
+        harmonics = 5
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (-6 < y_res < -3):
+        harmonics = 5
+        pitch_shift = 3
+    elif (x_res >= 8) and (-6 < y_res < -3):
+        harmonics = 5
+        pitch_shift = 4
+
+    elif (1 < x_res < 3) and (-8 < y_res < -6):
+        harmonics = 7
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (-8 < y_res < -6):
+        harmonics = 7
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (-8 < y_res < -6):
+        harmonics = 7
+        pitch_shift = 3
+    elif (x_res >= 8) and (-8 < y_res < -6):
+        harmonics = 7
+        pitch_shift = 4
+
+    elif (1 < x_res < 3) and (y_res < - 8):
+        harmonics = 9
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (y_res < - 8):
+        harmonics = 9
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (y_res < - 8):
+        harmonics = 9
+        pitch_shift = 3
+    elif (x_res >= 8) and (y_res < - 8):
+        harmonics = 9
+        pitch_shift = 4
+
+    #########################################################################
+
+    # Tilting Backwards and Left
+    elif (1 < y_res < 3) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = -3
+    elif (y_res >= 8) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = -4
+
+    elif (1 < y_res < 3) and (1 < x_res < 3):
+        harmonics = 3
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (1 < x_res < 3):
+        harmonics = 3
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (1 < x_res < 3):
+        harmonics = 3
+        pitch_shift = -3
+    elif (y_res >= 8) and (1 < x_res < 3):
+        harmonics = 3
+        pitch_shift = -4
+
+    elif (1 < y_res < 3) and (3 < x_res < 6):
+        harmonics = 5
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (3 < x_res < 6):
+        harmonics = 5
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (3 < x_res < 6):
+        harmonics = 5
+        pitch_shift = -3
+    elif (y_res >= 8) and (3 < x_res < 6):
+        harmonics = 5
+        pitch_shift = -4
+
+    elif (1 < y_res < 3) and (6 < x_res < 8):
+        harmonics = 7
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (6 < x_res < 8):
+        harmonics = 7
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (6 < x_res < 8):
+        harmonics = 7
+        pitch_shift = -3
+    elif (y_res >= 8) and (6 < x_res < 8):
+        harmonics = 7
+        pitch_shift = -4
+
+    elif (1 < y_res < 3) and (x_res >= 8):
+        harmonics = 9
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (x_res >= 8):
+        harmonics = 9
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (x_res >= 8):
+        harmonics = 9
+        pitch_shift = -3
+    elif (y_res >= 8) and (x_res >= 8):
+        harmonics = 9
+        pitch_shift = -4
+
+    # Tilting Backwards and Right
+    elif (1 < y_res < 3) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = -3
+    elif (y_res >= 8) and (-1 < x_res < 1):
+        harmonics = 0
+        pitch_shift = -4
+
+    elif (1 < y_res < 3) and (-3 < x_res < -1):
+        harmonics = 3
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (-3 < x_res < -1):
+        harmonics = 3
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (-3 < x_res < -1):
+        harmonics = 3
+        pitch_shift = -3
+    if (y_res >= 8) and (-3 < x_res < -1):
+        harmonics = 3
+        pitch_shift = -4
+
+    elif (1 < y_res < 3) and (-6 < x_res < -3):
+        harmonics = 5
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (-6 < x_res < -3):
+        harmonics = 5
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (-6 < x_res < -3):
+        harmonics = 5
+        pitch_shift = -3
+    elif (y_res >= 8) and (-6 < x_res < -3):
+        harmonics = 5
+        pitch_shift = -4
+
+    elif (1 < y_res < 3) and (-7 < x_res < -6):
+        harmonics = 7
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (-7 < x_res < -6):
+        harmonics = 7
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (-7 < x_res < -6):
+        harmonics = 7
+        pitch_shift = -3
+    elif (y_res >= 8) and (-7 < x_res < -6):
+        harmonics = 7
+        pitch_shift = -4
+
+    elif (1 < y_res < 3) and (x_res < -8):
+        harmonics = 9
+        pitch_shift = -1
+    elif (3 < y_res < 6) and (x_res < -8):
+        harmonics = 9
+        pitch_shift = -2
+    elif (6 < y_res < 8) and (x_res < -8):
+        harmonics = 9
+        pitch_shift = -3
+    elif (y_res >= 8) and (x_res < -8):
+        harmonics = 9
+        pitch_shift = -4
+
+    #########################################################################
+
+    # Tilting Right and Backwards
+    elif (-3 < x_res < -1) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = -2
+    elif (-7 < x_res < -6) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = -3
+    elif (x_res < -8) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = -4
+
+    elif (-3 < x_res < -1) and (1 < y_res < 3):
+        harmonics = 3
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (1 < y_res < 3):
+        harmonics = 3
+        pitch_shift = -2
+    elif (-7 < x_res < -6) and (1 < y_res < 3):
+        harmonics = 3
+        pitch_shift = -3
+    elif (x_res < -8) and (1 < y_res < 3):
+        harmonics = 3
+        pitch_shift = -4
+
+    elif (-3 < x_res < -1) and (3 < y_res < 6):
+        harmonics = 5
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (3 < y_res < 6):
+        harmonics = 5
+        pitch_shift = -2
+    elif (-7 < x_res < -6) and (3 < y_res < 6):
+        harmonics = 5
+        pitch_shift = -3
+    elif (x_res < -8) and (3 < y_res < 6):
+        harmonics = 5
+        pitch_shift = -4
+
+    elif (-3 < x_res < -1) and (6 < y_res < 7):
+        harmonics = 7
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (6 < y_res < 7):
+        harmonics = 7
+        pitch_shift = -2
+    elif (-7 < x_res < -6) and (6 < y_res < 7):
+        harmonics = 7
+        pitch_shift = -3
+    elif (x_res < -8) and (6 < y_res < 7):
+        harmonics = 7
+        pitch_shift = -4
+
+    elif (-3 < x_res < -1) and (y_res > 8):
+        harmonics = 9
+        pitch_shift = -1
+    elif (-6 < x_res < -3) and (y_res > 8):
+        harmonics = 9
+        pitch_shift = -2
+    elif (-7 < x_res < -6) and (y_res > 8):
+        harmonics = 9
+        pitch_shift = -3
+    elif (x_res < -8) and (y_res >= 8):
+        harmonics = 9
+        pitch_shift = -4
+
+    # Tilting Left and Backwards
+    elif (1 < x_res < 3) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = 3
+    elif (x_res >= 8) and (-1 < y_res < 1):
+        harmonics = 0
+        pitch_shift = 4
+
+    elif (1 < x_res < 3) and (1 < y_res < 3):
+        harmonics = 3
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (1 < y_res < 3):
+        harmonics = 3
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (1 < y_res < 3):
+        harmonics = 3
+        pitch_shift = 3
+    elif (x_res >= 8) and (1 < y_res < 3):
+        harmonics = 3
+        pitch_shift = 4
+
+    elif (1 < x_res < 3) and (3 < y_res < 6):
+        harmonics = 5
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (3 < y_res < 6):
+        harmonics = 5
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (3 < y_res < 6):
+        harmonics = 5
+        pitch_shift = 3
+    elif (x_res >= 8) and (3 < y_res < 6):
+        harmonics = 5
+        pitch_shift = 4
+
+    elif (1 < x_res < 3) and (6 < y_res < 7):
+        harmonics = 7
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (6 < y_res < 7):
+        harmonics = 7
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (6 < y_res < 7):
+        harmonics = 7
+        pitch_shift = 3
+    elif (x_res >= 8) and (6 < y_res < 7):
+        harmonics = 7
+        pitch_shift = 4
+
+    elif (1 < x_res < 3) and (y_res >= 8):
+        harmonics = 9
+        pitch_shift = 1
+    elif (3 < x_res < 6) and (y_res >= 8):
+        harmonics = 9
+        pitch_shift = 2
+    elif (6 < x_res < 8) and (y_res >= 8):
+        harmonics = 9
+        pitch_shift = 3
+    elif (x_res >= 8) and (y_res >= 8):
+        harmonics = 9
+        pitch_shift = 4
+
+    return harmonics, pitch_shift
