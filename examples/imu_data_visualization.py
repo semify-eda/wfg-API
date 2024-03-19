@@ -89,8 +89,8 @@ def generate_sound(frequency: int = 440, duration: float = 1, harmonics: int = 0
     :param pitch_shift: Pitch shift in octaves (positive for increase, negative for decrease)
     :return: None
     """
-
-    fs = 44100    # Sampling frequency
+    # Bluetooth speaker sample rate ~48kHz
+    fs = 20000    # Sampling frequency   44100
     # Scale the period of the signal according to the pitch shift
     if pitch_shift < 0:
         duration = duration / (2 ** (pitch_shift * -1))
@@ -127,7 +127,7 @@ def main():
 
         if IO_EXPANDER:
             i2c_io_exp_addr = 0x20
-            i2c_io_exp = sw.createI2CConfig("B2", "B1", int(200e3))
+            i2c_io_exp = sw.createI2CConfig("A8", "A7", int(200e3))
             i2c_io_exp.write(i2c_io_exp_addr, [0xff, 0xff])
 
         # Check if connection to the target device was successful
@@ -160,7 +160,7 @@ def main():
         ax5 = fig.add_subplot(gs[1, 1])
         ax6 = fig.add_subplot(gs[2, 1])
 
-        fig.suptitle("IMU - Data Visualization", color=sem_white)
+        fig.suptitle("Inerta Measurement Unit\nData Visualization", color=sem_white)
         ax1.set_title("X - axis", color=sem_white)
         ax2.set_title("Y - axis", color=sem_white)
         ax3.set_title("Z - axis", color=sem_white)
@@ -286,7 +286,7 @@ def main():
                 io_led_toggle(i2c_io_exp, i2c_io_exp_addr, x_res, y_res)
 
             if PLAY_SOUND:
-                frequency = 440
+                frequency = 220
                 duration = 0.1
 
                 harmonics, pitch_shift = sound_modulation(x_res, y_res)
@@ -296,7 +296,7 @@ def main():
                 p = pyaudio.PyAudio()
                 stream = p.open(format=pyaudio.paFloat32,
                                 channels=1,
-                                rate=44100,
+                                rate=20000,
                                 output=True)
                 stream.write(signal_wave.astype(np.float32).tobytes())
                 stream.stop_stream()

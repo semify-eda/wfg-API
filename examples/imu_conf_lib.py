@@ -482,122 +482,122 @@ def sound_modulation(x_res, y_res):
         pitch_shift = 4
 
     elif (-3 < y_res < -1) and (1 < x_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 1
     elif (-6 < y_res < -3) and (1 < x_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 2
     elif (-8 < y_res < -6) and (1 < x_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 3
     elif (y_res < -8) and (1 < x_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 4
 
     elif (-3 < y_res < -1) and (3 < x_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 1
     elif (-6 < y_res < -3) and (3 < x_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 2
     elif (-8 < y_res < -6) and (3 < x_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 3
     elif (y_res < -8) and (3 < x_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 4
 
     elif (-3 < y_res < -1) and (6 < x_res < 8):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 1
     elif (-6 < y_res < -3) and (6 < x_res < 8):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 2
     elif (-8 < y_res < -6) and (6 < x_res < 8):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 3
     elif (y_res < -8) and (6 < x_res < 8):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 4
 
     elif (-3 < y_res < -1) and (x_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 1
     elif (-6 < y_res < -3) and (x_res > 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 2
     elif (-8 < y_res < -6) and (x_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 3
     elif (y_res < -8) and (x_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 4
 
     # Tilting Forwards and Right
     elif (-3 < y_res < -1) and (-1 < x_res < 1):
         harmonics = 0
-        pitch_shift = 1
+        pitch_shift = -1
     elif (-6 < y_res < -3) and (-1 < x_res < 1):
         harmonics = 0
-        pitch_shift = 2
+        pitch_shift = -2
     elif (-8 < y_res < -6) and (-1 < x_res < 1):
         harmonics = 0
-        pitch_shift = 3
+        pitch_shift = -3
     elif (y_res < -8) and (-1 < x_res < 1):
         harmonics = 0
-        pitch_shift = 4
+        pitch_shift = -4
 
     elif (-3 < y_res < -1) and (-3 < x_res < -1):
-        harmonics = 3
-        pitch_shift = 1
+        harmonics = 5
+        pitch_shift = -1
     elif (-6 < y_res < -3) and (-3 < x_res < -1):
-        harmonics = 3
-        pitch_shift = 2
+        harmonics = 5
+        pitch_shift = -2
     elif (-8 < y_res < -6) and (-3 < x_res < -1):
-        harmonics = 3
-        pitch_shift = 3
+        harmonics = 5
+        pitch_shift = -3
     elif (y_res < -8) and (-3 < x_res < -1):
-        harmonics = 3
-        pitch_shift = 4
+        harmonics = 5
+        pitch_shift = -4
 
     elif (-3 < y_res < -1) and (-6 < x_res < -3):
-        harmonics = 5
-        pitch_shift = 1
+        harmonics = 9
+        pitch_shift = -1
     elif (-6 < y_res < -3) and (-6 < x_res < -3):
-        harmonics = 5
-        pitch_shift = 2
+        harmonics = 9
+        pitch_shift = -2
     elif (-8 < y_res < -6) and (-6 < x_res < -3):
-        harmonics = 5
-        pitch_shift = 3
+        harmonics = 9
+        pitch_shift = -3
     elif (y_res < -8) and (-6 < x_res < -3):
-        harmonics = 5
-        pitch_shift = 4
+        harmonics = 9
+        pitch_shift = -4
 
     elif (-3 < y_res < -1) and (-8 < x_res < -6):
-        harmonics = 7
-        pitch_shift = 1
+        harmonics = 13
+        pitch_shift = -1
     elif (-6 < y_res < -3) and (-8 < x_res < -6):
-        harmonics = 7
-        pitch_shift = 2
+        harmonics = 13
+        pitch_shift = -2
     elif (-8 < y_res < -6) and (-8 < x_res < -6):
-        harmonics = 7
-        pitch_shift = 3
+        harmonics = 13
+        pitch_shift = -3
     elif (y_res < -8) and (-8 < x_res < -6):
-        harmonics = 7
-        pitch_shift = 4
+        harmonics = 13
+        pitch_shift = -4
 
     elif (-3 < y_res < -1) and (x_res < -8):
-        harmonics = 9
-        pitch_shift = 1
+        harmonics = 17
+        pitch_shift = -1
     elif (-6 < y_res < -3) and (x_res < -8):
-        harmonics = 9
-        pitch_shift = 2
+        harmonics = 17
+        pitch_shift = -2
     elif (-8 < y_res < -6) and (x_res < -8):
-        harmonics = 9
-        pitch_shift = 3
+        harmonics = 17
+        pitch_shift = -3
     elif (y_res < -8) and (x_res < -8):
-        harmonics = 9
-        pitch_shift = 4
+        harmonics = 17
+        pitch_shift = -4
 
     #########################################################################
 
@@ -606,65 +606,65 @@ def sound_modulation(x_res, y_res):
         harmonics = 0
         pitch_shift = -1
     elif (-6 < x_res < -3) and (-1 < y_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -2
     elif (-8 < x_res < -6) and (-1 < y_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -3
     elif (x_res < -8) and (-1 < y_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -4
 
     elif (-3 < x_res < -1) and (-3 < y_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -1
     elif (-6 < x_res < -3) and (-3 < y_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -2
     elif (-8 < x_res < -6) and (-3 < y_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -3
     elif (x_res < -8) and (-3 < y_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -4
 
     elif (-3 < x_res < -1) and (-6 < y_res < -3):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -1
     elif (-6 < x_res < -3) and (-6 < y_res < -3):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -2
     elif (-8 < x_res < -6) and (-6 < y_res < -3):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -3
     elif (x_res < -8) and (-6 < y_res < -3):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -4
 
     elif (-3 < x_res < -1) and (-8 < y_res < -6):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -1
     elif (-6 < x_res < -3) and (-8 < y_res < -6):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -2
     elif (-8 < x_res < -6) and (-8 < y_res < -6):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -3
     elif (x_res < -8) and (-8 < y_res < -6):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -4
 
     elif (-3 < x_res < -1) and (y_res < -8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -1
     elif (-6 < x_res < -3) and (y_res < -8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -2
     elif (-7 < x_res < -6) and (y_res < -8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -3
     elif (x_res < -8) and (y_res < -8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -4
 
     # Tilting Left and Forwards
@@ -682,55 +682,55 @@ def sound_modulation(x_res, y_res):
         pitch_shift = 4
 
     elif (1 < x_res < 3) and (-3 < y_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 1
     elif (3 < x_res < 6) and (-3 < y_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 2
     elif (6 < x_res < 8) and (-3 < y_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 3
     elif (x_res >= 8) and (-3 < y_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 4
 
     elif (1 < x_res < 3) and (-6 < y_res < -3):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 1
     elif (3 < x_res < 6) and (-6 < y_res < -3):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 2
     elif (6 < x_res < 8) and (-6 < y_res < -3):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 3
     elif (x_res >= 8) and (-6 < y_res < -3):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 4
 
     elif (1 < x_res < 3) and (-8 < y_res < -6):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 1
     elif (3 < x_res < 6) and (-8 < y_res < -6):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 2
     elif (6 < x_res < 8) and (-8 < y_res < -6):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 3
     elif (x_res >= 8) and (-8 < y_res < -6):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 4
 
     elif (1 < x_res < 3) and (y_res < - 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 1
     elif (3 < x_res < 6) and (y_res < - 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 2
     elif (6 < x_res < 8) and (y_res < - 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 3
     elif (x_res >= 8) and (y_res < - 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 4
 
     #########################################################################
@@ -738,67 +738,67 @@ def sound_modulation(x_res, y_res):
     # Tilting Backwards and Left
     elif (1 < y_res < 3) and (-1 < x_res < 1):
         harmonics = 0
-        pitch_shift = -1
+        pitch_shift = 1
     elif (3 < y_res < 6) and (-1 < x_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -2
     elif (6 < y_res < 8) and (-1 < x_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -3
     elif (y_res >= 8) and (-1 < x_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -4
 
     elif (1 < y_res < 3) and (1 < x_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -1
     elif (3 < y_res < 6) and (1 < x_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -2
     elif (6 < y_res < 8) and (1 < x_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -3
     elif (y_res >= 8) and (1 < x_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -4
 
     elif (1 < y_res < 3) and (3 < x_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = -1
     elif (3 < y_res < 6) and (3 < x_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = -2
     elif (6 < y_res < 8) and (3 < x_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = -3
     elif (y_res >= 8) and (3 < x_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = -4
 
     elif (1 < y_res < 3) and (6 < x_res < 8):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = -1
     elif (3 < y_res < 6) and (6 < x_res < 8):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = -2
     elif (6 < y_res < 8) and (6 < x_res < 8):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = -3
     elif (y_res >= 8) and (6 < x_res < 8):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = -4
 
     elif (1 < y_res < 3) and (x_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = -1
     elif (3 < y_res < 6) and (x_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = -2
     elif (6 < y_res < 8) and (x_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = -3
     elif (y_res >= 8) and (x_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = -4
 
     # Tilting Backwards and Right
@@ -806,65 +806,65 @@ def sound_modulation(x_res, y_res):
         harmonics = 0
         pitch_shift = -1
     elif (3 < y_res < 6) and (-1 < x_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -2
     elif (6 < y_res < 8) and (-1 < x_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -3
     elif (y_res >= 8) and (-1 < x_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -4
 
     elif (1 < y_res < 3) and (-3 < x_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -1
     elif (3 < y_res < 6) and (-3 < x_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -2
     elif (6 < y_res < 8) and (-3 < x_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -3
     if (y_res >= 8) and (-3 < x_res < -1):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -4
 
     elif (1 < y_res < 3) and (-6 < x_res < -3):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -1
     elif (3 < y_res < 6) and (-6 < x_res < -3):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -2
     elif (6 < y_res < 8) and (-6 < x_res < -3):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -3
     elif (y_res >= 8) and (-6 < x_res < -3):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -4
 
     elif (1 < y_res < 3) and (-7 < x_res < -6):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -1
     elif (3 < y_res < 6) and (-7 < x_res < -6):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -2
     elif (6 < y_res < 8) and (-7 < x_res < -6):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -3
     elif (y_res >= 8) and (-7 < x_res < -6):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -4
 
     elif (1 < y_res < 3) and (x_res < -8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -1
     elif (3 < y_res < 6) and (x_res < -8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -2
     elif (6 < y_res < 8) and (x_res < -8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -3
     elif (y_res >= 8) and (x_res < -8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -4
 
     #########################################################################
@@ -874,65 +874,65 @@ def sound_modulation(x_res, y_res):
         harmonics = 0
         pitch_shift = -1
     elif (-6 < x_res < -3) and (-1 < y_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -2
     elif (-7 < x_res < -6) and (-1 < y_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -3
     elif (x_res < -8) and (-1 < y_res < 1):
-        harmonics = 0
+        harmonics = 3
         pitch_shift = -4
 
     elif (-3 < x_res < -1) and (1 < y_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -1
     elif (-6 < x_res < -3) and (1 < y_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -2
     elif (-7 < x_res < -6) and (1 < y_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -3
     elif (x_res < -8) and (1 < y_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = -4
 
     elif (-3 < x_res < -1) and (3 < y_res < 6):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -1
     elif (-6 < x_res < -3) and (3 < y_res < 6):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -2
     elif (-7 < x_res < -6) and (3 < y_res < 6):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -3
     elif (x_res < -8) and (3 < y_res < 6):
-        harmonics = 5
+        harmonics = 7
         pitch_shift = -4
 
     elif (-3 < x_res < -1) and (6 < y_res < 7):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -1
     elif (-6 < x_res < -3) and (6 < y_res < 7):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -2
     elif (-7 < x_res < -6) and (6 < y_res < 7):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -3
     elif (x_res < -8) and (6 < y_res < 7):
-        harmonics = 7
+        harmonics = 9
         pitch_shift = -4
 
     elif (-3 < x_res < -1) and (y_res > 8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -1
     elif (-6 < x_res < -3) and (y_res > 8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -2
     elif (-7 < x_res < -6) and (y_res > 8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -3
     elif (x_res < -8) and (y_res >= 8):
-        harmonics = 9
+        harmonics = 11
         pitch_shift = -4
 
     # Tilting Left and Backwards
@@ -950,55 +950,55 @@ def sound_modulation(x_res, y_res):
         pitch_shift = 4
 
     elif (1 < x_res < 3) and (1 < y_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 1
     elif (3 < x_res < 6) and (1 < y_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 2
     elif (6 < x_res < 8) and (1 < y_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 3
     elif (x_res >= 8) and (1 < y_res < 3):
-        harmonics = 3
+        harmonics = 5
         pitch_shift = 4
 
     elif (1 < x_res < 3) and (3 < y_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 1
     elif (3 < x_res < 6) and (3 < y_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 2
     elif (6 < x_res < 8) and (3 < y_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 3
     elif (x_res >= 8) and (3 < y_res < 6):
-        harmonics = 5
+        harmonics = 9
         pitch_shift = 4
 
     elif (1 < x_res < 3) and (6 < y_res < 7):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 1
     elif (3 < x_res < 6) and (6 < y_res < 7):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 2
     elif (6 < x_res < 8) and (6 < y_res < 7):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 3
     elif (x_res >= 8) and (6 < y_res < 7):
-        harmonics = 7
+        harmonics = 13
         pitch_shift = 4
 
     elif (1 < x_res < 3) and (y_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 1
     elif (3 < x_res < 6) and (y_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 2
     elif (6 < x_res < 8) and (y_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 3
     elif (x_res >= 8) and (y_res >= 8):
-        harmonics = 9
+        harmonics = 17
         pitch_shift = 4
 
     return harmonics, pitch_shift
