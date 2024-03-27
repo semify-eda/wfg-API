@@ -4,12 +4,9 @@ import time
 
 def main():
 
-    start = time.time()
     with SmartWave().connect() as sw:
-        # test = sw.createI2CConfig("A1", "A2")
-        # sw.triggerMode = TriggerMode.Toggle
         sw.vddio = 3.3
-        with sw.createI2CConfig("A8", "A7", 1e6) as i2c:
+        with sw.createI2CConfig("A2", "A1") as i2c:
             # sw.debugCallback = lambda x: print(x)
 
             i2c.write(0x20, [0xaa, 0x55])
@@ -19,10 +16,8 @@ def main():
             i2c.write(0x20, [0xff, 0xff])
             print("thirst: ", i2c.read(0x20, 2))
 
-        # test.delete()
 
 
-    print("elapsed time: ", time.time() - start)
 
 
 if __name__ == "__main__":

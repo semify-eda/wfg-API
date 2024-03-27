@@ -1,8 +1,8 @@
 #marker_template_start
 #multidata: globaldata:../../pkg/global_templating_data.json
 #multidata: wfg_core_top:../../wfg/wfg_core/data/wfg_core_reg.json
-#multidata: wfg_subcore_top:../../wfg/wfg_subcore/data/wfg_subcore_reg.json
 #multidata: wfg_drive_i2c_top:../../wfg/wfg_drive_i2c/data/wfg_drive_i2c_reg.json
+#multidata: wfg_drive_i2ct_top:../../wfg/wfg_drive_i2ct/data/wfg_drive_i2ct_reg.json
 #multidata: wfg_drive_pat_top:../../wfg/wfg_drive_pat/data/wfg_drive_pat_reg.json
 #multidata: wfg_drive_spi_top:../../wfg/wfg_drive_spi/data/wfg_drive_spi_reg.json
 #multidata: wfg_drive_uart_top:../../wfg/wfg_drive_uart/data/wfg_drive_uart_reg.json
@@ -20,32 +20,34 @@ class FPGA_Reg:
 
   output_pins  = {
 
-    "wfg_drive_spi_top_0_sclk" : 30,
-    "wfg_drive_spi_top_0_cs" : 29,
-    "wfg_drive_spi_top_0_dout" : 28,
-    "wfg_drive_spi_top_1_sclk" : 27,
-    "wfg_drive_spi_top_1_cs" : 26,
-    "wfg_drive_spi_top_1_dout" : 25,
-    "wfg_drive_pat_top_0_output_0" : 24,
-    "wfg_drive_pat_top_0_output_1" : 23,
-    "wfg_drive_pat_top_0_output_2" : 22,
-    "wfg_drive_pat_top_0_output_3" : 21,
-    "wfg_drive_pat_top_0_output_4" : 20,
-    "wfg_drive_pat_top_0_output_5" : 19,
-    "wfg_drive_pat_top_0_output_6" : 18,
-    "wfg_drive_pat_top_0_output_7" : 17,
-    "wfg_drive_pat_top_0_output_8" : 16,
-    "wfg_drive_pat_top_0_output_9" : 15,
-    "wfg_drive_pat_top_0_output_10" : 14,
-    "wfg_drive_pat_top_0_output_11" : 13,
-    "wfg_drive_pat_top_0_output_12" : 12,
-    "wfg_drive_pat_top_0_output_13" : 11,
-    "wfg_drive_pat_top_0_output_14" : 10,
-    "wfg_drive_pat_top_0_output_15" : 9,
-    "wfg_drive_i2c_top_0_scl" : 8,
-    "wfg_drive_i2c_top_0_sda" : 7,
-    "wfg_drive_i2c_top_1_scl" : 6,
-    "wfg_drive_i2c_top_1_sda" : 5,
+    "wfg_drive_spi_top_0_sclk" : 32,
+    "wfg_drive_spi_top_0_cs" : 31,
+    "wfg_drive_spi_top_0_dout" : 30,
+    "wfg_drive_spi_top_1_sclk" : 29,
+    "wfg_drive_spi_top_1_cs" : 28,
+    "wfg_drive_spi_top_1_dout" : 27,
+    "wfg_drive_pat_top_0_output_0" : 26,
+    "wfg_drive_pat_top_0_output_1" : 25,
+    "wfg_drive_pat_top_0_output_2" : 24,
+    "wfg_drive_pat_top_0_output_3" : 23,
+    "wfg_drive_pat_top_0_output_4" : 22,
+    "wfg_drive_pat_top_0_output_5" : 21,
+    "wfg_drive_pat_top_0_output_6" : 20,
+    "wfg_drive_pat_top_0_output_7" : 19,
+    "wfg_drive_pat_top_0_output_8" : 18,
+    "wfg_drive_pat_top_0_output_9" : 17,
+    "wfg_drive_pat_top_0_output_10" : 16,
+    "wfg_drive_pat_top_0_output_11" : 15,
+    "wfg_drive_pat_top_0_output_12" : 14,
+    "wfg_drive_pat_top_0_output_13" : 13,
+    "wfg_drive_pat_top_0_output_14" : 12,
+    "wfg_drive_pat_top_0_output_15" : 11,
+    "wfg_drive_i2c_top_0_scl" : 10,
+    "wfg_drive_i2c_top_0_sda" : 9,
+    "wfg_drive_i2c_top_1_scl" : 8,
+    "wfg_drive_i2c_top_1_sda" : 7,
+    "wfg_drive_i2ct_top_0_scl" : 6,
+    "wfg_drive_i2ct_top_0_sda" : 5,
     "wfg_drive_uart_top_0_tx" : 4,
     "wfg_drive_uart_top_1_tx" : 3
   };
@@ -53,12 +55,14 @@ class FPGA_Reg:
 
   input_pins  = {
 
-    "wfg_drive_spi_top_0_din" : 7,
-    "wfg_drive_spi_top_1_din" : 6,
-    "wfg_drive_i2c_top_0_scl" : 5,
-    "wfg_drive_i2c_top_0_sda" : 4,
-    "wfg_drive_i2c_top_1_scl" : 3,
-    "wfg_drive_i2c_top_1_sda" : 2,
+    "wfg_drive_spi_top_0_din" : 9,
+    "wfg_drive_spi_top_1_din" : 8,
+    "wfg_drive_i2c_top_0_scl" : 7,
+    "wfg_drive_i2c_top_0_sda" : 6,
+    "wfg_drive_i2c_top_1_scl" : 5,
+    "wfg_drive_i2c_top_1_sda" : 4,
+    "wfg_drive_i2ct_top_0_scl" : 3,
+    "wfg_drive_i2ct_top_0_sda" : 2,
     "wfg_drive_uart_top_0_rx" : 1,
     "wfg_drive_uart_top_1_rx" : 0
   };
@@ -119,6 +123,7 @@ class FPGA_Reg:
         "MSB" : 7,
         "LSB" : 0
       },
+
       "wfg_drive_uart_top_0_select_0" : {
         "addr" : 0x44030,
         "disconnect" : 0x00,
@@ -147,6 +152,7 @@ class FPGA_Reg:
         "wfg_drive_pat_top_0" : 0x11,
         "wfg_drive_i2c_top_0" : 0x21,
         "wfg_drive_i2c_top_1" : 0x22,
+        "wfg_drive_i2ct_top_0" : 0x21,
         "wfg_drive_uart_top_0" : 0x31,
         "wfg_drive_uart_top_1" : 0x32,
         "MSB" : 7,
@@ -160,6 +166,7 @@ class FPGA_Reg:
         "wfg_drive_pat_top_0" : 0x11,
         "wfg_drive_i2c_top_0" : 0x21,
         "wfg_drive_i2c_top_1" : 0x22,
+        "wfg_drive_i2ct_top_0" : 0x21,
         "wfg_drive_uart_top_0" : 0x31,
         "wfg_drive_uart_top_1" : 0x32,
         "MSB" : 7,
@@ -173,6 +180,7 @@ class FPGA_Reg:
         "wfg_drive_pat_top_0" : 0x11,
         "wfg_drive_i2c_top_0" : 0x21,
         "wfg_drive_i2c_top_1" : 0x22,
+        "wfg_drive_i2ct_top_0" : 0x21,
         "wfg_drive_uart_top_0" : 0x31,
         "wfg_drive_uart_top_1" : 0x32,
         "MSB" : 7,
@@ -186,6 +194,7 @@ class FPGA_Reg:
         "wfg_drive_pat_top_0" : 0x11,
         "wfg_drive_i2c_top_0" : 0x21,
         "wfg_drive_i2c_top_1" : 0x22,
+        "wfg_drive_i2ct_top_0" : 0x21,
         "wfg_drive_uart_top_0" : 0x31,
         "wfg_drive_uart_top_1" : 0x32,
         "MSB" : 7,
@@ -214,8 +223,8 @@ class FPGA_Reg:
             "LSB" : 16
           }
         },
-        "VERSION" : {
-          "addr" : 0x40008,
+        "MODULE_INFO" : {
+          "addr" : 0x400fc,
           "PATCH" : {
             "MSB" : 7,
             "LSB" : 0
@@ -227,63 +236,14 @@ class FPGA_Reg:
           "MAJOR" : {
             "MSB" : 23,
             "LSB" : 16
-          }
-        },
-        "GENDATE" : {
-          "addr" : 0x4000c,
-          "YEAR" : {
-            "MSB" : 10,
-            "LSB" : 0
           },
-          "MONTH" : {
-            "MSB" : 14,
-            "LSB" : 11
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
           },
-          "DAY" : {
-            "MSB" : 19,
-            "LSB" : 15
-          },
-          "HOUR" : {
-            "MSB" : 23,
-            "LSB" : 20
-          },
-          "MINUTE" : {
-            "MSB" : 29,
-            "LSB" : 24
-          }
-        },
-        "INFO" : {
-          "addr" : 0x40010,
-          "CLK_SPEED" : {
-            "MSB" : 15,
-            "LSB" : 0
-          }
-        },
-        "DEBUG_IR" : {
-          "addr" : 0x400a0,
-          "VECTOR" : {
+          "BLOCK" : {
             "MSB" : 31,
-            "LSB" : 0
-          }
-        }
-      },
-      "wfg_subcore_top" : {
-        "CFG" : {
-          "addr" : 0x42004,
-          "SUBCYCLE" : {
-            "MSB" : 31,
-            "LSB" : 16
-          },
-          "SYNC" : {
-            "MSB" : 15,
-            "LSB" : 0
-          }
-        },
-        "CTRL" : {
-          "addr" : 0x42000,
-          "EN" : {
-            "MSB" : 0,
-            "LSB" : 0
+            "LSB" : 28
           }
         }
       },
@@ -571,6 +531,29 @@ class FPGA_Reg:
             "MSB" : 15,
             "LSB" : 0
           }
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x460fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
         }
       }
       ,
@@ -675,6 +658,30 @@ class FPGA_Reg:
             "LSB" : 1
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x600fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_stim_mem_top_1" : {
@@ -775,6 +782,30 @@ class FPGA_Reg:
           "END" : {
             "MSB" : 1,
             "LSB" : 1
+          }
+
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x601fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
           }
 
         }
@@ -879,6 +910,30 @@ class FPGA_Reg:
             "LSB" : 1
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x602fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_stim_mem_top_3" : {
@@ -981,6 +1036,30 @@ class FPGA_Reg:
             "LSB" : 1
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x603fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_drive_spi_top_0" : {
@@ -1035,7 +1114,7 @@ class FPGA_Reg:
         "SPI_LEN" : {
           "addr" : 0x8000c,
           "VAL" : {
-            "MSB" : 4,
+            "MSB" : 5,
             "LSB" : 0
           }
 
@@ -1053,6 +1132,30 @@ class FPGA_Reg:
           "VAL" : {
             "MSB" : 31,
             "LSB" : 0
+          }
+
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x800fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
           }
 
         }
@@ -1109,7 +1212,7 @@ class FPGA_Reg:
         "SPI_LEN" : {
           "addr" : 0x8010c,
           "VAL" : {
-            "MSB" : 4,
+            "MSB" : 5,
             "LSB" : 0
           }
 
@@ -1129,30 +1232,54 @@ class FPGA_Reg:
             "LSB" : 0
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x801fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_drive_pat_top_0" : {
+        "CTRL" : {
+          "addr" : 0x82000,
+          "EN" : {
+            "MSB" : 15,
+            "LSB" : 0
+          }
+
+        },
         "CFG" : {
           "addr" : 0x82004,
           "BEGIN" : {
             "MSB" : 7,
             "LSB" : 0
           },
-          "CORE_SEL" : {
-            "MSB" : 16,
-            "LSB" : 16
-          },
           "END" : {
             "MSB" : 15,
             "LSB" : 8
-          }
-
-        },
-        "CTRL" : {
-          "addr" : 0x82000,
-          "EN" : {
-            "MSB" : 15,
-            "LSB" : 0
+          },
+          "CORE_SEL" : {
+            "MSB" : 16,
+            "LSB" : 16
           }
 
         },
@@ -1171,6 +1298,30 @@ class FPGA_Reg:
             "LSB" : 0
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x820fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_drive_i2c_top_0" : {
@@ -1187,6 +1338,10 @@ class FPGA_Reg:
           "DEV_ID" : {
             "MSB" : 6,
             "LSB" : 0
+          },
+          "WAIT_STATE_ENABLED" : {
+            "MSB" : 8,
+            "LSB" : 8
           }
 
         },
@@ -1233,6 +1388,30 @@ class FPGA_Reg:
             "LSB" : 1
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x840fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_drive_i2c_top_1" : {
@@ -1249,6 +1428,10 @@ class FPGA_Reg:
           "DEV_ID" : {
             "MSB" : 6,
             "LSB" : 0
+          },
+          "WAIT_STATE_ENABLED" : {
+            "MSB" : 8,
+            "LSB" : 8
           }
 
         },
@@ -1293,6 +1476,104 @@ class FPGA_Reg:
           "DATA_FRAME_ERROR" : {
             "MSB" : 1,
             "LSB" : 1
+          }
+
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x841fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
+        }
+      },
+      "wfg_drive_i2ct_top_0" : {
+        "CTRL" : {
+          "addr" : 0x88000,
+          "EN" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+
+        },
+        "CFG" : {
+          "addr" : 0x88004,
+          "DEVID" : {
+            "MSB" : 7,
+            "LSB" : 1
+          },
+          "ADDRSIZE" : {
+            "MSB" : 8,
+            "LSB" : 8
+          },
+          "DATASIZE" : {
+            "MSB" : 16,
+            "LSB" : 15
+          }
+
+        },
+        "REGCFG" : {
+          "addr" : 0x88010,
+          "AUTOINC" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+
+        },
+        "REGADDR" : {
+          "addr" : 0x88014,
+          "ADDR" : {
+            "MSB" : 15,
+            "LSB" : 0
+          }
+
+        },
+        "REGWDATA" : {
+          "addr" : 0x88018,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+
+        },
+        "REGWMASK" : {
+          "addr" : 0x8801c,
+          "MASK" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+
+        },
+        "REGRDATA" : {
+          "addr" : 0x88020,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+
+        },
+        "REGRMASK" : {
+          "addr" : 0x88024,
+          "MASK" : {
+            "MSB" : 31,
+            "LSB" : 0
           }
 
         }
@@ -1341,6 +1622,30 @@ class FPGA_Reg:
             "LSB" : 20
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x860fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_drive_uart_top_1" : {
@@ -1385,6 +1690,30 @@ class FPGA_Reg:
           "SHIFT_DIR" : {
             "MSB" : 20,
             "LSB" : 20
+          }
+
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x861fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
           }
 
         }
@@ -1473,6 +1802,30 @@ class FPGA_Reg:
             "LSB" : 1
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0xa00fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_record_mem_top_1" : {
@@ -1557,6 +1910,30 @@ class FPGA_Reg:
           "END" : {
             "MSB" : 1,
             "LSB" : 1
+          }
+
+        },
+        "MODULE_INFO" : {
+          "addr" : 0xa01fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
           }
 
         }
@@ -1645,6 +2022,30 @@ class FPGA_Reg:
             "LSB" : 1
           }
 
+        },
+        "MODULE_INFO" : {
+          "addr" : 0xa02fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
         }
       },
       "wfg_record_mem_top_3" : {
@@ -1729,6 +2130,30 @@ class FPGA_Reg:
           "END" : {
             "MSB" : 1,
             "LSB" : 1
+          }
+
+        },
+        "MODULE_INFO" : {
+          "addr" : 0xa03fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
           }
 
         }

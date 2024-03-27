@@ -1,3 +1,4 @@
+import math
 from typing import Dict, List, Optional
 from .pin import Pin
 
@@ -140,14 +141,37 @@ class I2CDriver(Driver):
             read = type(transaction) is I2CRead
 
             command_frame = 0
-            command_frame += length & 0xff
-            command_frame += 1 << 16  # use device select in frame
-            command_frame += (transaction.deviceId & 0xff) << 17
-            command_frame |= (1 if read else 0) << 25
+            command_frame |= length & 0xff  # datalength
+            command_frame |= (1 if read else 0) << 9  # read/not write
+            command_frame |= 1 << 10  # use device select in frame
+            command_frame |= (transaction.deviceId & 0xff) << 16  # device Id
+            command_frame |= 0xC << 28  # command frame marker
 
             samples.append(command_frame)
-            if not read:
-                samples += transaction.data
+
+            data_frame = 0
+            data_frame |= 0xD << 28  # data frame marker
+
+            num_data_frames = math.ceil(length / 2.0)
+
+            data_frames = [data_frame] * num_data_frames
+            for i in range(num_data_frames):
+                # first data in frame
+                if not read:
+                    data_frames[i] |= (transaction.data[i * 2])  # data
+                if read:
+                    data_frames[i] |= 1 << 8  # ack
+                data_frames[i] |= 1 << 9  # valid
+
+                if (i + 1) * 2 <= length:
+                    # second data in frame
+                    if not read:
+                        data_frames[i] |= (transaction.data[i * 2 + 1]) << 16  # data
+                    if read:
+                        data_frames[i] |= 1 << 24  # ack
+                    data_frames[i] |= 1 << 25  # valid
+
+            samples += data_frames
 
         return samples
 
