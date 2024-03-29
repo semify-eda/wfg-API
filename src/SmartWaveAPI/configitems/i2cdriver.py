@@ -171,6 +171,9 @@ class I2CDriver(Driver):
                         data_frames[i] |= 1 << 24  # ack
                     data_frames[i] |= 1 << 25  # valid
 
+            if num_data_frames == 0:
+                data_frames.append(data_frame)
+
             samples += data_frames
 
         return samples

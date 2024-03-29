@@ -454,116 +454,16 @@ def main():
     start = time.time()
     with SmartWave().connect() as sw:
         sw.debugCallback = debug
-        # sw.readbackCallback = readback
         with sw.createI2CConfig(sda_pin_name="A3", scl_pin_name="A4") as i2c:
-            # i2c.setTransactions([
-            #   I2CWrite(0x20, bytes([0x55, 0xff])),
-            #   I2CWrite(0x20, bytes([0x55, 0xaa])),
-            # ])
-            print(i2c.write(0x20, [0x55, 0xff]))
-            # print(i2c.read(0x20, 1))
-            # i2c.write(0x20, [0x55, 0xaa])
 
-            # def make_command_frame(slave_id=0x0, use_slave_id_from_frame=0, read_not_write=0, datalen=1, no_stop_bit=0):
-            #     return (0xC << 28) | (slave_id << 16) | (use_slave_id_from_frame << 10) | (read_not_write << 9) | (no_stop_bit << 8) | datalen
-            #
-            # def make_data_frame(data0=0, data0_valid=0, data1=0, data1_valid=0):
-            #     return (0xD << 28) | (data1_valid << 25) | (data1 << 16) | (data0_valid << 9) | data0
-            #
-            #
-            # byte0 = 0x55
-            # byte1 = 0xaa
-            #
-            # cmd_frame_wr = make_command_frame(read_not_write=0, datalen=2)
-            # data_frame_wr1 = make_data_frame(data0=byte0, data0_valid=1, data1=0xff, data1_valid=1)
-            # data_frame_wr2 = make_data_frame(data0=byte0, data0_valid=1, data1=byte1, data1_valid=1)
-            #
-            #
-            # ##                       0              4       8             c             10       14             18      1c
-            # data_array = [cmd_frame_wr, data_frame_wr1, 0x4141, cmd_frame_wr, data_frame_wr2, 0x4242]
-
-            # configure_mem(sw, 0, data_array)
-
-
-            # connect_to_stim_0 = FPGA_Reg.registers["wfg_interconnect_top"]["wfg_drive_i2c_top_0_select_0"]["wfg_stim_mem_top_0"]
-            # connect_to_i2c_0 = FPGA_Reg.registers["wfg_interconnect_top"]["wfg_record_mem_top_1_select_0"]["wfg_drive_i2c_top_0"]
-            # configure_interconnect(sw, i2c0=connect_to_stim_0, recorder0=connect_to_i2c_0)
-
-            # configure_pin_mux(sw, output_pin_a3=FPGA_Reg.output_pins["wfg_drive_i2c_top_0_scl"],
-            #                       output_pin_a4=FPGA_Reg.output_pins["wfg_drive_i2c_top_0_sda"],
-            #                       pullup_pin_a3=1,
-            #                       pullup_pin_a4=1,
-            #                       input_pin_a3=FPGA_Reg.input_pins["wfg_drive_i2c_top_0_scl"],
-            #                       input_pin_a4=FPGA_Reg.input_pins["wfg_drive_i2c_top_0_sda"],
-            #                       output_pin_a2=37,
-            #                       output_pin_a1=40)
-
-            # configure_record_mem_0(sw)
-            # configure_drive_i2c_0(sw, en=1, div=50, ssel=0b0100000)
-            # configure_stim_mem_0(sw, en=1, start=0x0, end=0x8, count=0x01)
-            # configure_core(sw, en=1, sync_count=16, subcycle_count=8)
-            sw.trigger()
-
-            time.sleep(1)
-            #
-            # '''
-            #
-            # print("stim memory:")
-            # read_register(sw, FPGA_Reg.memory)
-            # read_register(sw, FPGA_Reg.memory+4)
-            # read_register(sw, FPGA_Reg.memory+8)
-            # read_register(sw, FPGA_Reg.memory+0xc)
-            # read_register(sw, FPGA_Reg.memory+0x10)
-            # read_register(sw, FPGA_Reg.memory+0x14)
-            # read_register(sw, FPGA_Reg.memory+0x18)
-            # read_register(sw, FPGA_Reg.memory+0x1c)
-            #
-            # '''
-            #
-            # recorder_memory_addr = FPGA_Reg.memory + (4<<13)
-            # print("recorder memory:")
-            # read_register(sw, recorder_memory_addr)
-            # read_register(sw, recorder_memory_addr+4)
-            # read_register(sw, recorder_memory_addr+8)
-            # read_register(sw, recorder_memory_addr+0xc)
-            # '''
-            #
-            # time.sleep(1)
-            #
-            # stim_mem_current_addr_addr = FPGA_Reg.registers["wfg_stim_mem_top_0"]["ADDR"]["addr"]
-            # stim_mem_current_start_addr = FPGA_Reg.registers["wfg_stim_mem_top_0"]["START"]["addr"]
-            # read_register(sw, stim_mem_current_addr_addr)
-            # read_register(sw, stim_mem_current_start_addr)
-            # '''
-            # print("reenable:")
-            # reenable_stim_mem_0(sw, start=0xc, end=0x14)
-            #
-            # localenv = FPGA_Reg.registers["wfg_stim_mem_top_0"]
-            #
-            # addr = localenv["START"]["addr"]
-            # read_register(sw, addr)
-            #
-            # addr = localenv["STOP"]["addr"]
-            # read_register(sw, addr)
-            #
-            # addr = localenv["CTRL"]["addr"]
-            # read_register(sw, addr)
-            #
-            # '''
-            # read_register(sw, stim_mem_current_addr_addr)
-            # read_register(sw, stim_mem_current_start_addr)
-            # '''
-            # time.sleep(1)
-            #
-            # print("recorder memory:")
-            # read_register(sw, recorder_memory_addr)
-            # read_register(sw, recorder_memory_addr+4)
-            # read_register(sw, recorder_memory_addr+8)
-            # read_register(sw, recorder_memory_addr+0xc)
+            # res = i2c.write(0x20, [0x55, 0xff, 0xaa])
+            device_ids = i2c.scanAdresses()
+            pass
 
 
 
     print("elapsed time: ", time.time() - start)
+    print(device_ids)
 
 
 if __name__ == "__main__":

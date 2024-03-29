@@ -90,7 +90,7 @@ class I2CConfig(Config):
             Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.
 
         :return: If blocking == true, return the information about the transaction on the I2C bus. Else return None.
-        :rtype: Union[bytes, List[I2CTransactionResult]]
+        :rtype: Union[None, List[I2CTransactionResult]]
         :raises Exception: If the blocking mode is requested and another callback
         for a readback operation is already registered
         :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
@@ -126,7 +126,7 @@ class I2CConfig(Config):
               data: bytes,
               blocking: bool = True,
               timeout: Union[float, None] = 1.0
-              ) -> Union[None, List[I2CTransactionResult]]:
+              ) -> Union[None, I2CTransactionResult]:
         """Write bytes over I2C with the connected device.
 
         If the same write transaction already exists on the device,
@@ -139,14 +139,24 @@ class I2CConfig(Config):
             Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.
 
         :return: If blocking == true, return the information on the transaction on the I2C bus. Else return None.
-        :rtype: Union[bytes, List[I2CTransactionResult]]
+        :rtype: Union[None, I2CTransactionResult]
         :raises Exception: If the blocking mode is requested and another callback
         for a readback operation is already registered
         :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
         transactions = [I2CWrite(device_id, data)]
-        return self.sendTransactions(transactions, blocking, timeout)
+        ret = self.sendTransactions(transactions, blocking, timeout)
 
-    def writeRegister(self, device_id: int, address: bytes, value: bytes):
+        if ret is not None and len(ret):
+            return ret[0]
+        else:
+            return ret
+
+    def writeRegister(self,
+                      device_id: int,
+                      address: bytes,
+                      value: bytes,
+                      blocking: bool = True,
+                      timeout: Union[float, None] = 1.0):
         """Write to a register on an I2C device.
 
         If the same write transaction already exists on the device,
@@ -154,8 +164,17 @@ class I2CConfig(Config):
 
         :param int device_id: The I2C device ID to write to
         :param bytes address: The address bytes of the target I2C register
-        :param bytes value: The value bytes of the target I2C register"""
-        self.write(device_id, address + value)
+        :param bytes value: The value bytes of the target I2C register
+        :param bool blocking: If true, wait for the response from the connected device
+        :param Union[float, None] timeout: How long to wait for the response from the device in seconds.
+            Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.
+
+        :return: If blocking == true, return the information on the transaction on the I2C bus. Else return None.
+        :rtype: Union[bytes, I2CTransactionResult]
+        :raises Exception: If the blocking mode is requested and another callback
+        for a readback operation is already registered
+        :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
+        return self.write(device_id, address + value, blocking, timeout)
 
     def _readCallback(self, recorder_id: int, values: List[int]):
         """Handle the result of an I2C read."""
@@ -165,13 +184,15 @@ class I2CConfig(Config):
                 info = values.pop(0)
 
                 datalen = info & (0xff)
-                device_id = info & (0xe7f << 8)
+                device_id = (info >> 8) & 0x7f
                 read = True if info & (1 << 16) else False
                 ack_device_id = True if info & (1 << 17) else False
 
                 data = []
                 data_acks = []
                 for i in range(math.ceil(datalen / 2.0)):
+                    if len(values) == 0:
+                        break
                     dataframe = values.pop(0)
 
                     # first
@@ -180,7 +201,7 @@ class I2CConfig(Config):
 
                     # second
                     if (dataframe & (1 << 25)):
-                        data.append(dataframe & (0xff << 16))
+                        data.append(dataframe >> 16 & 0xff)
                         data_acks.append(True if dataframe & (1 << 24) else False)
 
                 self._latestReadValues.append(I2CTransactionResult(
@@ -198,7 +219,7 @@ class I2CConfig(Config):
              length: int,
              blocking: bool = True,
              timeout: Union[float, None] = 1.0
-             ) -> Union[None, bytes]:
+             ) -> Union[None, I2CTransactionResult]:
         """Read bytes from an I2C device.
 
         If the same read transaction already exists on the device,
@@ -210,16 +231,27 @@ class I2CConfig(Config):
         :param Union[float, None] timeout: How long to wait for the response from the device in seconds.
             Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.
 
-        :return: If blocking == True, return the bytes that were read over I2C. Else return None.
-        :rtype: Union[None, List[I2CTransactionResult]]
+        :return: If blocking == True, return the information on the transaction on the I2C bus. Else return None.
+        :rtype: Union[None, I2CTransactionResult]
         :raises Exception: If the blocking mode is requested and another callback
         for a readback operation is already registered
         :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
 
         transactions = [I2CRead(device_id, length)]
-        return self.sendTransactions(transactions, blocking, timeout)
+        ret = self.sendTransactions(transactions, blocking, timeout)
 
-    def readRegister(self, device_id: int, address: bytes, length: int, blocking: bool = True) -> Union[None, bytes]:
+        if ret is not None and len(ret):
+            return ret[0]
+        else:
+            return ret
+
+
+    def readRegister(self,
+                     device_id: int,
+                     address: bytes,
+                     length: int,
+                     blocking: bool = True,
+                     timeout: Union[float, None] = 1.0) -> Union[None, List[I2CTransactionResult]]:
         """Read bytes from an I2C device at a specified address.
 
         If the same register transaction already exists on the device,
@@ -229,34 +261,22 @@ class I2CConfig(Config):
         :param bytes address: The address bytes where to read from on the I2C device
         :param int length: The number of bytes to read
         :param bool blocking: If true, wait for the response from the connected device
-        :return: If blocking == True, return the bytes that were read over I2C. Else return None.
         :rtype: Union[List[int], None]
+        :param Union[float, None] timeout: How long to wait for the response from the device in seconds.
+            Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.
+
+        :return: If blocking == True, return the information on the transaction on the I2C bus. Else return None.
+        :rtype: Union[None, I2CTransactionResult]
         :raises Exception: If the blocking mode is requested and another callback
-        for a readback operation is already registered"""
-        if blocking:
-            if self._device.readbackCallback is not None:
-                raise Exception("Cannot configure a blocking read operation because there is already a readback "
-                                "callback registered on the device")
+        for a readback operation is already registered
+        :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
 
-            # acquire callback
-            self._device.readbackCallback = self._readCallback
-
-        self.setTransactions([
+        transactions = [
             I2CWrite(device_id, address),
             I2CRead(device_id, length)
-        ])
-        self._device.trigger()
+        ]
 
-        if blocking:
-            # wait for readback
-            self._readSemaphore.acquire()
-
-            # release callback
-            self._device.readbackCallback = None
-
-            return self._latestReadValues
-
-        return None
+        return self.sendTransactions(transactions, blocking, timeout)
 
     def _getReadNumber(self) -> int:
         """Get the number of samples to read back from the device.
@@ -271,6 +291,44 @@ class I2CConfig(Config):
             readNumber += math.ceil(datalength / 2.0)
 
         return readNumber
+
+    def scanAdresses(self,
+                     range_lower: int = 0,
+                     range_upper: int = 0x7f,
+                     timeout: Union[float, None] = 5.0) -> List[int]:
+        """Scan a given range of addresses on the I2C Bus and return the list of connected device IDs.
+        
+        :param int range_lower: The address at which to start searching
+        :param int range_upper: The address at which to stop searching
+        :param Union[float, None] timeout: How long to wait for the response from the device in seconds.
+            Default 5s, set to None to deactivate timeout.
+        
+        :returns: A list of connected device IDs
+        :rtype: List[int]
+        :raises ValueError If the range is not within [0x00, 0x7f] or range_lower is bigger than range_upper
+        :raises Exception: If another callback for a readback operation is already registered"""
+        if range_lower > range_upper:
+            raise ValueError("range_lower cannot be bigger than range_upper")
+        if range_lower < 0:
+            raise ValueError("range_lower cannot be smaller than 0")
+        if range_upper > 0x7f:
+            raise ValueError("range_upper cannot be bigger than 0x7f")
+
+        transactions = [
+            I2CRead(x, 1)
+            for x in range(range_lower, range_upper + 1)
+        ]
+
+        results = self.sendTransactions(transactions, timeout=timeout)
+
+        device_ids = []
+        for result in results:
+            if (result.ack_device_id):
+                device_ids.append(result.device_id)
+
+        return device_ids
+
+
 
     @property
     def clockSpeed(self) -> int:
