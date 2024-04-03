@@ -292,7 +292,7 @@ class I2CConfig(Config):
 
         return readNumber
 
-    def scanAdresses(self,
+    def scanAddresses(self,
                      range_lower: int = 0,
                      range_upper: int = 0x7f,
                      timeout: Union[float, None] = 5.0) -> List[int]:
