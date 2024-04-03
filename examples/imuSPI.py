@@ -8,9 +8,9 @@ def main():
         with sw.createSPIConfig(
                 bit_width=16,
                 miso_pin_name="A1",
-                mosi_pin_name="A2",
+                mosi_pin_name="A4",
                 sclk_pin_name="A3",
-                cs_pin_name="A4",
+                cs_pin_name="A2",
                 clock_speed=int(2e6),
                 bit_numbering="MSB") as spi:
             whoami = spi.write([0x8f00])[0]

@@ -1,7 +1,10 @@
+from multiprocessing import Process
+
+import keyboard
+
 from SmartWaveAPI import SmartWave
 from SmartWaveAPI.definitions import I2CWrite, I2CRead, TriggerMode
 import time
-
 
 from fpga_reg import FPGA_Reg
 
@@ -452,18 +455,22 @@ def readback(recId, values):
 def main():
 
     start = time.time()
-    with SmartWave().connect() as sw:
+    with SmartWave().connect(reset = False, request_info= False, configure_general=False) as sw:
         sw.debugCallback = debug
-        with sw.createI2CConfig(sda_pin_name="A3", scl_pin_name="A4") as i2c:
+        # time.sleep(5)
+        with sw.createI2CConfig(sda_pin_name="A2", scl_pin_name="A3", clock_speed=4e3) as i2c:
 
-            # res = i2c.write(0x20, [0x55, 0xff, 0xaa])
-            device_ids = i2c.scanAdresses()
-            pass
+            print(i2c.sendTransactions([
+              I2CWrite(0x6b, [0xb0]),
+            ]))
+            print(i2c.sendTransactions([
+              I2CWrite(0x6a, [0x10, 0x20, 0x30]),
+              I2CWrite(0x6a, [0x10, 0x10]),
+            ]))
 
 
 
     print("elapsed time: ", time.time() - start)
-    print(device_ids)
 
 
 if __name__ == "__main__":
