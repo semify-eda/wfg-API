@@ -156,7 +156,7 @@ class I2CConfig(Config):
                       address: bytes,
                       value: bytes,
                       blocking: bool = True,
-                      timeout: Union[float, None] = 1.0):
+                      timeout: Union[float, None] = 1.0) -> Union[bool, None]:
         """Write to a register on an I2C device.
 
         If the same write transaction already exists on the device,
@@ -166,15 +166,25 @@ class I2CConfig(Config):
         :param bytes address: The address bytes of the target I2C register
         :param bytes value: The value bytes of the target I2C register
         :param bool blocking: If true, wait for the response from the connected device
-        :param Union[float, None] timeout: How long to wait for the response from the device in seconds.
+        :param Union[True, None] timeout: How long to wait for the response from the device in seconds.
             Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.
 
-        :return: If blocking == true, return the information on the transaction on the I2C bus. Else return None.
-        :rtype: Union[bytes, I2CTransactionResult]
+        :return: If blocking == true, return True if the transaction succeeded or throw an Error if not.
+            If blocking == false, return None.
+        :rtype: Union[True, None]
+        :raises ConnectionError: If the transaction on the I2C bus was not acknowledged by the target device.
         :raises Exception: If the blocking mode is requested and another callback
         for a readback operation is already registered
         :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
-        return self.write(device_id, address + value, blocking, timeout)
+        res = self.write(device_id, address + value, blocking, timeout)
+
+        if res is None:
+            return res
+        else:
+            if res.ack_device_id and False not in res.acks_data:
+                return True
+            else:
+                raise ConnectionError("The target device did not acknowledge the write operation.")
 
     def _readCallback(self, recorder_id: int, values: List[int]):
         """Handle the result of an I2C read."""
@@ -251,7 +261,7 @@ class I2CConfig(Config):
                      address: bytes,
                      length: int,
                      blocking: bool = True,
-                     timeout: Union[float, None] = 1.0) -> Union[None, List[I2CTransactionResult]]:
+                     timeout: Union[float, None] = 1.0) -> Union[bytes, None]:
         """Read bytes from an I2C device at a specified address.
 
         If the same register transaction already exists on the device,
@@ -265,8 +275,10 @@ class I2CConfig(Config):
         :param Union[float, None] timeout: How long to wait for the response from the device in seconds.
             Ignored if blocking is set to False, default 1s, set to None to deactivate timeout.
 
-        :return: If blocking == True, return the information on the transaction on the I2C bus. Else return None.
-        :rtype: Union[None, I2CTransactionResult]
+        :return: If blocking == True, return the read bytes from the target device or throw an Error if the connection failed.
+            If blocking == False, return None.
+        :rtype: Union[bytes, None]
+        :raises ConnectionError: If the transaction on the I2C bus was not acknowledged by the target device.
         :raises Exception: If the blocking mode is requested and another callback
         for a readback operation is already registered
         :raises TimeoutError: If the timeout for reading back from the device is exceeded."""
@@ -276,7 +288,17 @@ class I2CConfig(Config):
             I2CRead(device_id, length)
         ]
 
-        return self.sendTransactions(transactions, blocking, timeout)
+        res = self.sendTransactions(transactions, blocking, timeout)
+
+        if res is None:
+            return res
+        else:
+            for res_part in res:
+                if (not res_part.ack_device_id   # no ack in devId
+                        or (not res_part.read and False in res_part.acks_data)):  # no ack in write data
+                    raise ConnectionError("The target device did not acknowledge the read operation.")
+
+            return res[1].data
 
     def _getReadNumber(self) -> int:
         """Get the number of samples to read back from the device.
