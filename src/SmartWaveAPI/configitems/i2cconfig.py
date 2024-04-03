@@ -34,11 +34,11 @@ class I2CConfig(Config):
         self._driver.configure(clock_speed=clock_speed, scl_display_name=scl_display_name,
                                sda_display_name=sda_display_name)
 
-        self._driver.pins['SCL'] = sda_pin if sda_pin is not None else device.getNextAvailablePin()
-        self._driver.pins['SCL'].pullup = True
-
-        self._driver.pins['SDA'] = scl_pin if scl_pin is not None else device.getNextAvailablePin()
+        self._driver.pins['SDA'] = sda_pin if sda_pin is not None else device.getNextAvailablePin()
         self._driver.pins['SDA'].pullup = True
+
+        self._driver.pins['SCL'] = scl_pin if scl_pin is not None else device.getNextAvailablePin()
+        self._driver.pins['SCL'].pullup = True
 
         stimulus = device.getNextAvailableStimulus()
 
