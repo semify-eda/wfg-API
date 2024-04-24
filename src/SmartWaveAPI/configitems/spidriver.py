@@ -79,7 +79,8 @@ class SPIDriver(Driver):
             self._cspol,
             self._cphase,
             (cdiv >> 8) & 0xff,
-            cdiv & 0xff
+            cdiv & 0xff,
+            1
         ]))
 
     def _checkAndSetClockSpeed(self, clockSpeed: int):
