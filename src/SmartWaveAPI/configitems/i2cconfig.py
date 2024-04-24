@@ -337,7 +337,7 @@ class I2CConfig(Config):
             raise ValueError("range_upper cannot be bigger than 0x7f")
 
         transactions = [
-            I2CRead(x, 1)
+            I2CRead(x, 0)
             for x in range(range_lower, range_upper + 1)
         ]
 
