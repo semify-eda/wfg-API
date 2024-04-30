@@ -31,11 +31,13 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     logging.info(f"Initial output level of SCL pin: {input_level_a} with output type: {pin_output_type_a}")
     logging.info(f"Initial output level of SDA pin: {input_level_b} with output type: {pin_output_type_b}")
 
+    ###########################################
     # SCL and SDA pulled down
+    ###########################################
     logging.info("Set both SCL and SDA in pull-down mode.")
-    gpio_a.outputType = PinOutputType.PushPull
+    gpio_a.outputType = PinOutputType.OpenDrain
     pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    gpio_b.outputType = PinOutputType.PushPull
+    gpio_b.outputType = PinOutputType.OpenDrain
     pin_output_type_b = str(gpio_b.outputType).split('.')[1]
     gpio_a.pullup = False
     gpio_b.pullup = False
@@ -51,17 +53,19 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
                  f"and pull-up set to: {gpio_b.pullup}")
 
     if input_level_a:
-        logging.error("The SCL pin couldn't be pulled high")
+        logging.error("The SCL pin is shorted to VCC")
         errors += 1
     if input_level_b:
-        logging.error("The SDA pin couldn't be pulled high")
+        logging.error("The SDA pin is shorted to VCC")
         errors += 1
 
+    ###########################################
     # SCL and SDA pulled up
-    logging.info("Set both SCL and SDA in pull-up mode.")
-    gpio_a.outputType = PinOutputType.PushPull
+    ###########################################
+    logging.info("Setting both SCL and SDA in pull-up mode.")
+    gpio_a.outputType = PinOutputType.OpenDrain
     pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    gpio_b.outputType = PinOutputType.PushPull
+    gpio_b.outputType = PinOutputType.OpenDrain
     pin_output_type_b = str(gpio_b.outputType).split('.')[1]
     gpio_a.pullup = True
     gpio_b.pullup = True
@@ -77,10 +81,10 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
                  f"and pull-up set to: {gpio_b.pullup}")
 
     if not input_level_a:
-        logging.error("The SCL pin couldn't be pulled low")
+        logging.error("The SCL pin is shorted to GND")
         errors += 1
     if not input_level_b:
-        logging.error("The SDA pin couldn't be pulled low")
+        logging.error("The SDA pin is shorted to GND")
         errors += 1
 
     if errors > 0:
@@ -114,7 +118,7 @@ def gpio_short(gpio_a, gpio_b) -> None:
     logging.info(f"Output level of SDA pin: {input_level_b}")
 
     if input_level_a == input_level_b:
-        logging.critical("There is a short between SCL and SDA.")
+        logging.critical("There is a short between the SCL and SDA lines.")
         raise ConnectionError("Terminating code.")
 
     logging.info("Set SCL high and SDA low.")
@@ -127,7 +131,7 @@ def gpio_short(gpio_a, gpio_b) -> None:
     logging.info(f"Output level of SDA pin: {input_level_b}")
 
     if input_level_a == input_level_b:
-        logging.critical("There is a short between SCL and SDA.")
+        logging.critical("There is a short between the SCL and SDA lines.")
         raise ConnectionError("Terminating code.")
 
 
@@ -158,13 +162,13 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
     dummy_byte = (0).to_bytes(1, 'big')
     i2c_addr_list = np.arange(addr_lower, addr_upper + 1)
     for addr in range(len(i2c_addr_list)):
-        i2c.write(int(i2c_addr_list[addr]), dummy_byte)  # TODO: replace with read/write function to return ACK
-        ack = i2c.read(int(i2c_addr_list[addr]), 1)
-        if ack is None:
+        i2c.write(int(i2c_addr_list[addr]), dummy_byte)
+        i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
+        if i2c_data.ack_device_id is None:
             logging.warning("No device is connected to SmartWave.")
             logging.warning("Check if all the wires are properly connected.")
             raise ConnectionError
-        if ack[0] == 0xff:
+        if i2c_data.ack_device_id is False:
             if addr == i2c_addr_list[-1]:
                 logging.warning("Couldn't reach device.")
             continue
@@ -235,7 +239,7 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: bytes,
 
     # Register write
     i2c.writeRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'), data_to_write.to_bytes(data_length, 'big'))
-    logging.info(f"Value written: {data_to_write:#0x} to address {reg_pointer[0]:#0x}")
+    logging.info(f"Value written: {data_to_write:#0x} to register address {reg_pointer[0]:#0x}")
 
     # Register read
     reg_read_back = i2c.readRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'), data_length)
@@ -243,7 +247,7 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: bytes,
     max_shift = (data_length - 1) * 8
     for pos in range(data_length):
         data_read_back |= reg_read_back[pos] << (max_shift - (pos * 8))
-    logging.info(f"Value read back: {data_read_back:#0x} from address {reg_pointer[0]:#0x}")
+    logging.info(f"Value read back: {data_read_back:#0x} from register address {reg_pointer[0]:#0x}")
 
     if data_to_write != data_read_back:
         logging.error("The value read back from the register does not match the written value")
@@ -280,10 +284,12 @@ def main():
 
     args = parser.parse_args()
 
+    # Create directory to save the log files
     directory = "./i2c_check_logs"
     if not os.path.exists(directory):
         os.mkdir(directory)
 
+    # Basic configuration for logging
     date_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S")
     file_name = f'I2C_coms_check_{date_time}.log'
     fq_fn = os.path.join(directory, file_name)
@@ -295,6 +301,7 @@ def main():
                                   logging.FileHandler(filename=fq_fn)
                                   ]
                         )
+    # Parameters for I2C object configuration
     scl = args.scl_pin
     sda = args.sda_pin
     fast_clk = int(400e3)
@@ -302,17 +309,27 @@ def main():
 
     logging.info("Starting the I2C Communication Test for SmartWave")
 
+    # Setup connection to SmartWave
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
+
+        ###########################################
+        # Check the SCL and SDA lines
+        ###########################################
         with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
             with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
-                logging.info(f"Create a GPIO instance on target pins {scl} and {sda}")
-                logging.info("Test if SCL and SDA can be pulled-down and pulled-up.")
+                logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
+                logging.info("Test whether SCL and SDA can be pulled-down and pulled-up.")
                 gpio_high_low(gpio_A, gpio_B)
                 logging.info("Check for shorts between SCL and SDA")
                 gpio_short(gpio_A, gpio_B)
+                logging.info("The SCL and SDA line checks have been successfully completed.")
+                logging.info("Moving on to the I2C communication setup check.")
 
-        with sw.createI2CConfig(scl, sda, fast_clk) as i2c:
+        ###########################################
+        # Start the I2C communication check
+        ###########################################
+        with sw.createI2CConfig(sda_pin_name=sda, scl_pin_name=scl, clock_speed=fast_clk) as i2c:
             logging.info(f"SCL is set to pin: {scl} | SDA is set to pin: {sda} "
                          f"| I2C clock running at {fast_clk // 1e3} kHz")
             logging.info("Trying to connect to the target device")
@@ -327,25 +344,13 @@ def main():
                     logging.debug("Connection was unsuccessful.")
                     logging.debug("Swapping the SDA / SCL lines and trying to reconnect to device.")
                     i2c.delete()
-                    i2c = sw.createI2CConfig(sda, scl, slow_clk)
+                    i2c = sw.createI2CConfig(scl_pin_name=sda, sda_pin_name=scl, clock_speed=slow_clk)
                     i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
                     if i2c_dev_addr is None:
                         logging.error("Couldn't reach device. Terminating code.")
                         raise ConnectionError("Terminating code.")
 
-                    """
-                    logging.debug("Please swap the SDA / SCL lines and retry")  # TODO: Automate (?)
-                    retry = input("Press 'R' to retry or 'Q' to quit: ")
-                    if retry.upper() == 'R':
-                        i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
-                        if i2c_dev_addr is None:
-                            logging.error("Couldn't reach device. Terminating code.")
-                            raise ValueError("Terminating code.")
-                    else:
-                        logging.error("Couldn't reach device. Terminating code.")
-                        raise ValueError("Terminating code.")
-                    """
-
+            # If provided, read out the unique manufacturer ID from the given register
             if args.unique_id:
                 logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
                 hex_id = args.unique_id.split('x')[-1]
@@ -354,8 +359,11 @@ def main():
                 unique_id = bytes.fromhex(hex_id)
                 read_dev_id(i2c, i2c_dev_addr, unique_id)
 
+            # If provided, access the user-specified register and write to it.
+            # Read back the modified register content to ensure that it was successfully accessed and written to.
             if args.reg_pointer:
                 logging.info("Perform a register write / read operation on target device.")
+                # Take the register address and the length of the address passed by the user.
                 hex_addr = args.reg_pointer.split('x')[-1]
                 if len(hex_addr) % 2:
                     hex_addr = "".join(['0', hex_addr])
@@ -365,6 +373,7 @@ def main():
                 else:
                     addr_length = len(reg_pointer)
 
+                # Take the data to write and the length of the data passed by the user.
                 hex_val = args.reg_value.split('x')[-1]
                 if len(hex_val) % 2:
                     hex_val = "".join(['0', hex_val])
@@ -374,6 +383,7 @@ def main():
                 else:
                     data_length = len(reg_value)
 
+                # Call the register read/write function with the user-defined values
                 register_r_w(i2c, i2c_dev_addr, reg_pointer, reg_value, addr_length, data_length)
 
             logging.info(f"I2C checklist was successfully completed. "
