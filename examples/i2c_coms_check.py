@@ -2,6 +2,7 @@
 Test script to check I2C communication setup
 """
 import sys
+import re
 import os
 import logging
 import time
@@ -11,10 +12,11 @@ from typing import Union, Optional
 import numpy as np
 
 from SmartWaveAPI import SmartWave
-from SmartWaveAPI.definitions import PinOutputType
+# from SmartWaveAPI.definitions import PinOutputType
+from fpga_reg import FPGA_Reg
 
 
-def gpio_high_low(gpio_a, gpio_b) -> None:
+def gpio_high_low(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     """
     Test if SDA and SCL can be pulled-down or up.
 
@@ -23,34 +25,34 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     :return: None
     """
     errors = 0
-    # Test initial condition
-    pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    pin_output_type_b = str(gpio_b.outputType).split('.')[1]
-    input_level_a = gpio_a.inputLevel
-    input_level_b = gpio_b.inputLevel
-    logging.info(f"Initial output level of SCL pin: {input_level_a} with output type: {pin_output_type_a}")
-    logging.info(f"Initial output level of SDA pin: {input_level_b} with output type: {pin_output_type_b}")
+    pin_0 = str(pin_conf_a)  # TODO: use pin_conf to select the correct output_sel and pullup_sel
+    pin_1 = str(pin_conf_b)
+
+    # TODO: Update the API functions to correctly set the pullup / pulldown modes
+    #       Direct register access should not be available to customers.
+    localenv = FPGA_Reg.registers["wfg_pin_mux_top"]
+    addr = localenv["OUTPUT_SEL_0"]["addr"]
+    pingroup = 0
+    pingroup |= 0 << localenv["OUTPUT_SEL_0"][pin_0]["LSB"]
+    pingroup |= 0 << localenv["OUTPUT_SEL_0"][pin_1]["LSB"]
+    sw.writeFPGARegister(addr, pingroup)
 
     ###########################################
     # SCL and SDA pulled down
     ###########################################
     logging.info("Set both SCL and SDA in pull-down mode.")
-    gpio_a.outputType = PinOutputType.OpenDrain
-    pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    gpio_b.outputType = PinOutputType.OpenDrain
-    pin_output_type_b = str(gpio_b.outputType).split('.')[1]
-    gpio_a.pullup = False
-    gpio_b.pullup = False
-    gpio_a.level = 0
-    gpio_b.level = 0
+    addr = localenv["PULLUP_SEL_0"]["addr"]
+    pingroup = 0
+    pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
+    pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
+    sw.writeFPGARegister(addr, pingroup)
+
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
 
-    logging.info(f"Input level of SCL pin: {input_level_a} with output type: {pin_output_type_a} "
-                 f"and pull-up set to: {gpio_a.pullup}")
-    logging.info(f"Input level of SDA pin: {input_level_b} with output type: {pin_output_type_b} "
-                 f"and pull-up set to: {gpio_b.pullup}")
+    logging.info(f"Input level of SCL pin: {input_level_a} with pulldown enabled")
+    logging.info(f"Input level of SDA pin: {input_level_b} with pulldown enabled")
 
     if input_level_a:
         logging.error("The SCL pin is shorted to VCC")
@@ -62,23 +64,18 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
     ###########################################
     # SCL and SDA pulled up
     ###########################################
-    logging.info("Setting both SCL and SDA in pull-up mode.")
-    gpio_a.outputType = PinOutputType.OpenDrain
-    pin_output_type_a = str(gpio_a.outputType).split('.')[1]
-    gpio_b.outputType = PinOutputType.OpenDrain
-    pin_output_type_b = str(gpio_b.outputType).split('.')[1]
-    gpio_a.pullup = True
-    gpio_b.pullup = True
-    gpio_a.level = 1
-    gpio_b.level = 1
+    logging.info("Setting both SCL and SDA in pullup mode.")
+    addr = localenv["PULLUP_SEL_0"]["addr"]
+    pingroup = 0
+    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
+    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
+    sw.writeFPGARegister(addr, pingroup)
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
 
-    logging.info(f"Input level of SCL pin: {input_level_a} with output type: {pin_output_type_a} "
-                 f"and pull-up set to: {gpio_a.pullup}")
-    logging.info(f"Input level of SDA pin: {input_level_b} with output type: {pin_output_type_b} "
-                 f"and pull-up set to: {gpio_b.pullup}")
+    logging.info(f"Input level of SCL pin: {input_level_a} with pullup enabled.")
+    logging.info(f"Input level of SDA pin: {input_level_b} with pullup enabled.")
 
     if not input_level_a:
         logging.error("The SCL pin is shorted to GND")
@@ -91,7 +88,7 @@ def gpio_high_low(gpio_a, gpio_b) -> None:
         raise ConnectionError("Terminating code.")
 
 
-def gpio_short(gpio_a, gpio_b) -> None:
+def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     """
     Test if there's a short between the SCL and SDA lines
 
@@ -99,18 +96,21 @@ def gpio_short(gpio_a, gpio_b) -> None:
     :param gpio_b: SmartWave GPIO_B object
     :return: None
     """
-    # TODO: Due to HW limitations, currently we can only check if a pin is shorted to GND or logic 0
-
-    gpio_a.outputType = PinOutputType.OpenDrain
-    gpio_b.outputType = PinOutputType.OpenDrain
-    input_level_a = gpio_a.inputLevel
-    input_level_b = gpio_b.inputLevel
-    logging.info(f"Initial output level of SCL pin: {input_level_a}")
-    logging.info(f"Initial output level of SDA pin: {input_level_b}")
+    pin_0 = str(pin_conf_a)
+    pin_1 = str(pin_conf_b)
+    localenv = FPGA_Reg.registers["wfg_pin_mux_top"]
+    addr = localenv["OUTPUT_SEL_0"]["addr"]
+    pingroup = 0
+    pingroup |= 0 << localenv["OUTPUT_SEL_0"][pin_0]["LSB"]
+    pingroup |= 0 << localenv["OUTPUT_SEL_0"][pin_1]["LSB"]
+    sw.writeFPGARegister(addr, pingroup)
 
     logging.info("Set SCL low and SDA high.")
-    gpio_a.level = 0
-    gpio_b.level = 1
+    addr = localenv["PULLUP_SEL_0"]["addr"]
+    pingroup = 0
+    pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
+    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
+    sw.writeFPGARegister(addr, pingroup)
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
@@ -122,8 +122,10 @@ def gpio_short(gpio_a, gpio_b) -> None:
         raise ConnectionError("Terminating code.")
 
     logging.info("Set SCL high and SDA low.")
-    gpio_a.level = 1
-    gpio_b.level = 0
+    pingroup = 0
+    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
+    pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
+    sw.writeFPGARegister(addr, pingroup)
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
@@ -133,6 +135,12 @@ def gpio_short(gpio_a, gpio_b) -> None:
     if input_level_a == input_level_b:
         logging.critical("There is a short between the SCL and SDA lines.")
         raise ConnectionError("Terminating code.")
+
+    # Re-enable the pullups for the I2C communication check
+    pingroup = 0
+    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
+    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
+    sw.writeFPGARegister(addr, pingroup)
 
 
 def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
@@ -320,9 +328,11 @@ def main():
             with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
                 logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
                 logging.info("Test whether SCL and SDA can be pulled-down and pulled-up.")
-                gpio_high_low(gpio_A, gpio_B)
+                pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
+                pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
+                gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
                 logging.info("Check for shorts between SCL and SDA")
-                gpio_short(gpio_A, gpio_B)
+                gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
                 logging.info("The SCL and SDA line checks have been successfully completed.")
                 logging.info("Moving on to the I2C communication setup check.")
 
