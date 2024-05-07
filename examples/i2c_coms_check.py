@@ -7,6 +7,8 @@ import os
 import logging
 import time
 import argparse
+import pkg_resources
+
 from datetime import datetime
 from typing import Union, Optional
 import numpy as np
@@ -85,7 +87,7 @@ def gpio_high_low(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
         errors += 1
 
     if errors > 0:
-        raise ConnectionError("Terminating code.")
+        exit("Terminating code.")
 
 
 def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
@@ -119,7 +121,7 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
 
     if input_level_a == input_level_b:
         logging.critical("There is a short between the SCL and SDA lines.")
-        raise ConnectionError("Terminating code.")
+        exit("Terminating code.")
 
     logging.info("Set SCL high and SDA low.")
     pingroup = 0
@@ -134,7 +136,7 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
 
     if input_level_a == input_level_b:
         logging.critical("There is a short between the SCL and SDA lines.")
-        raise ConnectionError("Terminating code.")
+        exit("Terminating code.")
 
     # Re-enable the pullups for the I2C communication check
     pingroup = 0
@@ -152,58 +154,65 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
     :param addr_upper: Upper value for the I2C address sweep
     :return: device specific I2C address
     """
-
-    logging.info(f"Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
     if addr_lower < 0:
         logging.warning("Minimum value for the lower range can't be a negative number!")
-        raise ValueError("Terminating code.")
+        logging.debug("Resetting the lower address value to the default 0.")
+        addr_lower = 0
 
     if addr_upper > 127:
         logging.warning("Maximum value for the upper range can't be greater than 127!")
-        raise ValueError("Terminating code.")
+        logging.debug("Resetting the upper address value to the default 127.")
+        addr_upper = 127
 
-    if addr_upper <= addr_lower:
-        logging.warning("The upper value can't be less than or equal to the lower value!")
-        raise ValueError("Terminating code.")
+    if addr_upper < addr_lower:
+        logging.warning("The upper value can't be less than the lower value!")
+        logging.debug("Swapping the upper value with the lower value.")
+        addr_swap = addr_upper
+        addr_upper = addr_lower
+        addr_lower = addr_swap
+        logging.info(f"The new lower value is: {addr_lower} and the new upper value is: {addr_upper}.")
+
+    logging.info(f"Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
 
     i2c_addr = None
     dummy_byte = (0).to_bytes(1, 'big')
     i2c_addr_list = np.arange(addr_lower, addr_upper + 1)
-    for addr in range(len(i2c_addr_list)):
-        i2c.write(int(i2c_addr_list[addr]), dummy_byte)
-        i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
+
+    # Check a single address passed by the user
+    if len(i2c_addr_list) == 1:
+        i2c.write(int(i2c_addr_list[0]), dummy_byte)
+        i2c_data = i2c.read(int(i2c_addr_list[0]), 1)
         if i2c_data.ack_device_id is None:
             logging.warning("No device is connected to SmartWave.")
             logging.warning("Check if all the wires are properly connected.")
-            raise ConnectionError
-        if i2c_data.ack_device_id is False:
-            if addr == i2c_addr_list[-1]:
-                logging.warning("Couldn't reach device.")
-            continue
-        i2c_addr = i2c_addr_list[addr]
-        logging.info(f"Connection was successful. I2C address is: {i2c_addr:#0x}")
-        break
+            exit("Terminating code")
+        elif i2c_data.ack_device_id is False:
+            logging.warning("Couldn't reach device.")
+        else:
+            i2c_addr = i2c_addr_list[0]
+            logging.info(f"Connection was successful. I2C address is: {i2c_addr:#0x}")
+
+    # Sweep the possible addresses within the given range
+    else:
+        for addr in range(len(i2c_addr_list)):
+            i2c.write(int(i2c_addr_list[addr]), dummy_byte)
+            i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
+            if i2c_data.ack_device_id is None:
+                logging.warning("No device is connected to SmartWave.")
+                logging.warning("Check if all the wires are properly connected.")
+                exit("Terminating code")
+            if i2c_data.ack_device_id is False:
+                if addr == i2c_addr_list[-1]:
+                    logging.warning("Couldn't reach device.")
+                continue
+            i2c_addr = i2c_addr_list[addr]
+            logging.info(f"Connection was successful. I2C address is: {i2c_addr:#0x}")
+            break
 
     return i2c_addr
 
 
-def read_dev_id(i2c, i2c_addr: int, reg_pointer: bytes, length: Optional[int] = 1) -> None:
-    """
-    Read a user specified register of the target device for identification
-
-    :param i2c: SmartWave I2C object
-    :param i2c_addr: Device Specific I2C address
-    :param reg_pointer: User defined register address
-    :param length: Register length as bytes
-    :return: None
-    """
-    dummy_byte = (0).to_bytes(length, 'big')
-    i2c.writeRegister(i2c_addr, reg_pointer, dummy_byte)
-    device_id = i2c.readRegister(i2c_addr, reg_pointer, length)
-    logging.info(f"Unique Device ID: {device_id[0]:#0x}")
-
-
-def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: bytes,
+def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: Optional[bytes] = None,
                  addr_length: Optional[int] = 1, data_length: Optional[int] = 1) -> None:
     """
     Simple function that performs a register read/write with user defined address and data
@@ -231,35 +240,47 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: bytes,
     else:
         addr_to_write = int.from_bytes(reg_pointer)
 
-    if (data_length != 1) and (len(reg_val) > 1):
+    # If register value is not set, then only read out the content of the specified register
+    if reg_val is None:
+        reg_read_back = i2c.readRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'), data_length)
+        data_read_back = 0
         max_shift = (data_length - 1) * 8
-        data_to_write = 0
         for pos in range(data_length):
-            data_to_write |= reg_val[pos] << (max_shift - (pos * 8))
-    elif (data_length != 1) and (len(reg_val) == 1):
-        data_to_write = []
-        reg_value = int.from_bytes(reg_val)
-        for _ in range(data_length):
-            data_to_write.append(reg_value)
-        data_to_write = int.from_bytes(bytes(data_to_write))
+            data_read_back |= reg_read_back[pos] << (max_shift - (pos * 8))
+        logging.info(f"Value read back: {data_read_back:#0x} from register address: {reg_pointer[0]:#0x}")
+
+    # Modify the register value then do a readout and compare the results
     else:
-        data_to_write = int.from_bytes(reg_val)
+        if (data_length != 1) and (len(reg_val) > 1):
+            max_shift = (data_length - 1) * 8
+            data_to_write = 0
+            for pos in range(data_length):
+                data_to_write |= reg_val[pos] << (max_shift - (pos * 8))
+        elif (data_length != 1) and (len(reg_val) == 1):
+            data_to_write = []
+            reg_value = int.from_bytes(reg_val)
+            for _ in range(data_length):
+                data_to_write.append(reg_value)
+            data_to_write = int.from_bytes(bytes(data_to_write))
+        else:
+            data_to_write = int.from_bytes(reg_val)
 
-    # Register write
-    i2c.writeRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'), data_to_write.to_bytes(data_length, 'big'))
-    logging.info(f"Value written: {data_to_write:#0x} to register address {reg_pointer[0]:#0x}")
+        # Register write
+        i2c.writeRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'),
+                          data_to_write.to_bytes(data_length, 'big'))
+        logging.info(f"Value written: {data_to_write:#0x} to register address {reg_pointer[0]:#0x}")
 
-    # Register read
-    reg_read_back = i2c.readRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'), data_length)
-    data_read_back = 0
-    max_shift = (data_length - 1) * 8
-    for pos in range(data_length):
-        data_read_back |= reg_read_back[pos] << (max_shift - (pos * 8))
-    logging.info(f"Value read back: {data_read_back:#0x} from register address {reg_pointer[0]:#0x}")
+        # Register read
+        reg_read_back = i2c.readRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'), data_length)
+        data_read_back = 0
+        max_shift = (data_length - 1) * 8
+        for pos in range(data_length):
+            data_read_back |= reg_read_back[pos] << (max_shift - (pos * 8))
+        logging.info(f"Value read back: {data_read_back:#0x} from register address {reg_pointer[0]:#0x}")
 
-    if data_to_write != data_read_back:
-        logging.error("The value read back from the register does not match the written value")
-        raise ValueError("Terminating code.")
+        if data_to_write != data_read_back:
+            logging.error("The value read back from the register does not match the written value!")
+            exit()
 
 
 def main():
@@ -276,13 +297,15 @@ def main():
 
     # Command line arguments provided by the user
     parser = argparse.ArgumentParser(description="Access Registers.")
-    parser.add_argument("-scl", "--scl_pin", type=str, help="Select the desired SCL Pin", default='A1')
-    parser.add_argument("-sda", "--sda_pin", type=str, help="Select the desired SDA Pin", default='A2')
+    parser.add_argument("-log", "--log_location", type=str, help="User defined location for log files")
 
-    parser.add_argument("-lower", "--addr_lower", type=int, help="Select the desired SCL Pin", default=0)
-    parser.add_argument("-upper", "--addr_upper", type=int, help="Select the desired SDA Pin", default=127)
+    parser.add_argument("-scl", "--scl_pin", type=str, help="Select the desired SCL Pin on SmartWave", default='A1')
+    parser.add_argument("-sda", "--sda_pin", type=str, help="Select the desired SDA Pin on SmartWave", default='A2')
 
-    parser.add_argument("-id", "--unique_id", type=str, help="Register address of unique device ID in HEX format.")
+    parser.add_argument("-lower", "--addr_lower", type=int, help="Select the lower address value for the I2C address sweep", default=0)
+    parser.add_argument("-upper", "--addr_upper", type=int, help="Select the upper address value for the I2C address sweep", default=127)
+
+    parser.add_argument("-rw", "--reg_read_write", type=int, help="Read/Write flag for register access.", default=1)
 
     parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX format.")
     parser.add_argument("-rp_len", "--num_addr_byte", type=int, help="Set the number of Address bytes")
@@ -293,7 +316,11 @@ def main():
     args = parser.parse_args()
 
     # Create directory to save the log files
-    directory = "./i2c_check_logs"
+    if args.log_location:
+        directory = args.log_location
+    else:
+        directory = "./i2c_check_logs"
+
     if not os.path.exists(directory):
         os.mkdir(directory)
 
@@ -320,6 +347,13 @@ def main():
     # Setup connection to SmartWave
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
+        installed_packages = pkg_resources.working_set
+        for package in installed_packages:
+            if package.key == "smartwaveapi":
+                logging.info(f"SmartWaveAPI Version: {package.version}")
+                break
+        sw.infoCallback = lambda hw, uc, fpga, flashID: logging.info(
+            f"Hardware version: {hw}\tMicrocontroller version: {uc}\tFPGA version: {fpga}\t")
 
         ###########################################
         # Check the SCL and SDA lines
@@ -358,22 +392,13 @@ def main():
                     i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
                     if i2c_dev_addr is None:
                         logging.error("Couldn't reach device. Terminating code.")
-                        raise ConnectionError("Terminating code.")
+                        exit()
 
-            # If provided, read out the unique manufacturer ID from the given register
-            if args.unique_id:
-                logging.info(f"Read target specific register for device ID with address: {i2c_dev_addr:#0x}")
-                hex_id = args.unique_id.split('x')[-1]
-                if len(hex_id) % 2:
-                    hex_id = "".join(['0', hex_id])
-                unique_id = bytes.fromhex(hex_id)
-                read_dev_id(i2c, i2c_dev_addr, unique_id)
-
-            # If provided, access the user-specified register and write to it.
-            # Read back the modified register content to ensure that it was successfully accessed and written to.
+            # Access the user specified register and read out its content
             if args.reg_pointer:
-                logging.info("Perform a register write / read operation on target device.")
-                # Take the register address and the length of the address passed by the user.
+                reg_value = None
+                if args.reg_read_write:
+                    logging.info("Perform a register read operation on the target device")
                 hex_addr = args.reg_pointer.split('x')[-1]
                 if len(hex_addr) % 2:
                     hex_addr = "".join(['0', hex_addr])
@@ -382,16 +407,27 @@ def main():
                     addr_length = int(args.num_addr_byte)
                 else:
                     addr_length = len(reg_pointer)
-
-                # Take the data to write and the length of the data passed by the user.
-                hex_val = args.reg_value.split('x')[-1]
-                if len(hex_val) % 2:
-                    hex_val = "".join(['0', hex_val])
-                reg_value = bytes.fromhex(hex_val)
                 if args.num_data_byte:
                     data_length = int(args.num_data_byte)
                 else:
-                    data_length = len(reg_value)
+                    logging.debug("Length of the data value wasn't set. Using default value of one byte.")
+                    data_length = 1
+
+                # Modify the content of the specified register and read it back for validation
+                if not args.reg_read_write:
+                    logging.info("Perform a register write and read operation on target device.")
+                    if args.reg_value is None:
+                        logging.warning("Cannot perform register write if value is not given")
+                        exit(f"Terminating code.")
+                    else:
+                        hex_val = args.reg_value.split('x')[-1]
+                        if len(hex_val) % 2:
+                            hex_val = "".join(['0', hex_val])
+                        reg_value = bytes.fromhex(hex_val)
+                        if args.num_data_byte:
+                            data_length = int(args.num_data_byte)
+                        else:
+                            data_length = len(reg_value)
 
                 # Call the register read/write function with the user-defined values
                 register_r_w(i2c, i2c_dev_addr, reg_pointer, reg_value, addr_length, data_length)
