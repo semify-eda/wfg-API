@@ -18,20 +18,22 @@ from SmartWaveAPI import SmartWave
 from fpga_reg import FPGA_Reg
 
 
-def gpio_high_low(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
+def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: int) -> None:
     """
     Test if SDA and SCL can be pulled-down or up.
 
-    :param gpio_a: SmartWave GPIO_A object
-    :param gpio_b: SmartWave GPIO_B object
+    :param sw: SmartWave object used for accessing the FPGA's registers
+    :param gpio_a: SmartWave GPIO_A object used to measure the input level on the selected pin
+    :param gpio_b: SmartWave GPIO_B object used to measure the input level on the selected pin
+    :param pin_conf_a: Used to enable to selected pin in the FPGA's register
+    :param pin_conf_b: Used to enable to selected pin in the FPGA's register
     :return: None
     """
+
     errors = 0
-    pin_0 = str(pin_conf_a)  # TODO: use pin_conf to select the correct output_sel and pullup_sel
+    pin_0 = str(pin_conf_a)
     pin_1 = str(pin_conf_b)
 
-    # TODO: Update the API functions to correctly set the pullup / pulldown modes
-    #       Direct register access should not be available to customers.
     localenv = FPGA_Reg.registers["wfg_pin_mux_top"]
     addr = localenv["OUTPUT_SEL_0"]["addr"]
     pingroup = 0
@@ -94,10 +96,14 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     """
     Test if there's a short between the SCL and SDA lines
 
-    :param gpio_a: SmartWave GPIO_A object
-    :param gpio_b: SmartWave GPIO_B object
+    :param sw: SmartWave object used for accessing the FPGA's registers
+    :param gpio_a: SmartWave GPIO_A object used to measure the input level on the selected pin
+    :param gpio_b: SmartWave GPIO_B object used to measure the input level on the selected pin
+    :param pin_conf_a: Used to enable to selected pin in the FPGA's register
+    :param pin_conf_b: Used to enable to selected pin in the FPGA's register
     :return: None
     """
+
     pin_0 = str(pin_conf_a)
     pin_1 = str(pin_conf_b)
     localenv = FPGA_Reg.registers["wfg_pin_mux_top"]
