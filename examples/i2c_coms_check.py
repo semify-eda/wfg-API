@@ -17,6 +17,25 @@ from SmartWaveAPI import SmartWave
 from fpga_reg import FPGA_Reg
 
 
+def check_data_type(data):
+    try:
+        # Try converting the value to an integer in base 2 (binary)
+        return hex(int(data, 2))[2:]
+    except ValueError:
+        pass
+
+    if data.startswith("0x"):
+        # If yes, treat it as hexadecimal and return
+        return data[2:]
+    else:
+        # Otherwise, assume it's an integer and convert
+        try:
+            return hex(int(data))[2:]
+        except ValueError:
+            # If conversion fails, return an error message
+            return "Not a valid integer or hexadecimal"
+
+
 def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: int) -> None:
     """
     Test if SDA and SCL can be pulled-down or up.
@@ -334,7 +353,7 @@ def main():
 
     parser.add_argument("-rw", "--reg_read_write", type=int, help="Read/Write flag for register access.")
 
-    parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX format.")
+    parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX format.", default="0x1")
     parser.add_argument("-rp_len", "--num_addr_byte", type=int, help="Set the number of Address bytes")
 
     parser.add_argument("-rv", "--reg_value", type=str, help="Register value to write in HEX format.")
@@ -431,10 +450,12 @@ def main():
                 reg_value = None
                 if args.reg_read_write:
                     logging.info("5.1 - Perform a register read operation on the target device")
-                hex_addr = args.reg_pointer.split('x')[-1]
+
+                hex_addr = check_data_type(args.reg_pointer)
                 if len(hex_addr) % 2:
                     hex_addr = "".join(['0', hex_addr])
                 reg_pointer = bytes.fromhex(hex_addr)
+
                 if args.num_addr_byte:
                     addr_length = int(args.num_addr_byte)
                 else:
@@ -452,7 +473,7 @@ def main():
                         logging.warning("Cannot perform register write if value is not given")
                         exit(f"Terminating code.")
                     else:
-                        hex_val = args.reg_value.split('x')[-1]
+                        hex_val = check_data_type(args.reg_value)
                         if len(hex_val) % 2:
                             hex_val = "".join(['0', hex_val])
                         reg_value = bytes.fromhex(hex_val)
