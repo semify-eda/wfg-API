@@ -14,7 +14,6 @@ from typing import Union, Optional
 import numpy as np
 
 from SmartWaveAPI import SmartWave
-# from SmartWaveAPI.definitions import PinOutputType
 from fpga_reg import FPGA_Reg
 
 
@@ -151,13 +150,14 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     sw.writeFPGARegister(addr, pingroup)
 
 
-def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
+def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Union[None, list]:
     """
     Sweep all the possible I2C addresses and wait for the ACK.
 
     :param i2c: SmartWave I2C object
     :param addr_lower: Lower value for the I2C address sweep
     :param addr_upper: Upper value for the I2C address sweep
+    :param multi_dev: Check if we are looking for a single or multiple devices
     :return: device specific I2C address
     """
     if addr_lower < 0:
@@ -180,7 +180,7 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
 
     logging.info(f"Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
 
-    i2c_addr = None
+    i2c_addr = []
     dummy_byte = (0).to_bytes(1, 'big')
     i2c_addr_list = np.arange(addr_lower, addr_upper + 1)
 
@@ -195,25 +195,42 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, int]:
         elif i2c_data.ack_device_id is False:
             logging.warning("Couldn't reach device.")
         else:
-            i2c_addr = i2c_addr_list[0]
-            logging.info(f"Connection was successful. I2C address is: {i2c_addr:#0x}")
+            i2c_addr.append(int(i2c_addr_list[0]))
+            logging.info(f"Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
 
     # Sweep the possible addresses within the given range
     else:
-        for addr in range(len(i2c_addr_list)):
-            i2c.write(int(i2c_addr_list[addr]), dummy_byte)
-            i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
-            if i2c_data.ack_device_id is None:
-                logging.warning("No device is connected to SmartWave.")
-                logging.warning("Check if all the wires are properly connected.")
-                exit("Terminating code")
-            if i2c_data.ack_device_id is False:
-                if addr == i2c_addr_list[-1]:
-                    logging.warning("Couldn't reach device.")
-                continue
-            i2c_addr = i2c_addr_list[addr]
-            logging.info(f"Connection was successful. I2C address is: {i2c_addr:#0x}")
-            break
+        if multi_dev:           # If multiple devices are connected to the I2C bus
+            for addr in range(len(i2c_addr_list)):
+                i2c.write(int(i2c_addr_list[addr]), dummy_byte)
+                i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
+                if i2c_data.ack_device_id is None:
+                    logging.warning("No device is connected to SmartWave.")
+                    logging.warning("Check if all the wires are properly connected.")
+                    exit("Terminating code")
+                if i2c_data.ack_device_id is False:
+                    if addr == i2c_addr_list[-1]:
+                        logging.warning("Couldn't reach device.")
+                    continue
+                i2c_addr.append(int((i2c_addr_list[addr])))
+            logging.info("Connection was successful. List of I2C Addresses: %s",
+                         ', '.join(hex(addr) for addr in i2c_addr))
+
+        else:                   # If we are only looking for a single device
+            for addr in range(len(i2c_addr_list)):
+                i2c.write(int(i2c_addr_list[addr]), dummy_byte)
+                i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
+                if i2c_data.ack_device_id is None:
+                    logging.warning("No device is connected to SmartWave.")
+                    logging.warning("Check if all the wires are properly connected.")
+                    exit("Terminating code")
+                if i2c_data.ack_device_id is False:
+                    if addr == i2c_addr_list[-1]:
+                        logging.warning("Couldn't reach device.")
+                    continue
+                i2c_addr.append(int(i2c_addr_list[addr]))
+                logging.info(f"Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
+                break
 
     return i2c_addr
 
@@ -308,10 +325,14 @@ def main():
     parser.add_argument("-scl", "--scl_pin", type=str, help="Select the desired SCL Pin on SmartWave", default='A1')
     parser.add_argument("-sda", "--sda_pin", type=str, help="Select the desired SDA Pin on SmartWave", default='A2')
 
-    parser.add_argument("-lower", "--addr_lower", type=int, help="Select the lower address value for the I2C address sweep", default=0)
-    parser.add_argument("-upper", "--addr_upper", type=int, help="Select the upper address value for the I2C address sweep", default=127)
+    parser.add_argument("-multi", "--multiple_dev", type=bool,
+                        help="Look for multiple devices on the I2C bus", default=False)
+    parser.add_argument("-lower", "--addr_lower", type=int, help="Select the lower address value "
+                                                                 "for the I2C address sweep", default=0)
+    parser.add_argument("-upper", "--addr_upper", type=int, help="Select the upper address value "
+                                                                 "for the I2C address sweep", default=127)
 
-    parser.add_argument("-rw", "--reg_read_write", type=int, help="Read/Write flag for register access.", default=1)
+    parser.add_argument("-rw", "--reg_read_write", type=int, help="Read/Write flag for register access.")
 
     parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX format.")
     parser.add_argument("-rp_len", "--num_addr_byte", type=int, help="Set the number of Address bytes")
@@ -383,20 +404,24 @@ def main():
             logging.info(f"SCL is set to pin: {scl} | SDA is set to pin: {sda} "
                          f"| I2C clock running at {fast_clk // 1e3} kHz")
             logging.info("Trying to connect to the target device")
-            i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
-            if i2c_dev_addr is None:
+            multi_dev = args.multiple_dev
+            i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
+                                          multi_dev=multi_dev)
+            if not i2c_dev_addr:
                 logging.debug("Connection was unsuccessful.")
                 logging.debug("Reducing the I2C clock speed to 100kHz and try to reconnect")
                 i2c.clockSpeed = slow_clk
                 logging.debug(f"I2C is running at {i2c.clockSpeed // 1e3} kHz")
-                i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
-                if i2c_dev_addr is None:
+                i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
+                                              multi_dev=multi_dev)
+                if not i2c_dev_addr:
                     logging.debug("Connection was unsuccessful.")
                     logging.debug("Swapping the SDA / SCL lines and trying to reconnect to device.")
                     i2c.delete()
                     i2c = sw.createI2CConfig(scl_pin_name=sda, sda_pin_name=scl, clock_speed=slow_clk)
-                    i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
-                    if i2c_dev_addr is None:
+                    i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
+                                                  multi_dev=multi_dev)
+                    if not i2c_dev_addr:
                         logging.error("Couldn't reach device. Terminating code.")
                         exit()
 
@@ -436,7 +461,15 @@ def main():
                             data_length = len(reg_value)
 
                 # Call the register read/write function with the user-defined values
-                register_r_w(i2c, i2c_dev_addr, reg_pointer, reg_value, addr_length, data_length)
+                if args.multiple_dev:
+                    logging.info("Performing a read/write operation of multiple devices is currently not supported")
+                    logging.info("A single register access will be performed on the first device.")
+                    register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
+                    # for dev in range(len(i2c_dev_addr)):
+                    #     register_r_w(i2c, i2c_dev_addr[dev], reg_pointer, reg_value, addr_length, data_length)
+
+                else:
+                    register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
 
             logging.info(f"I2C checklist was successfully completed. "
                          f"The log files can be found at {os.path.abspath(directory)}")
