@@ -404,17 +404,17 @@ def main():
         ###########################################
         # Check the SCL and SDA lines
         ###########################################
-        # with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
-        #     with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
-        #         logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
-        #         logging.info("1. - Test whether SCL and SDA can be pulled-down and pulled-up.")
-        #         pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
-        #         pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
-        #         gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
-        #         logging.info("2. - Check for shorts between SCL and SDA")
-        #         gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
-        #         logging.info("The SCL and SDA line checks have been successfully completed.")
-        #         logging.info("Moving on to the I2C communication setup check.")
+        with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
+            with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
+                logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
+                logging.info("1. - Test whether SCL and SDA can be pulled-down and pulled-up.")
+                pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
+                pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
+                gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
+                logging.info("2. - Check for shorts between SCL and SDA")
+                gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
+                logging.info("The SCL and SDA line checks have been successfully completed.")
+                logging.info("Moving on to the I2C communication setup check.")
 
         ###########################################
         # Start the I2C communication check
