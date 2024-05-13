@@ -31,6 +31,12 @@ The script can be run from terminal by simply calling:
 ```bash
 python i2c_coms_check.py
 ```
+The script initially verifies whether the Firmware and FPGA versions are the latest available releases. If not, the 
+user has the option to update them with the following command line argument when executing the script:
+```bash
+-update True
+```
+This option is disabled by default, to prevent overwriting any changes made by the user.
 
 By default, the script will only execute the basic pin tests and the I2C address check using the default pin settings 
 and address range. However, if the user wishes to modify the default values or run the register test, they can do so by 

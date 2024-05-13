@@ -219,7 +219,7 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
 
     # Sweep the possible addresses within the given range
     else:
-        if multi_dev:           # If multiple devices are connected to the I2C bus
+        if multi_dev:  # If multiple devices are connected to the I2C bus
             for addr in range(len(i2c_addr_list)):
                 i2c.write(int(i2c_addr_list[addr]), dummy_byte)
                 i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
@@ -235,7 +235,7 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
             logging.info("Connection was successful. List of I2C Addresses: %s",
                          ', '.join(hex(addr) for addr in i2c_addr))
 
-        else:                   # If we are only looking for a single device
+        else:  # If we are only looking for a single device
             for addr in range(len(i2c_addr_list)):
                 i2c.write(int(i2c_addr_list[addr]), dummy_byte)
                 i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
@@ -339,6 +339,9 @@ def main():
 
     # Command line arguments provided by the user
     parser = argparse.ArgumentParser(description="Access Registers.")
+    parser.add_argument("-update", "--version_update", type=bool, help="Update the SmartWave FPGA and Firmware to the"
+                                                                       "latest release.", default=False)
+
     parser.add_argument("-log", "--log_location", type=str, help="User defined location for log files")
 
     parser.add_argument("-scl", "--scl_pin", type=str, help="Select the desired SCL Pin on SmartWave", default='A1')
@@ -378,9 +381,9 @@ def main():
                         datefmt="%Y-%m-%d %H:%M:%S",
                         encoding='utf-8', level=logging.DEBUG,
                         handlers=[
-                                  logging.StreamHandler(sys.stdout),
-                                  logging.FileHandler(filename=fq_fn)
-                                  ]
+                            logging.StreamHandler(sys.stdout),
+                            logging.FileHandler(filename=fq_fn)
+                        ]
                         )
     # Parameters for I2C object configuration
     scl = args.scl_pin
@@ -400,6 +403,18 @@ def main():
                 break
         sw.infoCallback = lambda hw, uc, fpga, flashID: logging.info(
             f"Hardware version: {hw}\tMicrocontroller version: {uc}\tFPGA version: {fpga}\t")
+
+        # Update the FPGA bitstream and Microcontroller Firmware, if version update is enabled.
+        if args.version_update:
+            sw.disconnect()
+            with SmartWave().connect() as sw:
+                sw.updateFPGABitstream()
+                time.sleep(2)
+                sw.firmwareUpdateStatusCallback = lambda isUc, status: logging.info(
+                    "%s update status: %d%%" % ("Microcontroller" if isUc else "FPGA", status))
+                sw.updateFirmware()
+            time.sleep(2)  # Wait for all the updates to complete before reconnecting to SmartWave.
+            sw = SmartWave().connect()
 
         ###########################################
         # Check the SCL and SDA lines
