@@ -41,9 +41,32 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     sw.writeFPGARegister(addr, pingroup)
 
     ###########################################
+    # SCL and SDA pulled up
+    ###########################################
+    logging.info("1.1 and 1.3 Setting both SCL and SDA in pullup mode.")
+    addr = localenv["PULLUP_SEL_0"]["addr"]
+    pingroup = 0
+    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
+    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
+    sw.writeFPGARegister(addr, pingroup)
+    time.sleep(500e-3)
+    input_level_a = gpio_a.inputLevel
+    input_level_b = gpio_b.inputLevel
+
+    logging.info(f"Input level of SCL pin: {input_level_a} with pullup enabled.")
+    logging.info(f"Input level of SDA pin: {input_level_b} with pullup enabled.")
+
+    if not input_level_a:
+        logging.error("The SCL pin is shorted to GND")
+        errors += 1
+    if not input_level_b:
+        logging.error("The SDA pin is shorted to GND")
+        errors += 1
+
+    ###########################################
     # SCL and SDA pulled down
     ###########################################
-    logging.info("Set both SCL and SDA in pull-down mode.")
+    logging.info("1.2 and 1.4 Set both SCL and SDA in pull-down mode.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
     pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
@@ -62,29 +85,6 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
         errors += 1
     if input_level_b:
         logging.error("The SDA pin is shorted to VCC")
-        errors += 1
-
-    ###########################################
-    # SCL and SDA pulled up
-    ###########################################
-    logging.info("Setting both SCL and SDA in pullup mode.")
-    addr = localenv["PULLUP_SEL_0"]["addr"]
-    pingroup = 0
-    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
-    pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
-    sw.writeFPGARegister(addr, pingroup)
-    time.sleep(500e-3)
-    input_level_a = gpio_a.inputLevel
-    input_level_b = gpio_b.inputLevel
-
-    logging.info(f"Input level of SCL pin: {input_level_a} with pullup enabled.")
-    logging.info(f"Input level of SDA pin: {input_level_b} with pullup enabled.")
-
-    if not input_level_a:
-        logging.error("The SCL pin is shorted to GND")
-        errors += 1
-    if not input_level_b:
-        logging.error("The SDA pin is shorted to GND")
         errors += 1
 
     if errors > 0:
@@ -112,7 +112,7 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     pingroup |= 0 << localenv["OUTPUT_SEL_0"][pin_1]["LSB"]
     sw.writeFPGARegister(addr, pingroup)
 
-    logging.info("Set SCL low and SDA high.")
+    logging.info("2.1 - Set SCL low and SDA high.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
     pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
@@ -128,7 +128,7 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
         logging.critical("There is a short between the SCL and SDA lines.")
         exit("Terminating code.")
 
-    logging.info("Set SCL high and SDA low.")
+    logging.info("2.2 - Set SCL high and SDA low.")
     pingroup = 0
     pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
     pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
@@ -388,11 +388,11 @@ def main():
         with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
             with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
                 logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
-                logging.info("Test whether SCL and SDA can be pulled-down and pulled-up.")
+                logging.info("1. - Test whether SCL and SDA can be pulled-down and pulled-up.")
                 pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
                 pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
                 gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
-                logging.info("Check for shorts between SCL and SDA")
+                logging.info("2. - Check for shorts between SCL and SDA")
                 gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
                 logging.info("The SCL and SDA line checks have been successfully completed.")
                 logging.info("Moving on to the I2C communication setup check.")
@@ -403,20 +403,20 @@ def main():
         with sw.createI2CConfig(sda_pin_name=sda, scl_pin_name=scl, clock_speed=fast_clk) as i2c:
             logging.info(f"SCL is set to pin: {scl} | SDA is set to pin: {sda} "
                          f"| I2C clock running at {fast_clk // 1e3} kHz")
-            logging.info("Trying to connect to the target device")
+            logging.info("4.1 - Trying to connect to the target device")
             multi_dev = args.multiple_dev
             i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
                                           multi_dev=multi_dev)
             if not i2c_dev_addr:
                 logging.debug("Connection was unsuccessful.")
-                logging.debug("Reducing the I2C clock speed to 100kHz and try to reconnect")
+                logging.debug("4.2 - Reducing the I2C clock speed to 100kHz and try to reconnect")
                 i2c.clockSpeed = slow_clk
                 logging.debug(f"I2C is running at {i2c.clockSpeed // 1e3} kHz")
                 i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
                                               multi_dev=multi_dev)
                 if not i2c_dev_addr:
                     logging.debug("Connection was unsuccessful.")
-                    logging.debug("Swapping the SDA / SCL lines and trying to reconnect to device.")
+                    logging.debug("4.3 - Swapping the SDA / SCL lines and trying to reconnect to device.")
                     i2c.delete()
                     i2c = sw.createI2CConfig(scl_pin_name=sda, sda_pin_name=scl, clock_speed=slow_clk)
                     i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
@@ -427,9 +427,10 @@ def main():
 
             # Access the user specified register and read out its content
             if args.reg_pointer:
+                logging.info("5. - Check for the correct target device by accessing a known register.")
                 reg_value = None
                 if args.reg_read_write:
-                    logging.info("Perform a register read operation on the target device")
+                    logging.info("5.1 - Perform a register read operation on the target device")
                 hex_addr = args.reg_pointer.split('x')[-1]
                 if len(hex_addr) % 2:
                     hex_addr = "".join(['0', hex_addr])
@@ -446,7 +447,7 @@ def main():
 
                 # Modify the content of the specified register and read it back for validation
                 if not args.reg_read_write:
-                    logging.info("Perform a register write and read operation on target device.")
+                    logging.info("5.2 - Perform a register write and read operation on target device.")
                     if args.reg_value is None:
                         logging.warning("Cannot perform register write if value is not given")
                         exit(f"Terminating code.")
