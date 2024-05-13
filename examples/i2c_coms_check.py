@@ -353,7 +353,7 @@ def main():
 
     parser.add_argument("-rw", "--reg_read_write", type=int, help="Read/Write flag for register access.")
 
-    parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX format.", default="0x1")
+    parser.add_argument("-rp", "--reg_pointer", type=str, help="Register address to write to in HEX format.")
     parser.add_argument("-rp_len", "--num_addr_byte", type=int, help="Set the number of Address bytes")
 
     parser.add_argument("-rv", "--reg_value", type=str, help="Register value to write in HEX format.")
@@ -404,17 +404,17 @@ def main():
         ###########################################
         # Check the SCL and SDA lines
         ###########################################
-        with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
-            with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
-                logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
-                logging.info("1. - Test whether SCL and SDA can be pulled-down and pulled-up.")
-                pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
-                pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
-                gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
-                logging.info("2. - Check for shorts between SCL and SDA")
-                gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
-                logging.info("The SCL and SDA line checks have been successfully completed.")
-                logging.info("Moving on to the I2C communication setup check.")
+        # with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
+        #     with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
+        #         logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
+        #         logging.info("1. - Test whether SCL and SDA can be pulled-down and pulled-up.")
+        #         pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
+        #         pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
+        #         gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
+        #         logging.info("2. - Check for shorts between SCL and SDA")
+        #         gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
+        #         logging.info("The SCL and SDA line checks have been successfully completed.")
+        #         logging.info("Moving on to the I2C communication setup check.")
 
         ###########################################
         # Start the I2C communication check
