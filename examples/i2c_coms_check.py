@@ -5,6 +5,7 @@ import sys
 import re
 import os
 import logging
+import requests
 import time
 import argparse
 import importlib.metadata
@@ -17,7 +18,29 @@ from SmartWaveAPI import SmartWave
 from fpga_reg import FPGA_Reg
 
 
-def check_data_type(data):
+def get_latest_version(package_name: str) -> str:
+    """
+    Helper function that checks the latest available version of a Python package.
+    In this scenario we are only interested in the SmartWaveAPI
+
+    :param package_name: Name of the python package.
+    :return: Version number as string
+    """
+    url = f"https://pypi.org/pypi/{package_name}/json"
+    response = requests.get(url)
+    data = response.json()
+    latest_version = data["info"]["version"]
+
+    return latest_version
+
+
+def check_data_type(data) -> Union[str, hex]:
+    """
+    Helper function that converts the data given by the user and returns it as a hex value
+
+    :param data: Value provided by the user that could be either binary, hex, or integer
+    :return: Data converted into hexadecimal format
+    """
     try:
         # Try converting the value to an integer in base 2 (binary)
         return hex(int(data, 2))[2:]
@@ -335,7 +358,6 @@ def main():
     - check for correct target
     :return: none
     """
-
     # Command line arguments provided by the user
     parser = argparse.ArgumentParser(description="Access Registers.")
     parser.add_argument("-update", "--version_update", type=bool, help="Update the SmartWave FPGA and Firmware to the"
@@ -384,6 +406,20 @@ def main():
                             logging.FileHandler(filename=fq_fn)
                         ]
                         )
+    original_log_level = logging.getLogger().getEffectiveLevel()
+
+    try:
+        version = importlib.metadata.version("SmartWaveAPI")
+        logging.info(f"SmartWaveAPI Version: {version}")
+        logging.getLogger().setLevel(logging.INFO)
+        latest_version = get_latest_version("SmartWaveAPI")
+        logging.getLogger().setLevel(original_log_level)
+        if version != latest_version:
+            logging.warning("SmartWaveAPI is outdated! Some functionalities might not work."
+                            "It is recommended to update using pip install --upgrade SmartWaveAPI")
+    except importlib.metadata.PackageNotFoundError:
+        logging.error("SmartWaveAPI is not installed.")
+
     # Parameters for I2C object configuration
     scl = args.scl_pin
     sda = args.sda_pin
@@ -397,11 +433,6 @@ def main():
     # Setup connection to SmartWave
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
-        try:
-            version = importlib.metadata.version("SmartWaveAPI")
-            logging.info(f"SmartWaveAPI Version: {version}")
-        except importlib.metadata.PackageNotFoundError:
-            logging.error("SmartWaveAPI is not installed.")
         sw.infoCallback = lambda hw, uc, fpga, flashID: (
             setattr(sw, "fpga_outdated", 1),  # Raise the flag if FPGA version is outdated
             logging.warning("FPGA version is outdated, some functions may not work")
