@@ -7,7 +7,7 @@ import os
 import logging
 import time
 import argparse
-import pkg_resources
+import importlib.metadata
 
 from datetime import datetime
 from typing import Union, Optional
@@ -331,7 +331,6 @@ def main():
 
     - SDA, SCL can be pull-down or pull-up
     - no shorts between SCL and SDA
-    - maximal clock frequency
     - send command to target device and check for ACK
     - check for correct target
     :return: none
@@ -398,11 +397,11 @@ def main():
     # Setup connection to SmartWave
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
-        installed_packages = pkg_resources.working_set
-        for package in installed_packages:
-            if package.key == "smartwaveapi":
-                logging.info(f"SmartWaveAPI Version: {package.version}")
-                break
+        try:
+            version = importlib.metadata.version("SmartWaveAPI")
+            logging.info(f"SmartWaveAPI Version: {version}")
+        except importlib.metadata.PackageNotFoundError:
+            logging.error("SmartWaveAPI is not installed.")
         sw.infoCallback = lambda hw, uc, fpga, flashID: (
             setattr(sw, "fpga_outdated", 1),  # Raise the flag if FPGA version is outdated
             logging.warning("FPGA version is outdated, some functions may not work")
