@@ -254,11 +254,13 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
                     logging.warning("4.1 - No device is connected to SmartWave.")
                     logging.warning("4.1 - Check if all the wires are properly connected.")
                     exit("4.1 - Terminating code")
-                if i2c_data.ack_device_id is False:
+                elif i2c_data.ack_device_id is False:
                     if addr == i2c_addr_list[-1]:
                         logging.warning("4.1 - Couldn't reach device.")
+                        exit("4.1 - Terminating code")
                     continue
-                i2c_addr.append(int((i2c_addr_list[addr])))
+                else:
+                    i2c_addr.append(int((i2c_addr_list[addr])))
             logging.info("4.1 - Connection was successful. List of I2C Addresses: %s",
                          ', '.join(hex(addr) for addr in i2c_addr))
 
@@ -270,11 +272,13 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
                     logging.warning("4.1 - No device is connected to SmartWave.")
                     logging.warning("4.1 - Check if all the wires are properly connected.")
                     exit("4.1 - Terminating code")
-                if i2c_data.ack_device_id is False:
+                elif i2c_data.ack_device_id is False:
                     if addr == i2c_addr_list[-1]:
                         logging.warning("4.1 - Couldn't reach device.")
+                        exit("4.1 - Terminating code")
                     continue
-                i2c_addr.append(int(i2c_addr_list[addr]))
+                else:
+                    i2c_addr.append(int(i2c_addr_list[addr]))
                 logging.info(f"4.1 - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
                 break
 
