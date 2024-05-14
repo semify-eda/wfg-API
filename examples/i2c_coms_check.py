@@ -85,7 +85,7 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     ###########################################
     # SCL and SDA pulled up
     ###########################################
-    logging.info("1.1 and 1.3 Setting both SCL and SDA in pullup mode.")
+    logging.info("1.1 and 1.2 - Setting both SCL and SDA in pullup mode.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
     pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
@@ -95,20 +95,20 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
 
-    logging.info(f"Input level of SCL pin: {input_level_a} with pullup enabled.")
-    logging.info(f"Input level of SDA pin: {input_level_b} with pullup enabled.")
+    logging.info(f"1.1 - Input level of SCL pin: {input_level_a} with pullup enabled.")
+    logging.info(f"1.2 - Input level of SDA pin: {input_level_b} with pullup enabled.")
 
     if not input_level_a:
-        logging.error("The SCL pin is shorted to GND")
+        logging.error("1.1 - The SCL pin is shorted to GND")
         errors += 1
     if not input_level_b:
-        logging.error("The SDA pin is shorted to GND")
+        logging.error("1.2 - The SDA pin is shorted to GND")
         errors += 1
 
     ###########################################
     # SCL and SDA pulled down
     ###########################################
-    logging.info("1.2 and 1.4 Set both SCL and SDA in pull-down mode.")
+    logging.info("1.3 and 1.4 - Set both SCL and SDA in pull-down mode.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
     pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
@@ -119,18 +119,18 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
 
-    logging.info(f"Input level of SCL pin: {input_level_a} with pulldown enabled")
-    logging.info(f"Input level of SDA pin: {input_level_b} with pulldown enabled")
+    logging.info(f"1.3 - Input level of SCL pin: {input_level_a} with pulldown enabled")
+    logging.info(f"1.4 - Input level of SDA pin: {input_level_b} with pulldown enabled")
 
     if input_level_a:
-        logging.error("The SCL pin is shorted to VCC")
+        logging.error("1.3 - The SCL pin is shorted to VCC")
         errors += 1
     if input_level_b:
-        logging.error("The SDA pin is shorted to VCC")
+        logging.error("1.4 - The SDA pin is shorted to VCC")
         errors += 1
 
     if errors > 0:
-        exit("Terminating code.")
+        exit("1 - Terminating code.")
 
 
 def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
@@ -163,12 +163,12 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    logging.info(f"Output level of SCL pin: {input_level_a}")
-    logging.info(f"Output level of SDA pin: {input_level_b}")
+    logging.info(f"2.1 - Output level of SCL pin: {input_level_a}")
+    logging.info(f"2.1 - Output level of SDA pin: {input_level_b}")
 
     if input_level_a == input_level_b:
-        logging.critical("There is a short between the SCL and SDA lines.")
-        exit("Terminating code.")
+        logging.critical("2.1 - There is a short between the SCL and SDA lines.")
+        exit("2.1 - Terminating code.")
 
     logging.info("2.2 - Set SCL high and SDA low.")
     pingroup = 0
@@ -178,12 +178,12 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     time.sleep(500e-3)
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
-    logging.info(f"Output level of SCL pin: {input_level_a}")
-    logging.info(f"Output level of SDA pin: {input_level_b}")
+    logging.info(f"2.2 - Output level of SCL pin: {input_level_a}")
+    logging.info(f"2.2 - Output level of SDA pin: {input_level_b}")
 
     if input_level_a == input_level_b:
-        logging.critical("There is a short between the SCL and SDA lines.")
-        exit("Terminating code.")
+        logging.critical("2.2 - There is a short between the SCL and SDA lines.")
+        exit("2.2 - Terminating code.")
 
     # Re-enable the pullups for the I2C communication check
     pingroup = 0
@@ -203,24 +203,24 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
     :return: device specific I2C address
     """
     if addr_lower < 0:
-        logging.warning("Minimum value for the lower range can't be a negative number!")
-        logging.debug("Resetting the lower address value to the default 0.")
+        logging.warning("4. - Minimum value for the lower range can't be a negative number!")
+        logging.debug("4. - Resetting the lower address value to the default 0.")
         addr_lower = 0
 
     if addr_upper > 127:
-        logging.warning("Maximum value for the upper range can't be greater than 127!")
-        logging.debug("Resetting the upper address value to the default 127.")
+        logging.warning("4. - Maximum value for the upper range can't be greater than 127!")
+        logging.debug("4. - Resetting the upper address value to the default 127.")
         addr_upper = 127
 
     if addr_upper < addr_lower:
-        logging.warning("The upper value can't be less than the lower value!")
-        logging.debug("Swapping the upper value with the lower value.")
+        logging.warning("4. - The upper value can't be less than the lower value!")
+        logging.debug("4. - Swapping the upper value with the lower value.")
         addr_swap = addr_upper
         addr_upper = addr_lower
         addr_lower = addr_swap
-        logging.info(f"The new lower value is: {addr_lower} and the new upper value is: {addr_upper}.")
+        logging.info(f"4. - The new lower value is: {addr_lower} and the new upper value is: {addr_upper}.")
 
-    logging.info(f"Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
+    logging.info(f"4. - Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
 
     i2c_addr = []
     dummy_byte = (0).to_bytes(1, 'big')
@@ -231,14 +231,14 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
         i2c.write(int(i2c_addr_list[0]), dummy_byte)
         i2c_data = i2c.read(int(i2c_addr_list[0]), 1)
         if i2c_data.ack_device_id is None:
-            logging.warning("No device is connected to SmartWave.")
-            logging.warning("Check if all the wires are properly connected.")
-            exit("Terminating code")
+            logging.warning("4. - No device is connected to SmartWave.")
+            logging.warning("4. - Check if all the wires are properly connected.")
+            exit("4. - Terminating code")
         elif i2c_data.ack_device_id is False:
-            logging.warning("Couldn't reach device.")
+            logging.warning("4. - Couldn't reach device.")
         else:
             i2c_addr.append(int(i2c_addr_list[0]))
-            logging.info(f"Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
+            logging.info(f"4. - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
 
     # Sweep the possible addresses within the given range
     else:
@@ -247,15 +247,15 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
                 i2c.write(int(i2c_addr_list[addr]), dummy_byte)
                 i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
                 if i2c_data.ack_device_id is None:
-                    logging.warning("No device is connected to SmartWave.")
-                    logging.warning("Check if all the wires are properly connected.")
-                    exit("Terminating code")
+                    logging.warning("4. - No device is connected to SmartWave.")
+                    logging.warning("4. - Check if all the wires are properly connected.")
+                    exit("4. - Terminating code")
                 if i2c_data.ack_device_id is False:
                     if addr == i2c_addr_list[-1]:
-                        logging.warning("Couldn't reach device.")
+                        logging.warning("4. - Couldn't reach device.")
                     continue
                 i2c_addr.append(int((i2c_addr_list[addr])))
-            logging.info("Connection was successful. List of I2C Addresses: %s",
+            logging.info("4. - Connection was successful. List of I2C Addresses: %s",
                          ', '.join(hex(addr) for addr in i2c_addr))
 
         else:  # If we are only looking for a single device
@@ -263,15 +263,15 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
                 i2c.write(int(i2c_addr_list[addr]), dummy_byte)
                 i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
                 if i2c_data.ack_device_id is None:
-                    logging.warning("No device is connected to SmartWave.")
-                    logging.warning("Check if all the wires are properly connected.")
-                    exit("Terminating code")
+                    logging.warning("4. - No device is connected to SmartWave.")
+                    logging.warning("C4. - heck if all the wires are properly connected.")
+                    exit("4. - Terminating code")
                 if i2c_data.ack_device_id is False:
                     if addr == i2c_addr_list[-1]:
-                        logging.warning("Couldn't reach device.")
+                        logging.warning("4. - Couldn't reach device.")
                     continue
                 i2c_addr.append(int(i2c_addr_list[addr]))
-                logging.info(f"Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
+                logging.info(f"4. - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
                 break
 
     return i2c_addr
@@ -312,7 +312,7 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: Optional[bytes
         max_shift = (data_length - 1) * 8
         for pos in range(data_length):
             data_read_back |= reg_read_back[pos] << (max_shift - (pos * 8))
-        logging.info(f"Value read back: {data_read_back:#0x} from register address: {reg_pointer[0]:#0x}")
+        logging.info(f"5.1 - Value read back: {data_read_back:#0x} from register address: {reg_pointer[0]:#0x}")
 
     # Modify the register value then do a readout and compare the results
     else:
@@ -333,7 +333,7 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: Optional[bytes
         # Register write
         i2c.writeRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'),
                           data_to_write.to_bytes(data_length, 'big'))
-        logging.info(f"Value written: {data_to_write:#0x} to register address {reg_pointer[0]:#0x}")
+        logging.info(f"5.2 - Value written: {data_to_write:#0x} to register address {reg_pointer[0]:#0x}")
 
         # Register read
         reg_read_back = i2c.readRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'), data_length)
@@ -341,10 +341,10 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: Optional[bytes
         max_shift = (data_length - 1) * 8
         for pos in range(data_length):
             data_read_back |= reg_read_back[pos] << (max_shift - (pos * 8))
-        logging.info(f"Value read back: {data_read_back:#0x} from register address {reg_pointer[0]:#0x}")
+        logging.info(f"5.2 - Value read back: {data_read_back:#0x} from register address {reg_pointer[0]:#0x}")
 
         if data_to_write != data_read_back:
-            logging.error("The value read back from the register does not match the written value!")
+            logging.error("5.2 - The value read back from the register does not match the written value!")
             exit()
 
 
@@ -520,15 +520,15 @@ def main():
                 if args.num_data_byte:
                     data_length = int(args.num_data_byte)
                 else:
-                    logging.debug("Length of the data value wasn't set. Using default value of one byte.")
+                    logging.debug("5.1 - Length of the data value wasn't set. Using default value of one byte.")
                     data_length = 1
 
                 # Modify the content of the specified register and read it back for validation
                 if not args.reg_read_write:
                     logging.info("5.2 - Perform a register write and read operation on target device.")
                     if args.reg_value is None:
-                        logging.warning("Cannot perform register write if value is not given")
-                        exit(f"Terminating code.")
+                        logging.warning("5.2 - Cannot perform register write if value is not given")
+                        exit(f"5.2 - Terminating code.")
                     else:
                         hex_val = check_data_type(args.reg_value)
                         if len(hex_val) % 2:
@@ -541,8 +541,9 @@ def main():
 
                 # Call the register read/write function with the user-defined values
                 if args.multiple_dev:
-                    logging.info("Performing a read/write operation of multiple devices is currently not supported")
-                    logging.info("A single register access will be performed on the first device.")
+                    logging.info("5.2 - Performing a read/write operation of multiple devices is currently not "
+                                 "supported")
+                    logging.info("5.2 - A single register access will be performed on the first device.")
                     register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
                     # for dev in range(len(i2c_dev_addr)):
                     #     register_r_w(i2c, i2c_dev_addr[dev], reg_pointer, reg_value, addr_length, data_length)
