@@ -393,6 +393,8 @@ def main():
 
     logging.info("Starting the I2C Communication Test for SmartWave")
 
+    fpga_outdated = 0
+
     # Setup connection to SmartWave
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
@@ -401,8 +403,13 @@ def main():
             if package.key == "smartwaveapi":
                 logging.info(f"SmartWaveAPI Version: {package.version}")
                 break
-        sw.infoCallback = lambda hw, uc, fpga, flashID: logging.info(
-            f"Hardware version: {hw}\tMicrocontroller version: {uc}\tFPGA version: {fpga}\t")
+        sw.infoCallback = lambda hw, uc, fpga, flashID: (
+            setattr(sw, "fpga_outdated", 1),  # Raise the flag if FPGA version is outdated
+            logging.warning("FPGA version is outdated, some functions may not work")
+        ) if fpga != (2, 2, 0) else (
+            setattr(sw, "fpga_outdated", 0),  # Reset the flag if FPGA version is up-to-date
+            logging.info(f"Hardware version: {hw}\tMicrocontroller version: {uc}\tFPGA version: {fpga}")
+        )
 
         # Update the FPGA bitstream and Microcontroller Firmware, if version update is enabled.
         if args.version_update:
@@ -416,20 +423,25 @@ def main():
             time.sleep(2)  # Wait for all the updates to complete before reconnecting to SmartWave.
             sw = SmartWave().connect()
 
-        ###########################################
-        # Check the SCL and SDA lines
-        ###########################################
-        with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
-            with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
-                logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
-                logging.info("1. - Test whether SCL and SDA can be pulled-down and pulled-up.")
-                pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
-                pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
-                gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
-                logging.info("2. - Check for shorts between SCL and SDA")
-                gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
-                logging.info("The SCL and SDA line checks have been successfully completed.")
-                logging.info("Moving on to the I2C communication setup check.")
+        if fpga_outdated:
+            logging.warning("The current version of the FPGA does not support the pull-down configuration on the GPIOs."
+                            "The script will skip the SCL and SDA line checks and progresses to the I2C communication "
+                            "check.")
+        else:
+            ###########################################
+            # Check the SCL and SDA lines
+            ###########################################
+            with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
+                with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
+                    logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
+                    logging.info("1. - Test whether SCL and SDA can be pulled-down and pulled-up.")
+                    pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
+                    pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
+                    gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
+                    logging.info("2. - Check for shorts between SCL and SDA")
+                    gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
+                    logging.info("The SCL and SDA line checks have been successfully completed.")
+                    logging.info("Moving on to the I2C communication setup check.")
 
         ###########################################
         # Start the I2C communication check
