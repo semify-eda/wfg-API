@@ -441,6 +441,11 @@ def main():
             logging.info(f"Hardware version: {hw}\tMicrocontroller version: {uc}\tFPGA version: {fpga}")
         )
 
+        if fpga_outdated and args.version_update is False:
+            logging.warning("The current version of the FPGA does not support the pull-down configuration on the GPIOs."
+                            "The script will skip the SCL and SDA line checks and progresses to the I2C communication "
+                            "check.")
+
         # Update the FPGA bitstream and Microcontroller Firmware, if version update is enabled.
         if args.version_update:
             sw.disconnect()
@@ -453,10 +458,6 @@ def main():
             time.sleep(2)  # Wait for all the updates to complete before reconnecting to SmartWave.
             sw = SmartWave().connect()
 
-        if fpga_outdated:
-            logging.warning("The current version of the FPGA does not support the pull-down configuration on the GPIOs."
-                            "The script will skip the SCL and SDA line checks and progresses to the I2C communication "
-                            "check.")
         else:
             ###########################################
             # Check the SCL and SDA lines
