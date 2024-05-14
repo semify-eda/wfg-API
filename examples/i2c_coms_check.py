@@ -85,7 +85,7 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     ###########################################
     # SCL and SDA pulled up
     ###########################################
-    logging.info("1.1 and 1.2 - Setting both SCL and SDA in pullup mode.")
+    logging.info("1.1 - 1.2 - Setting both SCL and SDA in pullup mode.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
     pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
@@ -108,7 +108,7 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     ###########################################
     # SCL and SDA pulled down
     ###########################################
-    logging.info("1.3 and 1.4 - Set both SCL and SDA in pull-down mode.")
+    logging.info("1.3 - 1.4 - Set both SCL and SDA in pull-down mode.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
     pingroup |= 5 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
@@ -249,7 +249,7 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
                 if i2c_data.ack_device_id is None:
                     logging.warning("4.1 - No device is connected to SmartWave.")
                     logging.warning("4.1 - Check if all the wires are properly connected.")
-                    exit("4. - Terminating code")
+                    exit("4.1 - Terminating code")
                 if i2c_data.ack_device_id is False:
                     if addr == i2c_addr_list[-1]:
                         logging.warning("4.1 - Couldn't reach device.")
@@ -265,10 +265,10 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
                 if i2c_data.ack_device_id is None:
                     logging.warning("4.1 - No device is connected to SmartWave.")
                     logging.warning("4.1 - Check if all the wires are properly connected.")
-                    exit("4. - Terminating code")
+                    exit("4.1 - Terminating code")
                 if i2c_data.ack_device_id is False:
                     if addr == i2c_addr_list[-1]:
-                        logging.warning("4. - Couldn't reach device.")
+                        logging.warning("4.1 - Couldn't reach device.")
                     continue
                 i2c_addr.append(int(i2c_addr_list[addr]))
                 logging.info(f"4.1 - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
@@ -464,11 +464,11 @@ def main():
             with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
                 with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
                     logging.info(f"Instantiate a GPIO object on the specified target pins. SCL: {scl} // SDA: {sda}")
-                    logging.info("1. - Test whether SCL and SDA can be pulled-down and pulled-up.")
+                    logging.info("1 - Test whether SCL and SDA can be pulled-down and pulled-up.")
                     pin_conf_a = int(re.findall(r'\d+', scl)[0]) - 1
                     pin_conf_b = int(re.findall(r'\d+', sda)[0]) - 1
                     gpio_high_low(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
-                    logging.info("2. - Check for shorts between SCL and SDA")
+                    logging.info("2 - Check for shorts between SCL and SDA")
                     gpio_short(sw, gpio_A, gpio_B, pin_conf_a, pin_conf_b)
                     logging.info("The SCL and SDA line checks have been successfully completed.")
                     logging.info("Moving on to the I2C communication setup check.")
@@ -477,33 +477,33 @@ def main():
         # Start the I2C communication check
         ###########################################
         with sw.createI2CConfig(sda_pin_name=sda, scl_pin_name=scl, clock_speed=fast_clk) as i2c:
-            logging.info(f"SCL is set to pin: {scl} | SDA is set to pin: {sda} "
+            logging.info(f"4 - SCL is set to pin: {scl} | SDA is set to pin: {sda} "
                          f"| I2C clock running at {fast_clk // 1e3} kHz")
             logging.info("4.1 - Trying to connect to the target device")
             multi_dev = args.multiple_dev
             i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
                                           multi_dev=multi_dev)
             if not i2c_dev_addr:
-                logging.debug("Connection was unsuccessful.")
+                logging.debug("4.1 - Connection was unsuccessful.")
                 logging.debug("4.2 - Reducing the I2C clock speed to 100kHz and try to reconnect")
                 i2c.clockSpeed = slow_clk
-                logging.debug(f"I2C is running at {i2c.clockSpeed // 1e3} kHz")
+                logging.debug(f"4.2 - I2C is running at {i2c.clockSpeed // 1e3} kHz")
                 i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
                                               multi_dev=multi_dev)
                 if not i2c_dev_addr:
-                    logging.debug("Connection was unsuccessful.")
+                    logging.debug("4.2 - Connection was unsuccessful.")
                     logging.debug("4.3 - Swapping the SDA / SCL lines and trying to reconnect to device.")
                     i2c.delete()
                     i2c = sw.createI2CConfig(scl_pin_name=sda, sda_pin_name=scl, clock_speed=slow_clk)
                     i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
                                                   multi_dev=multi_dev)
                     if not i2c_dev_addr:
-                        logging.error("Couldn't reach device. Terminating code.")
+                        logging.error("4.3 - Couldn't reach device. Terminating code.")
                         exit()
 
             # Access the user specified register and read out its content
             if args.reg_pointer:
-                logging.info("5. - Check for the correct target device by accessing a known register.")
+                logging.info("5 - Check for the correct target device by accessing a known register.")
                 reg_value = None
                 if args.reg_read_write:
                     logging.info("5.1 - Perform a register read operation on the target device")
