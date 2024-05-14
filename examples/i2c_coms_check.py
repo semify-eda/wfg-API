@@ -203,24 +203,24 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
     :return: device specific I2C address
     """
     if addr_lower < 0:
-        logging.warning("4. - Minimum value for the lower range can't be a negative number!")
-        logging.debug("4. - Resetting the lower address value to the default 0.")
+        logging.warning("4.1 - Minimum value for the lower range can't be a negative number!")
+        logging.debug("4.1 - Resetting the lower address value to the default 0.")
         addr_lower = 0
 
     if addr_upper > 127:
-        logging.warning("4. - Maximum value for the upper range can't be greater than 127!")
-        logging.debug("4. - Resetting the upper address value to the default 127.")
+        logging.warning("4.1 - Maximum value for the upper range can't be greater than 127!")
+        logging.debug("4.1 - Resetting the upper address value to the default 127.")
         addr_upper = 127
 
     if addr_upper < addr_lower:
-        logging.warning("4. - The upper value can't be less than the lower value!")
-        logging.debug("4. - Swapping the upper value with the lower value.")
+        logging.warning("4.1 - The upper value can't be less than the lower value!")
+        logging.debug("4.1 - Swapping the upper value with the lower value.")
         addr_swap = addr_upper
         addr_upper = addr_lower
         addr_lower = addr_swap
-        logging.info(f"4. - The new lower value is: {addr_lower} and the new upper value is: {addr_upper}.")
+        logging.info(f"4.1 - The new lower value is: {addr_lower} and the new upper value is: {addr_upper}.")
 
-    logging.info(f"4. - Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
+    logging.info(f"4.1 - Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
 
     i2c_addr = []
     dummy_byte = (0).to_bytes(1, 'big')
@@ -231,14 +231,14 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
         i2c.write(int(i2c_addr_list[0]), dummy_byte)
         i2c_data = i2c.read(int(i2c_addr_list[0]), 1)
         if i2c_data.ack_device_id is None:
-            logging.warning("4. - No device is connected to SmartWave.")
-            logging.warning("4. - Check if all the wires are properly connected.")
-            exit("4. - Terminating code")
+            logging.warning("4.1 - No device is connected to SmartWave.")
+            logging.warning("4.1 - Check if all the wires are properly connected.")
+            exit("4.1 - Terminating code")
         elif i2c_data.ack_device_id is False:
-            logging.warning("4. - Couldn't reach device.")
+            logging.warning("4.1 - Couldn't reach device.")
         else:
             i2c_addr.append(int(i2c_addr_list[0]))
-            logging.info(f"4. - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
+            logging.info(f"4.1 - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
 
     # Sweep the possible addresses within the given range
     else:
@@ -247,15 +247,15 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
                 i2c.write(int(i2c_addr_list[addr]), dummy_byte)
                 i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
                 if i2c_data.ack_device_id is None:
-                    logging.warning("4. - No device is connected to SmartWave.")
-                    logging.warning("4. - Check if all the wires are properly connected.")
+                    logging.warning("4.1 - No device is connected to SmartWave.")
+                    logging.warning("4.1 - Check if all the wires are properly connected.")
                     exit("4. - Terminating code")
                 if i2c_data.ack_device_id is False:
                     if addr == i2c_addr_list[-1]:
-                        logging.warning("4. - Couldn't reach device.")
+                        logging.warning("4.1 - Couldn't reach device.")
                     continue
                 i2c_addr.append(int((i2c_addr_list[addr])))
-            logging.info("4. - Connection was successful. List of I2C Addresses: %s",
+            logging.info("4.1 - Connection was successful. List of I2C Addresses: %s",
                          ', '.join(hex(addr) for addr in i2c_addr))
 
         else:  # If we are only looking for a single device
@@ -263,15 +263,15 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
                 i2c.write(int(i2c_addr_list[addr]), dummy_byte)
                 i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
                 if i2c_data.ack_device_id is None:
-                    logging.warning("4. - No device is connected to SmartWave.")
-                    logging.warning("C4. - heck if all the wires are properly connected.")
+                    logging.warning("4.1 - No device is connected to SmartWave.")
+                    logging.warning("4.1 - Check if all the wires are properly connected.")
                     exit("4. - Terminating code")
                 if i2c_data.ack_device_id is False:
                     if addr == i2c_addr_list[-1]:
                         logging.warning("4. - Couldn't reach device.")
                     continue
                 i2c_addr.append(int(i2c_addr_list[addr]))
-                logging.info(f"4. - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
+                logging.info(f"4.1 - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
                 break
 
     return i2c_addr
