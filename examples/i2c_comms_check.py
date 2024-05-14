@@ -1,5 +1,9 @@
 """
-Test script to check I2C communication setup
+Script Name: i2c_comms_check.py
+Description: Test script for I2C Communication Setup Support
+Author: Adam Horvath
+Company: semify GmbH
+Copyright © 2024 semify GmbH. All rights reserved.
 """
 import sys
 import re

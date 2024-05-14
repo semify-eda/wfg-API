@@ -29,7 +29,7 @@ pip install -r requirements.txt
 The first thing to do is to ensure that SmartWave is securely connected to host PC. 
 The script can be run from terminal by simply calling:
 ```bash
-python i2c_coms_check.py
+python i2c_comms_check.py
 ```
 The script initially verifies whether the Firmware and FPGA versions are the latest available releases. If not, the 
 user has the option to update them with the following command line argument when executing the script:
@@ -98,7 +98,7 @@ location using the following command line argument:
 
 A complete run configuration could look like this:
 ```bash
-python i2c_coms_check.py -log C:\semify\i2c_logs -scl A1 -sda A2 -lower 20 -upper 26 -rw 0 -rp 0x1 -rp_len 1 -rv 0x0101 -rv_len 2
+python i2c_comms_check.py -log C:\semify\i2c_logs -scl A1 -sda A2 -lower 20 -upper 26 -rw 0 -rp 0x1 -rp_len 1 -rv 0x0101 -rv_len 2
 ```
 
 
