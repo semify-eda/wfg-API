@@ -92,7 +92,7 @@
 <h1>SmartWaveAPI.definitions package<a class="headerlink" href="#smartwaveapi-definitions-package" title="Link to this heading"></a></h1>
 <section id="module-SmartWaveAPI.definitions">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-SmartWaveAPI.definitions" title="Link to this heading"></a></h2>
-<p>All of the value definitions for the correct communication with a SmartWave device.</p>
+<p>All the value definitions for the correct communication with a SmartWave device.</p>
 </section>
 <section id="module-SmartWaveAPI.definitions.command">
 <span id="smartwaveapi-definitions-command-module"></span><h2>SmartWaveAPI.definitions.command module<a class="headerlink" href="#module-SmartWaveAPI.definitions.command" title="Link to this heading"></a></h2>
@@ -187,6 +187,11 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>The ID of the type of driver.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="SmartWaveAPI.definitions.drivertype.DriverType.GPIO">
+<span class="sig-name descname"><span class="pre">GPIO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#SmartWaveAPI.definitions.drivertype.DriverType.GPIO" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="SmartWaveAPI.definitions.drivertype.DriverType.I2C">
 <span class="sig-name descname"><span class="pre">I2C</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#SmartWaveAPI.definitions.drivertype.DriverType.I2C" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -218,16 +223,65 @@
 <span id="smartwaveapi-definitions-i2ctransaction-module"></span><h2>SmartWaveAPI.definitions.i2ctransaction module<a class="headerlink" href="#module-SmartWaveAPI.definitions.i2ctransaction" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="SmartWaveAPI.definitions.i2ctransaction.I2CRead">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.definitions.i2ctransaction.</span></span><span class="sig-name descname"><span class="pre">I2CRead</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deviceId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.definitions.i2ctransaction.I2CRead" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.definitions.i2ctransaction.</span></span><span class="sig-name descname"><span class="pre">I2CRead</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.definitions.i2ctransaction.I2CRead" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A read operation on an I2C driver</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="SmartWaveAPI.definitions.i2ctransaction.I2CTransactionResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.definitions.i2ctransaction.</span></span><span class="sig-name descname"><span class="pre">I2CTransactionResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ack_device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acks_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.definitions.i2ctransaction.I2CTransactionResult" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The result of an I2C transaction</p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="SmartWaveAPI.definitions.i2ctransaction.I2CWrite">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.definitions.i2ctransaction.</span></span><span class="sig-name descname"><span class="pre">I2CWrite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deviceId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.definitions.i2ctransaction.I2CWrite" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.definitions.i2ctransaction.</span></span><span class="sig-name descname"><span class="pre">I2CWrite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.definitions.i2ctransaction.I2CWrite" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A write operation on an I2C driver</p>
+</dd></dl>
+
+</section>
+<section id="smartwaveapi-definitions-pinoutputtype-module">
+<h2>SmartWaveAPI.definitions.pinoutputtype module<a class="headerlink" href="#smartwaveapi-definitions-pinoutputtype-module" title="Link to this heading"></a></h2>
+<dl class="py class" id="module-SmartWaveAPI.definitions.pinoutputtype">
+<dt class="sig sig-object py" id="SmartWaveAPI.definitions.pinoutputtype.PinOutputType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.definitions.pinoutputtype.</span></span><span class="sig-name descname"><span class="pre">PinOutputType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.definitions.pinoutputtype.PinOutputType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The output type of a pin.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SmartWaveAPI.definitions.pinoutputtype.PinOutputType.Disable">
+<span class="sig-name descname"><span class="pre">Disable</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#SmartWaveAPI.definitions.pinoutputtype.PinOutputType.Disable" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SmartWaveAPI.definitions.pinoutputtype.PinOutputType.OpenDrain">
+<span class="sig-name descname"><span class="pre">OpenDrain</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#SmartWaveAPI.definitions.pinoutputtype.PinOutputType.OpenDrain" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SmartWaveAPI.definitions.pinoutputtype.PinOutputType.PushPull">
+<span class="sig-name descname"><span class="pre">PushPull</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#SmartWaveAPI.definitions.pinoutputtype.PinOutputType.PushPull" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-SmartWaveAPI.definitions.rgb565">
+<span id="smartwaveapi-definitions-rgb565-module"></span><h2>SmartWaveAPI.definitions.rgb565 module<a class="headerlink" href="#module-SmartWaveAPI.definitions.rgb565" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SmartWaveAPI.definitions.rgb565.colorRGB565">
+<span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.definitions.rgb565.</span></span><span class="sig-name descname"><span class="pre">colorRGB565</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#SmartWaveAPI.definitions.rgb565.colorRGB565" title="Link to this definition"></a></dt>
+<dd><p>Convert hex color to an RGB565 value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>this driver’s color as an RGB565 value</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
