@@ -196,14 +196,13 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     sw.writeFPGARegister(addr, pingroup)
 
 
-def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Union[None, list]:
+def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, list]:
     """
     Sweep all the possible I2C addresses and wait for the ACK.
 
     :param i2c: SmartWave I2C object
     :param addr_lower: Lower value for the I2C address sweep
     :param addr_upper: Upper value for the I2C address sweep
-    :param multi_dev: Check if we are looking for a single or multiple devices
     :return: device specific I2C address
     """
     if addr_lower < 0:
@@ -224,7 +223,8 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
         addr_lower = addr_swap
         logging.info(f"4.1 - The new lower value is: {addr_lower} and the new upper value is: {addr_upper}.")
 
-    logging.info(f"4.1 - Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
+    logging.info(
+        f"4.1 - Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
 
     i2c_addr = []
     dummy_byte = (0).to_bytes(1, 'big')
@@ -246,42 +246,23 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int, multi_dev: bool) -> Un
 
     # Sweep the possible addresses within the given range
     else:
-        if multi_dev:  # If multiple devices are connected to the I2C bus
-            for addr in range(len(i2c_addr_list)):
-                i2c.write(int(i2c_addr_list[addr]), dummy_byte)
-                i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
-                if i2c_data.ack_device_id is None:
-                    logging.warning("4.1 - No device is connected to SmartWave.")
-                    logging.warning("4.1 - Check if all the wires are properly connected.")
-                    exit("4.1 - Terminating code")
-                elif i2c_data.ack_device_id is False:
-                    if addr == i2c_addr_list[-1]:
-                        logging.warning("4.1 - Couldn't reach device.")
-                        exit("4.1 - Terminating code")
-                    continue
-                else:
-                    i2c_addr.append(int((i2c_addr_list[addr])))
+        connected = False
+        for addr in range(len(i2c_addr_list)):
+            i2c.write(int(i2c_addr_list[addr]), dummy_byte)
+            i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
+            if i2c_data.ack_device_id is None:
+                logging.warning("4.1 - No device is connected to SmartWave.")
+                logging.warning("4.1 - Check if all the wires are properly connected.")
+                exit("4.1 - Terminating code")
+            elif i2c_data.ack_device_id is False:
+                if i2c_addr_list[addr] == i2c_addr_list[-1] and not i2c_addr:
+                    logging.warning("4.1 - Couldn't reach device.")
+            else:
+                i2c_addr.append(int((i2c_addr_list[addr])))
+                connected = True
+        if connected:
             logging.info("4.1 - Connection was successful. List of I2C Addresses: %s",
                          ', '.join(hex(addr) for addr in i2c_addr))
-
-        else:  # If we are only looking for a single device
-            for addr in range(len(i2c_addr_list)):
-                i2c.write(int(i2c_addr_list[addr]), dummy_byte)
-                i2c_data = i2c.read(int(i2c_addr_list[addr]), 1)
-                if i2c_data.ack_device_id is None:
-                    logging.warning("4.1 - No device is connected to SmartWave.")
-                    logging.warning("4.1 - Check if all the wires are properly connected.")
-                    exit("4.1 - Terminating code")
-                elif i2c_data.ack_device_id is False:
-                    if addr == i2c_addr_list[-1]:
-                        logging.warning("4.1 - Couldn't reach device.")
-                        exit("4.1 - Terminating code")
-                    continue
-                else:
-                    i2c_addr.append(int(i2c_addr_list[addr]))
-                logging.info(f"4.1 - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
-                break
-
     return i2c_addr
 
 
@@ -376,8 +357,6 @@ def main():
     parser.add_argument("-scl", "--scl_pin", type=str, help="Select the desired SCL Pin on SmartWave", default='A1')
     parser.add_argument("-sda", "--sda_pin", type=str, help="Select the desired SDA Pin on SmartWave", default='A2')
 
-    parser.add_argument("-multi", "--multiple_dev", type=bool,
-                        help="Look for multiple devices on the I2C bus", default=False)
     parser.add_argument("-lower", "--addr_lower", type=int, help="Select the lower address value "
                                                                  "for the I2C address sweep", default=0)
     parser.add_argument("-upper", "--addr_upper", type=int, help="Select the upper address value "
@@ -436,23 +415,18 @@ def main():
 
     logging.info("Starting the I2C Communication Test for SmartWave")
 
-    fpga_outdated = 0
+    fpga_outdated = False
 
     # Setup connection to SmartWave
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
         sw.infoCallback = lambda hw, uc, fpga, flashID: (
-            setattr(sw, "fpga_outdated", 1),  # Raise the flag if FPGA version is outdated
+            setattr(sw, "fpga_outdated", True),  # Raise the flag if FPGA version is outdated
             logging.warning("FPGA version is outdated, some functions may not work")
         ) if fpga != (2, 2, 0) else (
-            setattr(sw, "fpga_outdated", 0),  # Reset the flag if FPGA version is up-to-date
+            setattr(sw, "fpga_outdated", False),  # Reset the flag if FPGA version is up-to-date
             logging.info(f"Hardware version: {hw}\tMicrocontroller version: {uc}\tFPGA version: {fpga}")
         )
-
-        if fpga_outdated and args.version_update is False:
-            logging.warning("The current version of the FPGA does not support the pull-down configuration on the GPIOs."
-                            "The script will skip the SCL and SDA line checks and progresses to the I2C communication "
-                            "check.")
 
         # Update the FPGA bitstream and Microcontroller Firmware, if version update is enabled.
         if args.version_update:
@@ -465,8 +439,13 @@ def main():
                 sw.updateFirmware()
             time.sleep(2)  # Wait for all the updates to complete before reconnecting to SmartWave.
             sw = SmartWave().connect()
+            fpga_outdated = False
 
-        else:
+        if fpga_outdated and args.version_update is False:
+            logging.warning("The current version of the FPGA does not support the pull-down configuration on the GPIOs."
+                            "The script will skip the SCL and SDA line checks and progresses to the I2C communication "
+                            "check.")
+        elif fpga_outdated is False:
             ###########################################
             # Check the SCL and SDA lines
             ###########################################
@@ -489,23 +468,19 @@ def main():
             logging.info(f"4 - SCL is set to pin: {scl} | SDA is set to pin: {sda} "
                          f"| I2C clock running at {fast_clk // 1e3} kHz")
             logging.info("4.1 - Trying to connect to the target device")
-            multi_dev = args.multiple_dev
-            i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
-                                          multi_dev=multi_dev)
+            i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
             if not i2c_dev_addr:
                 logging.debug("4.1 - Connection was unsuccessful.")
                 logging.debug("4.2 - Reducing the I2C clock speed to 100kHz and try to reconnect")
                 i2c.clockSpeed = slow_clk
                 logging.debug(f"4.2 - I2C is running at {i2c.clockSpeed // 1e3} kHz")
-                i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
-                                              multi_dev=multi_dev)
+                i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
                 if not i2c_dev_addr:
                     logging.debug("4.2 - Connection was unsuccessful.")
                     logging.debug("4.3 - Swapping the SDA / SCL lines and trying to reconnect to device.")
                     i2c.delete()
                     i2c = sw.createI2CConfig(scl_pin_name=sda, sda_pin_name=scl, clock_speed=slow_clk)
-                    i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper,
-                                                  multi_dev=multi_dev)
+                    i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
                     if not i2c_dev_addr:
                         logging.error("4.3 - Couldn't reach device. Terminating code.")
                         exit()
@@ -515,7 +490,7 @@ def main():
                 logging.info("5 - Check for the correct target device by accessing a known register.")
                 reg_value = None
                 if args.reg_read_write:
-                    logging.info("5.1 - Perform a register read operation on the target device")
+                    logging.info(f"5.1 - Perform a register read operation on device {i2c_dev_addr[0]:#0x}")
 
                 hex_addr = check_data_type(args.reg_pointer)
                 if len(hex_addr) % 2:
@@ -534,7 +509,7 @@ def main():
 
                 # Modify the content of the specified register and read it back for validation
                 if not args.reg_read_write:
-                    logging.info("5.2 - Perform a register write and read operation on target device.")
+                    logging.info(f"5.2 - Perform a register write and read operation on device {i2c_dev_addr[0]:#0x}.")
                     if args.reg_value is None:
                         logging.warning("5.2 - Cannot perform register write if value is not given")
                         exit(f"5.2 - Terminating code.")
@@ -549,16 +524,16 @@ def main():
                             data_length = len(reg_value)
 
                 # Call the register read/write function with the user-defined values
-                if args.multiple_dev:
-                    logging.info("5.2 - Performing a read/write operation of multiple devices is currently not "
-                                 "supported")
-                    logging.info("5.2 - A single register access will be performed on the first device.")
-                    register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
-                    # for dev in range(len(i2c_dev_addr)):
-                    #     register_r_w(i2c, i2c_dev_addr[dev], reg_pointer, reg_value, addr_length, data_length)
+                # if args.multiple_dev:
+                #     logging.info("5.2 - Performing a read/write operation of multiple devices is currently not "
+                #                  "supported")
+                #     logging.info("5.2 - A single register access will be performed on the first device.")
+                #     register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
+                #     for dev in range(len(i2c_dev_addr)):
+                #         register_r_w(i2c, i2c_dev_addr[dev], reg_pointer, reg_value, addr_length, data_length)
 
-                else:
-                    register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
+                # else:
+                register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
 
             logging.info(f"I2C checklist was successfully completed. "
                          f"The log files can be found at {os.path.abspath(directory)}")

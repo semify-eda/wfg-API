@@ -50,16 +50,12 @@ specifying the desired options through the following command line arguments:
 It's important to note that if the lower and upper range are equal, the script will only verify whether that single 
 address matches the device's address.
 
-In case the user has multiple devices connected to the I2C bus, an extended address sweep can be performed by using 
-the following command line argument:
-```bash
--multi True  # Find the I2C address of all connected devices
-```
+In case the user has multiple devices connected to the I2C bus, an extended address sweep can be performed.
 This would find the I2C addresses of all the connected devices, and return it as a list.
 
 If the user want to perform a register read/write operation, then they can use the following command line arguments:
 ```bash
--rw 0  # Read/write flag for register access
+-rw 1  # Read/write flag for register access
 ```
 The default value of the read/write flag is 1, which will perform a register read, if the register pointer argument is given.
 
@@ -96,9 +92,16 @@ location using the following command line argument:
 -log C:\i2c_check\logs  # Location where to save the log files
 ```
 
+### Example
 A complete run configuration could look like this:
 ```bash
 python i2c_comms_check.py -log C:\semify\i2c_logs -scl A1 -sda A2 -lower 20 -upper 26 -rw 0 -rp 0x1 -rp_len 1 -rv 0x0101 -rv_len 2
 ```
+This will save the log files to the specified directory. Set up the SCL line on pin A1 and the SDA line on pin A2. 
+The I2C address sweep will be done within the range of 20 to 26. Additionally, we will perform a write operation to the 
+register address of 0x1, which has a length of one byte. The data we wish to write to this address is 0x0101 with a 
+length of two bytes.
 
-
+The user must ensure that the register address corresponds to a valid address of the connected device and supports
+read/write capabilities. Additionally, it is essential to provide the correct length for both the address 
+and data. Failure to do so may result in accessing and/or modifying an incorrect register.
