@@ -21,6 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartWaveAPI.smartwave module" href="SmartWaveAPI.smartwave.html" />
     <link rel="prev" title="SmartWaveAPI.configitems package" href="SmartWaveAPI.configitems.html" /> 
 </head>
 
@@ -45,19 +46,48 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="README.html">SmartWaveAPI</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">wfg-API</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="SmartWaveAPI.html">SmartWaveAPI package</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI">Module contents</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="SmartWaveAPI.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html">SmartWaveAPI.configitems package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">SmartWaveAPI.definitions package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Description</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">SmartWaveAPI</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html">SmartWaveAPI.configitems package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SmartWaveAPI.definitions package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.definitions.command">SmartWaveAPI.definitions.command module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.command.Command"><code class="docutils literal notranslate"><span class="pre">Command</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI.smartwave">SmartWaveAPI.smartwave module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.definitions.drivertype">SmartWaveAPI.definitions.drivertype module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.drivertype.DriverType"><code class="docutils literal notranslate"><span class="pre">DriverType</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.definitions.i2ctransaction">SmartWaveAPI.definitions.i2ctransaction module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.i2ctransaction.I2CRead"><code class="docutils literal notranslate"><span class="pre">I2CRead</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.i2ctransaction.I2CTransactionResult"><code class="docutils literal notranslate"><span class="pre">I2CTransactionResult</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.i2ctransaction.I2CWrite"><code class="docutils literal notranslate"><span class="pre">I2CWrite</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.definitions.pinoutputtype">SmartWaveAPI.definitions.pinoutputtype module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.pinoutputtype.PinOutputType"><code class="docutils literal notranslate"><span class="pre">PinOutputType</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.definitions.rgb565">SmartWaveAPI.definitions.rgb565 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.rgb565.colorRGB565"><code class="docutils literal notranslate"><span class="pre">colorRGB565()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.definitions.statusbit">SmartWaveAPI.definitions.statusbit module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.statusbit.ErrorCode"><code class="docutils literal notranslate"><span class="pre">ErrorCode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.statusbit.Statusbit"><code class="docutils literal notranslate"><span class="pre">Statusbit</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.definitions.stimulustype">SmartWaveAPI.definitions.stimulustype module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.stimulustype.StimulusType"><code class="docutils literal notranslate"><span class="pre">StimulusType</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.definitions.triggermode">SmartWaveAPI.definitions.triggermode module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.definitions.triggermode.TriggerMode"><code class="docutils literal notranslate"><span class="pre">TriggerMode</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.smartwave.html">SmartWaveAPI.smartwave module</a></li>
 </ul>
 </li>
 </ul>
@@ -76,8 +106,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">wfg-API</a></li>
-          <li class="breadcrumb-item"><a href="SmartWaveAPI.html">SmartWaveAPI package</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">SmartWaveAPI</a></li>
       <li class="breadcrumb-item active">SmartWaveAPI.definitions package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/SmartWaveAPI.definitions.rst.txt" rel="nofollow"> View page source</a>
@@ -88,12 +117,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="smartwaveapi-definitions-package">
-<h1>SmartWaveAPI.definitions package<a class="headerlink" href="#smartwaveapi-definitions-package" title="Link to this heading"></a></h1>
-<section id="module-SmartWaveAPI.definitions">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-SmartWaveAPI.definitions" title="Link to this heading"></a></h2>
+  <section id="module-SmartWaveAPI.definitions">
+<span id="smartwaveapi-definitions-package"></span><h1>SmartWaveAPI.definitions package<a class="headerlink" href="#module-SmartWaveAPI.definitions" title="Link to this heading"></a></h1>
 <p>All the value definitions for the correct communication with a SmartWave device.</p>
-</section>
 <section id="module-SmartWaveAPI.definitions.command">
 <span id="smartwaveapi-definitions-command-module"></span><h2>SmartWaveAPI.definitions.command module<a class="headerlink" href="#module-SmartWaveAPI.definitions.command" title="Link to this heading"></a></h2>
 <dl class="py class">
@@ -243,9 +269,9 @@
 </dd></dl>
 
 </section>
-<section id="smartwaveapi-definitions-pinoutputtype-module">
-<h2>SmartWaveAPI.definitions.pinoutputtype module<a class="headerlink" href="#smartwaveapi-definitions-pinoutputtype-module" title="Link to this heading"></a></h2>
-<dl class="py class" id="module-SmartWaveAPI.definitions.pinoutputtype">
+<section id="module-SmartWaveAPI.definitions.pinoutputtype">
+<span id="smartwaveapi-definitions-pinoutputtype-module"></span><h2>SmartWaveAPI.definitions.pinoutputtype module<a class="headerlink" href="#module-SmartWaveAPI.definitions.pinoutputtype" title="Link to this heading"></a></h2>
+<dl class="py class">
 <dt class="sig sig-object py" id="SmartWaveAPI.definitions.pinoutputtype.PinOutputType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.definitions.pinoutputtype.</span></span><span class="sig-name descname"><span class="pre">PinOutputType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.definitions.pinoutputtype.PinOutputType" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
@@ -419,6 +445,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="SmartWaveAPI.configitems.html" class="btn btn-neutral float-left" title="SmartWaveAPI.configitems package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="SmartWaveAPI.smartwave.html" class="btn btn-neutral float-right" title="SmartWaveAPI.smartwave module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

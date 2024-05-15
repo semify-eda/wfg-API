@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>wfg-API &mdash; SmartWave API  documentation</title>
+  <title>SmartWaveAPI &mdash; SmartWave API  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -21,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="SmartWaveAPI package" href="SmartWaveAPI.html" />
-    <link rel="prev" title="SmartWaveAPI" href="README.html" /> 
+    <link rel="next" title="SmartWaveAPI.configitems package" href="SmartWaveAPI.configitems.html" />
+    <link rel="prev" title="Description" href="README.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,9 +46,11 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="README.html">SmartWaveAPI</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">wfg-API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.html">SmartWaveAPI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Description</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartWaveAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html">SmartWaveAPI.configitems package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html">SmartWaveAPI.definitions package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.smartwave.html">SmartWaveAPI.smartwave module</a></li>
 </ul>
 </li>
 </ul>
@@ -67,7 +69,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">wfg-API</li>
+      <li class="breadcrumb-item active">SmartWaveAPI</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -77,84 +79,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="wfg-api">
-<h1>wfg-API<a class="headerlink" href="#wfg-api" title="Link to this heading"></a></h1>
+  <section id="smartwaveapi">
+<h1>SmartWaveAPI<a class="headerlink" href="#smartwaveapi" title="Link to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="SmartWaveAPI.html">SmartWaveAPI package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI">Module contents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.configitems.html">SmartWaveAPI.configitems package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems">Module contents</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.config">SmartWaveAPI.configitems.config module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.driver">SmartWaveAPI.configitems.driver module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.gpio">SmartWaveAPI.configitems.gpio module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.i2cconfig">SmartWaveAPI.configitems.i2cconfig module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.i2cdriver">SmartWaveAPI.configitems.i2cdriver module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.pin">SmartWaveAPI.configitems.pin module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#smartwaveapi-configitems-spiconfig-module">SmartWaveAPI.configitems.spiconfig module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#smartwaveapi-configitems-spidriver-module">SmartWaveAPI.configitems.spidriver module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.stimulus">SmartWaveAPI.configitems.stimulus module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SmartWaveAPI.configitems.html">SmartWaveAPI.configitems package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.config">SmartWaveAPI.configitems.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.driver">SmartWaveAPI.configitems.driver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.gpio">SmartWaveAPI.configitems.gpio module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.i2cconfig">SmartWaveAPI.configitems.i2cconfig module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.i2cdriver">SmartWaveAPI.configitems.i2cdriver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.pin">SmartWaveAPI.configitems.pin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.spiconfig">SmartWaveAPI.configitems.spiconfig module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.spidriver">SmartWaveAPI.configitems.spidriver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.configitems.html#module-SmartWaveAPI.configitems.stimulus">SmartWaveAPI.configitems.stimulus module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.definitions.html">SmartWaveAPI.definitions package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions">Module contents</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.command">SmartWaveAPI.definitions.command module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.drivertype">SmartWaveAPI.definitions.drivertype module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.i2ctransaction">SmartWaveAPI.definitions.i2ctransaction module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#smartwaveapi-definitions-pinoutputtype-module">SmartWaveAPI.definitions.pinoutputtype module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.rgb565">SmartWaveAPI.definitions.rgb565 module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.statusbit">SmartWaveAPI.definitions.statusbit module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.stimulustype">SmartWaveAPI.definitions.stimulustype module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.triggermode">SmartWaveAPI.definitions.triggermode module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SmartWaveAPI.definitions.html">SmartWaveAPI.definitions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.command">SmartWaveAPI.definitions.command module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.drivertype">SmartWaveAPI.definitions.drivertype module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.i2ctransaction">SmartWaveAPI.definitions.i2ctransaction module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.pinoutputtype">SmartWaveAPI.definitions.pinoutputtype module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.rgb565">SmartWaveAPI.definitions.rgb565 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.statusbit">SmartWaveAPI.definitions.statusbit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.stimulustype">SmartWaveAPI.definitions.stimulustype module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html#module-SmartWaveAPI.definitions.triggermode">SmartWaveAPI.definitions.triggermode module</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI.smartwave">SmartWaveAPI.smartwave module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave"><code class="docutils literal notranslate"><span class="pre">SmartWave</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FPGABitstreamEnd"><code class="docutils literal notranslate"><span class="pre">SmartWave.FPGABitstreamEnd</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FPGABitstreamStart"><code class="docutils literal notranslate"><span class="pre">SmartWave.FPGABitstreamStart</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FPGAClockDivided"><code class="docutils literal notranslate"><span class="pre">SmartWave.FPGAClockDivided</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FPGAClockSpeed"><code class="docutils literal notranslate"><span class="pre">SmartWave.FPGAClockSpeed</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FirmwareEnd"><code class="docutils literal notranslate"><span class="pre">SmartWave.FirmwareEnd</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.FirmwareStart"><code class="docutils literal notranslate"><span class="pre">SmartWave.FirmwareStart</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.PID"><code class="docutils literal notranslate"><span class="pre">SmartWave.PID</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.SBLStart"><code class="docutils literal notranslate"><span class="pre">SmartWave.SBLStart</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.VID"><code class="docutils literal notranslate"><span class="pre">SmartWave.VID</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.configGeneral"><code class="docutils literal notranslate"><span class="pre">SmartWave.configGeneral()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.connect"><code class="docutils literal notranslate"><span class="pre">SmartWave.connect()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.createGPIO"><code class="docutils literal notranslate"><span class="pre">SmartWave.createGPIO()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.createI2CConfig"><code class="docutils literal notranslate"><span class="pre">SmartWave.createI2CConfig()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.createSPIConfig"><code class="docutils literal notranslate"><span class="pre">SmartWave.createSPIConfig()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.disconnect"><code class="docutils literal notranslate"><span class="pre">SmartWave.disconnect()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getNextAvailableI2CDriver"><code class="docutils literal notranslate"><span class="pre">SmartWave.getNextAvailableI2CDriver()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getNextAvailablePin"><code class="docutils literal notranslate"><span class="pre">SmartWave.getNextAvailablePin()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getNextAvailableSPIDriver"><code class="docutils literal notranslate"><span class="pre">SmartWave.getNextAvailableSPIDriver()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getNextAvailableStimulus"><code class="docutils literal notranslate"><span class="pre">SmartWave.getNextAvailableStimulus()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.getPin"><code class="docutils literal notranslate"><span class="pre">SmartWave.getPin()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.isConnected"><code class="docutils literal notranslate"><span class="pre">SmartWave.isConnected()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.readFPGARegister"><code class="docutils literal notranslate"><span class="pre">SmartWave.readFPGARegister()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.removeConfig"><code class="docutils literal notranslate"><span class="pre">SmartWave.removeConfig()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.requestInfo"><code class="docutils literal notranslate"><span class="pre">SmartWave.requestInfo()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.reset"><code class="docutils literal notranslate"><span class="pre">SmartWave.reset()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.returnI2CDriver"><code class="docutils literal notranslate"><span class="pre">SmartWave.returnI2CDriver()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.returnPin"><code class="docutils literal notranslate"><span class="pre">SmartWave.returnPin()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.returnSPIDriver"><code class="docutils literal notranslate"><span class="pre">SmartWave.returnSPIDriver()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.returnStimulus"><code class="docutils literal notranslate"><span class="pre">SmartWave.returnStimulus()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.scanAndConnect"><code class="docutils literal notranslate"><span class="pre">SmartWave.scanAndConnect()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.trigger"><code class="docutils literal notranslate"><span class="pre">SmartWave.trigger()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.triggerMode"><code class="docutils literal notranslate"><span class="pre">SmartWave.triggerMode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.updateFPGABitstream"><code class="docutils literal notranslate"><span class="pre">SmartWave.updateFPGABitstream()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.updateFirmware"><code class="docutils literal notranslate"><span class="pre">SmartWave.updateFirmware()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.vddio"><code class="docutils literal notranslate"><span class="pre">SmartWave.vddio</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.writeFPGARegister"><code class="docutils literal notranslate"><span class="pre">SmartWave.writeFPGARegister()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.html#SmartWaveAPI.smartwave.SmartWave.writeToDevice"><code class="docutils literal notranslate"><span class="pre">SmartWave.writeToDevice()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="SmartWaveAPI.smartwave.html">SmartWaveAPI.smartwave module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.smartwave.html#SmartWaveAPI.smartwave.SmartWave"><code class="docutils literal notranslate"><span class="pre">SmartWave</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -165,8 +118,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="README.html" class="btn btn-neutral float-left" title="SmartWaveAPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="SmartWaveAPI.html" class="btn btn-neutral float-right" title="SmartWaveAPI package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="README.html" class="btn btn-neutral float-left" title="Description" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="SmartWaveAPI.configitems.html" class="btn btn-neutral float-right" title="SmartWaveAPI.configitems package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="SmartWaveAPI.definitions package" href="SmartWaveAPI.definitions.html" />
-    <link rel="prev" title="SmartWaveAPI package" href="SmartWaveAPI.html" /> 
+    <link rel="prev" title="SmartWaveAPI" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,19 +46,49 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="README.html">SmartWaveAPI</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">wfg-API</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="SmartWaveAPI.html">SmartWaveAPI package</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI">Module contents</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="SmartWaveAPI.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">SmartWaveAPI.configitems package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="SmartWaveAPI.definitions.html">SmartWaveAPI.definitions package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Description</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">SmartWaveAPI</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SmartWaveAPI.configitems package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.config">SmartWaveAPI.configitems.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="SmartWaveAPI.html#module-SmartWaveAPI.smartwave">SmartWaveAPI.smartwave module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.driver">SmartWaveAPI.configitems.driver module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.driver.Driver"><code class="docutils literal notranslate"><span class="pre">Driver</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.gpio">SmartWaveAPI.configitems.gpio module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.gpio.GPIO"><code class="docutils literal notranslate"><span class="pre">GPIO</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.i2cconfig">SmartWaveAPI.configitems.i2cconfig module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.i2cconfig.I2CConfig"><code class="docutils literal notranslate"><span class="pre">I2CConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.i2cdriver">SmartWaveAPI.configitems.i2cdriver module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.i2cdriver.I2CDriver"><code class="docutils literal notranslate"><span class="pre">I2CDriver</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.pin">SmartWaveAPI.configitems.pin module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.pin.Pin"><code class="docutils literal notranslate"><span class="pre">Pin</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.spiconfig">SmartWaveAPI.configitems.spiconfig module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.spiconfig.SPIConfig"><code class="docutils literal notranslate"><span class="pre">SPIConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.spidriver">SmartWaveAPI.configitems.spidriver module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.spidriver.SPIDriver"><code class="docutils literal notranslate"><span class="pre">SPIDriver</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SmartWaveAPI.configitems.stimulus">SmartWaveAPI.configitems.stimulus module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SmartWaveAPI.configitems.stimulus.Stimulus"><code class="docutils literal notranslate"><span class="pre">Stimulus</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.definitions.html">SmartWaveAPI.definitions package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmartWaveAPI.smartwave.html">SmartWaveAPI.smartwave module</a></li>
 </ul>
 </li>
 </ul>
@@ -77,8 +107,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">wfg-API</a></li>
-          <li class="breadcrumb-item"><a href="SmartWaveAPI.html">SmartWaveAPI package</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">SmartWaveAPI</a></li>
       <li class="breadcrumb-item active">SmartWaveAPI.configitems package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/SmartWaveAPI.configitems.rst.txt" rel="nofollow"> View page source</a>
@@ -89,12 +118,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="smartwaveapi-configitems-package">
-<h1>SmartWaveAPI.configitems package<a class="headerlink" href="#smartwaveapi-configitems-package" title="Link to this heading"></a></h1>
-<section id="module-SmartWaveAPI.configitems">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-SmartWaveAPI.configitems" title="Link to this heading"></a></h2>
+  <section id="module-SmartWaveAPI.configitems">
+<span id="smartwaveapi-configitems-package"></span><h1>SmartWaveAPI.configitems package<a class="headerlink" href="#module-SmartWaveAPI.configitems" title="Link to this heading"></a></h1>
 <p>All the configuration items, such als pins, drivers, and stimuli, needed to configure a SmartWave device.</p>
-</section>
 <section id="module-SmartWaveAPI.configitems.config">
 <span id="smartwaveapi-configitems-config-module"></span><h2>SmartWaveAPI.configitems.config module<a class="headerlink" href="#module-SmartWaveAPI.configitems.config" title="Link to this heading"></a></h2>
 <dl class="py class">
@@ -737,9 +763,9 @@ for a readback operation is already registered</p></li>
 </dd></dl>
 
 </section>
-<section id="smartwaveapi-configitems-spiconfig-module">
-<h2>SmartWaveAPI.configitems.spiconfig module<a class="headerlink" href="#smartwaveapi-configitems-spiconfig-module" title="Link to this heading"></a></h2>
-<dl class="py class" id="module-SmartWaveAPI.configitems.spiconfig">
+<section id="module-SmartWaveAPI.configitems.spiconfig">
+<span id="smartwaveapi-configitems-spiconfig-module"></span><h2>SmartWaveAPI.configitems.spiconfig module<a class="headerlink" href="#module-SmartWaveAPI.configitems.spiconfig" title="Link to this heading"></a></h2>
+<dl class="py class">
 <dt class="sig sig-object py" id="SmartWaveAPI.configitems.spiconfig.SPIConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.configitems.spiconfig.</span></span><span class="sig-name descname"><span class="pre">SPIConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sclk_pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SmartWaveAPI.configitems.pin.Pin" title="SmartWaveAPI.configitems.pin.Pin"><span class="pre">Pin</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mosi_pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SmartWaveAPI.configitems.pin.Pin" title="SmartWaveAPI.configitems.pin.Pin"><span class="pre">Pin</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">miso_pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SmartWaveAPI.configitems.pin.Pin" title="SmartWaveAPI.configitems.pin.Pin"><span class="pre">Pin</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cs_pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SmartWaveAPI.configitems.pin.Pin" title="SmartWaveAPI.configitems.pin.Pin"><span class="pre">Pin</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clockspeed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bit_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bit_numbering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'MSB'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'LSB'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cphase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sclk_display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mosi_display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">miso_display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cs_display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.spiconfig.SPIConfig" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SmartWaveAPI.configitems.config.Config" title="SmartWaveAPI.configitems.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></p>
@@ -851,9 +877,9 @@ readback operation is already registered.</p></li>
 </dd></dl>
 
 </section>
-<section id="smartwaveapi-configitems-spidriver-module">
-<h2>SmartWaveAPI.configitems.spidriver module<a class="headerlink" href="#smartwaveapi-configitems-spidriver-module" title="Link to this heading"></a></h2>
-<dl class="py class" id="module-SmartWaveAPI.configitems.spidriver">
+<section id="module-SmartWaveAPI.configitems.spidriver">
+<span id="smartwaveapi-configitems-spidriver-module"></span><h2>SmartWaveAPI.configitems.spidriver module<a class="headerlink" href="#module-SmartWaveAPI.configitems.spidriver" title="Link to this heading"></a></h2>
+<dl class="py class">
 <dt class="sig sig-object py" id="SmartWaveAPI.configitems.spidriver.SPIDriver">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SmartWaveAPI.configitems.spidriver.</span></span><span class="sig-name descname"><span class="pre">SPIDriver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clockSpeed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">25000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitWidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitNumbering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'MSB'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'LSB'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'MSB'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cphase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SmartWaveAPI.configitems.spidriver.SPIDriver" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SmartWaveAPI.configitems.driver.Driver" title="SmartWaveAPI.configitems.driver.Driver"><code class="xref py py-class docutils literal notranslate"><span class="pre">Driver</span></code></a></p>
@@ -1023,7 +1049,7 @@ readback operation is already registered.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="SmartWaveAPI.html" class="btn btn-neutral float-left" title="SmartWaveAPI package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="SmartWaveAPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="SmartWaveAPI.definitions.html" class="btn btn-neutral float-right" title="SmartWaveAPI.definitions package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
