@@ -1,4 +1,4 @@
-# SmartWaveAPI
+# Description 
 A python API for the SmartWave interface.
 
 ## Installation

@@ -1,7 +1,9 @@
-wfg-API
-=======
+SmartWaveAPI
+============
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
-   SmartWaveAPI
+   SmartWaveAPI.configitems
+   SmartWaveAPI.definitions
+   SmartWaveAPI.smartwave
