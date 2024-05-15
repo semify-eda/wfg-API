@@ -12,7 +12,9 @@ def main():
                 sclk_pin_name="A3",
                 cs_pin_name="A2",
                 clock_speed=int(2e6),
-                bit_numbering="MSB") as spi:
+                bit_numbering="MSB",
+                cs_inactive_time=5,
+        ) as spi:
             whoami = spi.write([0x8f00])[0]
             print(whoami)
             # input()
