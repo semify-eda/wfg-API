@@ -20,7 +20,8 @@ class SPIConfig(Config):
                  sclk_display_name: Optional[str] = None,
                  mosi_display_name: Optional[str] = None,
                  miso_display_name: Optional[str] = None,
-                 cs_display_name: Optional[str] = None):
+                 cs_display_name: Optional[str] = None,
+                 cs_inactive_time: Optional[int] = None):
         """Create a new SPI Config object and write the configuration to the connected device.
 
         :param SmartWave device: The SmartWave device this config belongs to
@@ -37,7 +38,8 @@ class SPIConfig(Config):
         :param str sclk_display_name: The name to display for the driver's SCLK pin. Default: SCLK
         :param str mosi_display_name: The name to display for the driver's MOSI pin. Default: MOSI
         :param str miso_display_name: The name to display for the driver's MISO pin. Default: MISO
-        :param str cs_display_name: The name to display for the driver's CS pin. Default: CS"""
+        :param str cs_display_name: The name to display for the driver's CS pin. Default: CS
+        :param int cs_inactive_time: How long the CS line should send an inactive level between words, in clock cycles. Default: 1"""
         self._device = device
 
         self._readSemaphore = threading.Semaphore(0)
@@ -54,7 +56,8 @@ class SPIConfig(Config):
             sclk_display_name=sclk_display_name,
             mosi_display_name=mosi_display_name,
             miso_display_name=miso_display_name,
-            cs_display_name=cs_display_name
+            cs_display_name=cs_display_name,
+            cs_inactive_time=cs_inactive_time,
         )
 
         self._driver.pins['SCLK'] = sclk_pin if sclk_pin is not None else device.getNextAvailablePin()
@@ -277,3 +280,15 @@ class SPIConfig(Config):
         :param str value: The name to display for the driver's CS pin."""
         self.csDisplayName = value
 
+
+    @property
+    def csInactiveTime(self) -> int:
+        """How long the CS line is inactive between words, in clock cycles."""
+        return self._driver.csInactiveTime
+
+    @csInactiveTime.setter
+    def csInactiveTime(self, value: int) -> None:
+        """Set the CS inactive time, in clock cycles.
+
+        :param int value: The time in clock cycles how long the CS line should be inactive between words"""
+        self._driver.csInactiveTime = value

@@ -17,7 +17,8 @@ class SPIDriver(Driver):
                  bitNumbering: Literal["MSB", "LSB"] = "MSB",
                  cspol: Literal[0, 1] = 0,
                  cpol: Literal[0, 1] = 0,
-                 cphase: Literal[0, 1] = 0):
+                 cphase: Literal[0, 1] = 0,
+                 cs_inactive_time: int = 1):
         """Create a new SPI driver instance. Only to be called in SmartWave.__init__() function.
 
         :param SmartWave device: The SmartWave device this driver belongs to
@@ -28,6 +29,7 @@ class SPIDriver(Driver):
         :param Literal[0, 1] cspol: The polarity of the chipselect pin
         :param Literal[0, 1] cpol: The polarity of the clock pin
         :param Literal[0, 1] cphase: The phase of the clock
+        :param int cs_inactive_time: How long the CS line should send an inactive level between words, in clock cycles. Default: 1
 
         :raises AttributeError: If clockSpeed is not available on the device
         :raises AttributeError: If bitWidth is not between 1 and 32"""
@@ -40,6 +42,7 @@ class SPIDriver(Driver):
         self._cspol: Literal[0, 1] = cspol
         self._cpol: Literal[0, 1] = cpol
         self._cphase: Literal[0, 1] = cphase
+        self._csInactiveTime: int = cs_inactive_time
 
         self.pins: Dict[str, Pin or None] = {
             "SCLK": None,
@@ -79,7 +82,8 @@ class SPIDriver(Driver):
             self._cspol,
             self._cphase,
             (cdiv >> 8) & 0xff,
-            cdiv & 0xff
+            cdiv & 0xff,
+            self._csInactiveTime
         ]))
 
     def _checkAndSetClockSpeed(self, clockSpeed: int):
@@ -115,6 +119,7 @@ class SPIDriver(Driver):
                   mosi_display_name: Optional[str] = None,
                   miso_display_name: Optional[str] = None,
                   cs_display_name: Optional[str] = None,
+                  cs_inactive_time: Optional[int] = None,
                   ):
         """Configure the settings of this driver and write them to the connected device.
 
@@ -128,6 +133,7 @@ class SPIDriver(Driver):
         :param str mosi_display_name: The name to display for the MOSI pin
         :param str miso_display_name: The name to display for the MISO pin
         :param str cs_display_name: The name to display for the CS pin
+        :param int cs_inactive_time: How long the CS line should send an inactive level between words, in clock cycles
 
         :raises AttributeError: If clockSpeed is not available on the device
         :raises AttributeError: If bitWidth is not between 1 and 32"""
@@ -161,6 +167,9 @@ class SPIDriver(Driver):
 
         if cs_display_name is not None:
             self._displayNames["CS"] = cs_display_name
+
+        if cs_inactive_time is not None:
+            self._csInactiveTime = cs_inactive_time
 
         if self._device.isConnected():
             self.writeToDevice()
@@ -287,6 +296,19 @@ class SPIDriver(Driver):
 
         :param str value: The name to display for the CS pin."""
         self.configure(cs_display_name=value)
+
+    @property
+    def csInactiveTime(self) -> int:
+        """How long the CS line is inactive between words, in clock cycles."""
+        return self._csInactiveTime
+
+    @csInactiveTime.setter
+    def csInactiveTime(self, value: int) -> None:
+        """Set the CS inactive time, in clock cycles.
+
+        :param int value: The time in clock cycles how long the CS line should be inactive between words"""
+        self.configure(cs_inactive_time=value)
+
 
     def writePinsToDevice(self):
         """Write the configuration of each of this driver's pins to the device."""

@@ -632,7 +632,8 @@ class SmartWave(object):
                         sclk_display_name: Optional[str] = None,
                         mosi_display_name: Optional[str] = None,
                         miso_display_name: Optional[str] = None,
-                        cs_display_name: Optional[str] = None):
+                        cs_display_name: Optional[str] = None,
+                        cs_inactive_time: Optional[int] = None):
         """Create an SPI Configuration object.
 
         :param str sclk_pin_name: The name of the pin to use for SCLK
@@ -649,6 +650,7 @@ class SmartWave(object):
         :param str mosi_display_name: The name to display for the driver's MOSI pin. Default: MOSI
         :param str miso_display_name: The name to display for the driver's MISO pin. Default: MISO
         :param str cs_display_name: The name to display for the driver's CS pin. Default: CS
+        :param int cs_inactive_time: How long the CS line should send an inactive level between words, in clock cycles. Default: 1
 
         :return: An SPI Configuration with the specified settings
         :rtype: SPIConfig
@@ -672,7 +674,8 @@ class SmartWave(object):
                                       sclk_display_name,
                                       mosi_display_name,
                                       miso_display_name,
-                                      cs_display_name)
+                                      cs_display_name,
+                                      cs_inactive_time)
         self.configEntries.append(config)
 
         return config
