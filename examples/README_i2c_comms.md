@@ -46,7 +46,7 @@ If this is the case, the user can specify to skip the GPIO test with the followi
 ```bash
 -gpio 0     # Bypass the GPIO tests
 ```
-
+### Locate connected device(s)
 By default, the script will only execute the basic pin tests and the I2C address check using the default pin settings 
 and address range. However, if the user wishes to modify the default values or run the register test, they can do so by 
 specifying the desired options through the following command line arguments:
@@ -54,13 +54,22 @@ specifying the desired options through the following command line arguments:
 -scl A2 -sda A3     # Configure pin A2 to SCL and pin A3 to SDA
 ```
 ```bash
--lower 20 -upper 30   # Look for the device's I2C address within the range of 20-30 
+-lower 0x18 -upper 0x40   # Look for the device's I2C address within the range of 0x18 - 0x40 
 ```
 It's important to note that if the lower and upper range are equal, the script will only verify whether that single 
 address matches the device's address.
 
 In case the user has multiple devices connected to the I2C bus, an extended address sweep can be performed.
 This would find the I2C addresses of all the connected devices, and return it as a list.
+
+### Register Read / Write
+If there are multiple devices connected, the user can specify which device to access for the read/write operation using 
+the following command:
+```bash
+-addr 0x20  # I2C address of the selected device for read/write operation
+```
+If the address parameter is not defined, the register read/write operation will be performed on the first device 
+returned in the I2C address list.
 
 If the user want to perform a register read/write operation, then they can use the following command line arguments:
 ```bash
@@ -104,7 +113,7 @@ location using the following command line argument:
 ### Example
 A complete run configuration could look like this:
 ```bash
-python i2c_comms_check.py -update 0 -log C:\semify\i2c_logs -gpio 1 -scl A1 -sda A2 -lower 20 -upper 26 -rw 0 -rp 0x1 -rp_len 1 -rv 0x0101 -rv_len 2
+python i2c_comms_check.py -update 0 -log C:\semify\i2c_logs -gpio 0 -scl A1 -sda A2 -lower 0x18 -upper 0x40 -addr 0x20 -rw 0 -rp 0x1 -rp_len 1 -rv 0x0101 -rv_len 2
 ```
 This will disable the auto update (default setting) save the log files to the specified directory and enable the GPIO 
 checks (default setting). Set up the SCL line on pin A1 and the SDA line on pin A2. 

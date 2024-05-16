@@ -79,9 +79,9 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     pin_0 = str(pin_conf_a)
     pin_1 = str(pin_conf_b)
 
-    ############################################################
+    ############################################################################################
     # Select the desired pins by writing to the FPGA's register
-    ############################################################
+    ############################################################################################
     localenv = FPGA_Reg.registers["wfg_pin_mux_top"]
     addr = localenv["OUTPUT_SEL_0"]["addr"]
     pingroup = 0
@@ -89,10 +89,10 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     pingroup |= 0 << localenv["OUTPUT_SEL_0"][pin_1]["LSB"]
     sw.writeFPGARegister(addr, pingroup)
 
-    ###########################################
+    ############################################################################################
     # SCL and SDA pulled up
-    ###########################################
-    logging.info("1.1 - 1.2 - Setting both SCL and SDA in pullup mode.")
+    ############################################################################################
+    logging.info("1.1 - 1.2 - Setting both SCL and SDA in pull-up mode.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
     pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
@@ -112,9 +112,9 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
         logging.error("1.2 - The SDA pin is shorted to GND")
         errors += 1
 
-    ###########################################
+    ############################################################################################
     # SCL and SDA pulled down
-    ###########################################
+    ############################################################################################
     logging.info("1.3 - 1.4 - Set both SCL and SDA in pull-down mode.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
@@ -126,8 +126,8 @@ def gpio_high_low(sw: SmartWave, gpio_a, gpio_b, pin_conf_a: int, pin_conf_b: in
     input_level_a = gpio_a.inputLevel
     input_level_b = gpio_b.inputLevel
 
-    logging.info(f"1.3 - Input level of SCL pin: {input_level_a} with pulldown enabled")
-    logging.info(f"1.4 - Input level of SDA pin: {input_level_b} with pulldown enabled")
+    logging.info(f"1.3 - Input level of SCL pin: {input_level_a} with pull-down enabled")
+    logging.info(f"1.4 - Input level of SDA pin: {input_level_b} with pull-down enabled")
 
     if input_level_a:
         logging.error("1.3 - The SCL pin is shorted to VCC")
@@ -152,9 +152,9 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     :return: None
     """
 
-    ############################################################
+    ############################################################################################
     # Select the desired pins by writing to the FPGA's register
-    ############################################################
+    ############################################################################################
     pin_0 = str(pin_conf_a)
     pin_1 = str(pin_conf_b)
     localenv = FPGA_Reg.registers["wfg_pin_mux_top"]
@@ -164,9 +164,9 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
     pingroup |= 0 << localenv["OUTPUT_SEL_0"][pin_1]["LSB"]
     sw.writeFPGARegister(addr, pingroup)
 
-    ###########################################
+    ############################################################################################
     # SCL pulled low and SDA pulled high
-    ###########################################
+    ############################################################################################
     logging.info("2.1 - Set SCL low and SDA high.")
     addr = localenv["PULLUP_SEL_0"]["addr"]
     pingroup = 0
@@ -183,9 +183,9 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
         logging.critical("2.1 - There is a short between the SCL and SDA lines.")
         exit("2.1 - Terminating code.")
 
-    ###########################################
+    ############################################################################################
     # SCL pulled high and SDA pulled low
-    ###########################################
+    ############################################################################################
     logging.info("2.2 - Set SCL high and SDA low.")
     pingroup = 0
     pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
@@ -201,9 +201,9 @@ def gpio_short(sw, gpio_a, gpio_b, pin_conf_a, pin_conf_b) -> None:
         logging.critical("2.2 - There is a short between the SCL and SDA lines.")
         exit("2.2 - Terminating code.")
 
-    #########################################################
+    ############################################################################################
     # Re-enable the pull-ups for the I2C communication check
-    #########################################################
+    ############################################################################################
     pingroup = 0
     pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_0]["LSB"]
     pingroup |= 1 << localenv["PULLUP_SEL_0"][pin_1]["LSB"]
@@ -220,9 +220,9 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, list]:
     :return: device specific I2C address
     """
 
-    #####################################################################################
+    ############################################################################################
     # Check if the lower and upper address range is set correctly, and modify if needed
-    #####################################################################################
+    ############################################################################################
     if addr_lower < 0:
         logging.warning("4.1 - Minimum value for the lower range can't be a negative number!")
         logging.debug("4.1 - Resetting the lower address value to the default 0.")
@@ -239,18 +239,18 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, list]:
         addr_swap = addr_upper
         addr_upper = addr_lower
         addr_lower = addr_swap
-        logging.info(f"4.1 - The new lower value is: {addr_lower} and the new upper value is: {addr_upper}.")
+        logging.info(f"4.1 - The new lower value is: {addr_lower:#0x} and the new upper value is: {addr_upper:#0x}.")
 
     logging.info(
-        f"4.1 - Trying to find the I2C address of the device within the range of {addr_lower} and {addr_upper}")
+        f"4.1 - Trying to find the I2C address of the device within the range of {addr_lower:#0x} and {addr_upper:#0x}")
 
     i2c_addr = []
     dummy_byte = (0).to_bytes(1, 'big')
     i2c_addr_list = np.arange(addr_lower, addr_upper + 1)
 
-    ##############################################
+    ############################################################################################
     # Check a single address passed by the user
-    ##############################################
+    ############################################################################################
     if len(i2c_addr_list) == 1:
         i2c.write(int(i2c_addr_list[0]), dummy_byte)
         i2c_data = i2c.read(int(i2c_addr_list[0]), 1)
@@ -264,9 +264,9 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, list]:
             i2c_addr.append(int(i2c_addr_list[0]))
             logging.info(f"4.1 - Connection was successful. I2C address is: {i2c_addr[0]:#0x}")
 
-    ########################################################
+    ############################################################################################
     # Sweep the possible addresses within the given range
-    ########################################################
+    ############################################################################################
     else:
         connected = False
         for addr in range(len(i2c_addr_list)):
@@ -283,8 +283,8 @@ def i2c_addr_sweep(i2c, addr_lower: int, addr_upper: int) -> Union[None, list]:
                 i2c_addr.append(int((i2c_addr_list[addr])))
                 connected = True
         if connected:
-            logging.info("4.1 - Connection was successful. List of I2C Addresses: %s",
-                         ', '.join(hex(addr) for addr in i2c_addr))
+            logging.info(f"4.1 - Connection was successful. {len(i2c_addr)} devices were found. "
+                         "List of I2C Addresses: %s", ', '.join(hex(addr) for addr in i2c_addr))
     return i2c_addr
 
 
@@ -302,9 +302,9 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: Optional[bytes
     :return: None
     """
 
-    ######################################################
+    ############################################################################################
     # Convert the register address to the correct length
-    ######################################################
+    ############################################################################################
     if (addr_length != 1) and (len(reg_pointer) > 1):
         max_shift = (addr_length - 1) * 8
         addr_to_write = 0
@@ -330,13 +330,11 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: Optional[bytes
             data_read_back |= reg_read_back[pos] << (max_shift - (pos * 8))
         logging.info(f"5.1 - Value read back: {data_read_back:#0x} from register address: {reg_pointer[0]:#0x}")
 
-    ##########################################################################
+    ############################################################################################
     # Modify the register value then do a read-back and compare the results
-    ##########################################################################
+    ############################################################################################
     else:
-        ######################################################
         # Convert the register data to the correct length
-        ######################################################
         if (data_length != 1) and (len(reg_val) > 1):
             max_shift = (data_length - 1) * 8
             data_to_write = 0
@@ -351,16 +349,16 @@ def register_r_w(i2c, i2c_addr: int, reg_pointer: bytes, reg_val: Optional[bytes
         else:
             data_to_write = int.from_bytes(reg_val)
 
-        #################
+        ############################################################################################
         # Register write
-        #################
+        ############################################################################################
         i2c.writeRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'),
                           data_to_write.to_bytes(data_length, 'big'))
         logging.info(f"5.2 - Value written: {data_to_write:#0x} to register address {reg_pointer[0]:#0x}")
 
-        #################
+        ############################################################################################
         # Register read
-        #################
+        ############################################################################################
         reg_read_back = i2c.readRegister(i2c_addr, addr_to_write.to_bytes(addr_length, 'big'), data_length)
         data_read_back = 0
         max_shift = (data_length - 1) * 8
@@ -384,9 +382,9 @@ def main():
     :return: none
     """
 
-    ###############################################
+    ############################################################################################
     # Command line arguments provided by the user
-    ###############################################
+    ############################################################################################
     parser = argparse.ArgumentParser(description="Access Registers.")
     parser.add_argument("-update", "--version_update", type=int, help="Update the SmartWave FPGA and Firmware to the"
                                                                       "latest release.", default=0)
@@ -399,10 +397,13 @@ def main():
     parser.add_argument("-scl", "--scl_pin", type=str, help="Select the desired SCL Pin on SmartWave", default='A1')
     parser.add_argument("-sda", "--sda_pin", type=str, help="Select the desired SDA Pin on SmartWave", default='A2')
 
-    parser.add_argument("-lower", "--addr_lower", type=int, help="Select the lower address value "
-                                                                 "for the I2C address sweep", default=0)
-    parser.add_argument("-upper", "--addr_upper", type=int, help="Select the upper address value "
-                                                                 "for the I2C address sweep", default=127)
+    parser.add_argument("-lower", "--addr_lower", type=str, help="Select the lower address value "
+                                                                 "for the I2C address sweep", default='0')
+    parser.add_argument("-upper", "--addr_upper", type=str, help="Select the upper address value "
+                                                                 "for the I2C address sweep", default='127')
+
+    parser.add_argument("-addr", "--user_addr", type=str, help="Select which device should be accessed for register"
+                                                               "read/write operation")
 
     parser.add_argument("-rw", "--reg_read_write", type=int, help="Read/Write flag for register access.")
 
@@ -414,9 +415,9 @@ def main():
 
     args = parser.parse_args()
 
-    ##########################################
+    ############################################################################################
     # Create directory to save the log files
-    ##########################################
+    ############################################################################################
     if args.log_location:
         directory = args.log_location
     else:
@@ -425,9 +426,9 @@ def main():
     if not os.path.exists(directory):
         os.mkdir(directory)
 
-    ###################################
+    ############################################################################################
     # Basic configuration for logging
-    ###################################
+    ############################################################################################
     date_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S")
     file_name = f'I2C_coms_check_{date_time}.log'
     fq_fn = os.path.join(directory, file_name)
@@ -437,13 +438,13 @@ def main():
                         handlers=[
                             logging.StreamHandler(sys.stdout),
                             logging.FileHandler(filename=fq_fn)
-                        ]
+                            ]
                         )
     original_log_level = logging.getLogger().getEffectiveLevel()
 
-    #############################################################
+    ############################################################################################
     # Check if the SmartWaveAPI is the latest available version
-    #############################################################
+    ############################################################################################
     try:
         version = importlib.metadata.version("SmartWaveAPI")
         logging.info(f"SmartWaveAPI Version: {version}")
@@ -456,9 +457,9 @@ def main():
     except importlib.metadata.PackageNotFoundError:
         logging.error("SmartWaveAPI is not installed.")
 
-    ###########################################
+    ############################################################################################
     # Parameters for I2C object configuration
-    ###########################################
+    ############################################################################################
     scl = args.scl_pin
     sda = args.sda_pin
     fast_clk = int(400e3)
@@ -467,9 +468,9 @@ def main():
     logging.info("Starting the I2C Communication Test for SmartWave")
 
     fpga_outdated = False
-    ###################################
+    ############################################################################################
     # Setup connection to SmartWave
-    ###################################
+    ############################################################################################
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
         sw.infoCallback = lambda hw, uc, fpga, flashID: (
@@ -500,9 +501,9 @@ def main():
                             "The script will skip the SCL and SDA line checks and progresses to the I2C communication "
                             "check.")
 
-        ###########################################
+        ############################################################################################
         # Check the SCL and SDA lines
-        ###########################################
+        ############################################################################################
         elif (fpga_outdated is False) and (args.gpio_test == 1):
             with sw.createGPIO(pin_name=scl, name="SCL") as gpio_A:
                 with sw.createGPIO(pin_name=sda, name="SDA") as gpio_B:
@@ -516,43 +517,47 @@ def main():
                     logging.info("The SCL and SDA line checks have been successfully completed.")
                     logging.info("Moving on to the I2C communication setup check.")
 
-        ###########################################
+        ############################################################################################
         # Start the I2C communication check
-        ###########################################
+        ############################################################################################
         with sw.createI2CConfig(sda_pin_name=sda, scl_pin_name=scl, clock_speed=fast_clk) as i2c:
             logging.info(f"4 - SCL is set to pin: {scl} | SDA is set to pin: {sda} "
                          f"| I2C clock running at {fast_clk // 1e3} kHz")
             logging.info("4.1 - Trying to connect to the target device")
-            i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
+            addr_lower = check_data_type(args.addr_lower)
+            addr_lower = int(addr_lower, 16)
+            addr_upper = check_data_type(args.addr_upper)
+            addr_upper = int(addr_upper, 16)
+            i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=addr_lower, addr_upper=addr_upper)
             if not i2c_dev_addr:
                 logging.debug("4.1 - Connection was unsuccessful.")
                 logging.debug("4.2 - Reducing the I2C clock speed to 100kHz and try to reconnect")
                 i2c.clockSpeed = slow_clk
                 logging.debug(f"4.2 - I2C is running at {i2c.clockSpeed // 1e3} kHz")
-                i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
+                i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=addr_lower, addr_upper=addr_upper)
                 if not i2c_dev_addr:
                     logging.debug("4.2 - Connection was unsuccessful.")
                     logging.debug("4.3 - Swapping the SDA / SCL lines and trying to reconnect to device.")
                     i2c.delete()
                     i2c = sw.createI2CConfig(scl_pin_name=sda, sda_pin_name=scl, clock_speed=slow_clk)
-                    i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=args.addr_lower, addr_upper=args.addr_upper)
+                    i2c_dev_addr = i2c_addr_sweep(i2c, addr_lower=addr_lower, addr_upper=addr_upper)
                     if not i2c_dev_addr:
                         logging.error("4.3 - Couldn't reach device. Terminating code.")
                         exit()
 
-            ###############################################################
+            ############################################################################################
             # Access the user specified register and read out its content
-            ###############################################################
+            ############################################################################################
             if args.reg_pointer:
                 logging.info("5 - Check for the correct target device by accessing a known register.")
                 reg_value = None
                 if args.reg_read_write:
                     logging.info(f"5.1 - Perform a register read operation on device {i2c_dev_addr[0]:#0x}")
 
-                hex_addr = check_data_type(args.reg_pointer)
-                if len(hex_addr) % 2:
-                    hex_addr = "".join(['0', hex_addr])
-                reg_pointer = bytes.fromhex(hex_addr)
+                target_addr = check_data_type(args.reg_pointer)
+                if len(target_addr) % 2:
+                    target_addr = "".join(['0', target_addr])
+                reg_pointer = bytes.fromhex(target_addr)
 
                 if args.num_addr_byte:
                     addr_length = int(args.num_addr_byte)
@@ -564,11 +569,10 @@ def main():
                     logging.debug("5.1 - Length of the data value wasn't set. Using default value of one byte.")
                     data_length = 1
 
-                #################################################################################
+                ############################################################################################
                 # Modify the content of the specified register and read it back for validation
-                #################################################################################
+                ############################################################################################
                 if not args.reg_read_write:
-                    logging.info(f"5.2 - Perform a register write and read operation on device {i2c_dev_addr[0]:#0x}.")
                     if args.reg_value is None:
                         logging.warning("5.2 - Cannot perform register write if value is not given")
                         exit(f"5.2 - Terminating code.")
@@ -582,17 +586,29 @@ def main():
                         else:
                             data_length = len(reg_value)
 
-                # Call the register read/write function with the user-defined values
-                # if args.multiple_dev:
-                #     logging.info("5.2 - Performing a read/write operation of multiple devices is currently not "
-                #                  "supported")
-                #     logging.info("5.2 - A single register access will be performed on the first device.")
-                #     register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
-                #     for dev in range(len(i2c_dev_addr)):
-                #         register_r_w(i2c, i2c_dev_addr[dev], reg_pointer, reg_value, addr_length, data_length)
+                ############################################################################################
+                # Perform a register access on the user defined device
+                ############################################################################################
+                if args.user_addr:
+                    target_addr = check_data_type(args.user_addr)
+                    target_addr = int(target_addr, 16)
+                    target_found = False
+                    logging.info("5.2 - Performing a read/write operation on the selected device with address "
+                                 f"{target_addr:#0x}")
+                    for idx, dev in enumerate(i2c_dev_addr):
+                        if dev == target_addr:
+                            target_found = True
+                            register_r_w(i2c, i2c_dev_addr[idx], reg_pointer, reg_value, addr_length, data_length)
+                        if not target_found and dev == i2c_dev_addr[-1]:
+                            logging.warning("5.2 - Target not found. Make sure the device address is correct.")
+                            exit()
 
-                # else:
-                register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
+                ############################################################################################
+                # Perform a register access on the first device in the i2c_dev_addr list
+                ############################################################################################
+                else:
+                    logging.info(f"5.2 - Perform a register write and read operation on device {i2c_dev_addr[0]:#0x}.")
+                    register_r_w(i2c, i2c_dev_addr[0], reg_pointer, reg_value, addr_length, data_length)
 
             logging.info(f"I2C checklist was successfully completed. "
                          f"The log files can be found at {os.path.abspath(directory)}")
