@@ -34,9 +34,18 @@ python i2c_comms_check.py
 The script initially verifies whether the Firmware and FPGA versions are the latest available releases. If not, the 
 user has the option to update them with the following command line argument when executing the script:
 ```bash
--update True
+-update 1  # Update the Firmware and FPGA bitstream to the latest release
 ```
 This option is disabled by default, to prevent overwriting any changes made by the user.
+
+It is important to note that when multiple devices are connected to the same I2C bus, SmartWave may not be able to pull 
+down the SCL/SDA lines, leading to a failure when checking for logic 0 levels. This occurs because the combined pull-up 
+strength of the connected devices exceeds the pull-down resistor strength of SmartWave, maintaining the SCL/SDA line at 
+logic 1.
+If this is the case, the user can specify to skip the GPIO test with the following command line argument:
+```bash
+-gpio 0     # Bypass the GPIO tests
+```
 
 By default, the script will only execute the basic pin tests and the I2C address check using the default pin settings 
 and address range. However, if the user wishes to modify the default values or run the register test, they can do so by 
@@ -95,9 +104,10 @@ location using the following command line argument:
 ### Example
 A complete run configuration could look like this:
 ```bash
-python i2c_comms_check.py -log C:\semify\i2c_logs -scl A1 -sda A2 -lower 20 -upper 26 -rw 0 -rp 0x1 -rp_len 1 -rv 0x0101 -rv_len 2
+python i2c_comms_check.py -update 0 -log C:\semify\i2c_logs -gpio 1 -scl A1 -sda A2 -lower 20 -upper 26 -rw 0 -rp 0x1 -rp_len 1 -rv 0x0101 -rv_len 2
 ```
-This will save the log files to the specified directory. Set up the SCL line on pin A1 and the SDA line on pin A2. 
+This will disable the auto update (default setting) save the log files to the specified directory and enable the GPIO 
+checks (default setting). Set up the SCL line on pin A1 and the SDA line on pin A2. 
 The I2C address sweep will be done within the range of 20 to 26. Additionally, we will perform a write operation to the 
 register address of 0x1, which has a length of one byte. The data we wish to write to this address is 0x0101 with a 
 length of two bytes.

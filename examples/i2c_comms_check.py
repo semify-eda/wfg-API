@@ -349,10 +349,13 @@ def main():
     """
     # Command line arguments provided by the user
     parser = argparse.ArgumentParser(description="Access Registers.")
-    parser.add_argument("-update", "--version_update", type=bool, help="Update the SmartWave FPGA and Firmware to the"
-                                                                       "latest release.", default=False)
+    parser.add_argument("-update", "--version_update", type=int, help="Update the SmartWave FPGA and Firmware to the"
+                                                                      "latest release.", default=0)
 
     parser.add_argument("-log", "--log_location", type=str, help="User defined location for log files")
+
+    parser.add_argument("-gpio", "--gpio_test", type=int, help="Test is the pins can be pulled high and low.",
+                        default=1)
 
     parser.add_argument("-scl", "--scl_pin", type=str, help="Select the desired SCL Pin on SmartWave", default='A1')
     parser.add_argument("-sda", "--sda_pin", type=str, help="Select the desired SDA Pin on SmartWave", default='A2')
@@ -416,7 +419,6 @@ def main():
     logging.info("Starting the I2C Communication Test for SmartWave")
 
     fpga_outdated = False
-
     # Setup connection to SmartWave
     with SmartWave().connect() as sw:
         logging.info("Successfully connected to SmartWave")
@@ -429,7 +431,7 @@ def main():
         )
 
         # Update the FPGA bitstream and Microcontroller Firmware, if version update is enabled.
-        if args.version_update:
+        if args.version_update == 1:
             sw.disconnect()
             with SmartWave().connect() as sw:
                 sw.updateFPGABitstream()
@@ -441,11 +443,11 @@ def main():
             sw = SmartWave().connect()
             fpga_outdated = False
 
-        if fpga_outdated and args.version_update is False:
+        if fpga_outdated and (args.version_update == 0):
             logging.warning("The current version of the FPGA does not support the pull-down configuration on the GPIOs."
                             "The script will skip the SCL and SDA line checks and progresses to the I2C communication "
                             "check.")
-        elif fpga_outdated is False:
+        elif (fpga_outdated is False) and (args.gpio_test == 1):
             ###########################################
             # Check the SCL and SDA lines
             ###########################################
