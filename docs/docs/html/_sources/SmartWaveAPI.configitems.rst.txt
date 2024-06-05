@@ -1,9 +1,6 @@
 SmartWaveAPI.configitems package
 ================================
 
-Module contents
----------------
-
 .. automodule:: SmartWaveAPI.configitems
    :members:
    :undoc-members:
@@ -21,6 +18,14 @@ SmartWaveAPI.configitems.driver module
 --------------------------------------
 
 .. automodule:: SmartWaveAPI.configitems.driver
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+SmartWaveAPI.configitems.gpio module
+--------------------------------------
+
+.. automodule:: SmartWaveAPI.configitems.gpio
    :members:
    :undoc-members:
    :show-inheritance:
@@ -45,6 +50,22 @@ SmartWaveAPI.configitems.pin module
 -----------------------------------
 
 .. automodule:: SmartWaveAPI.configitems.pin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+SmartWaveAPI.configitems.spiconfig module
+-----------------------------------------
+
+.. automodule:: SmartWaveAPI.configitems.spiconfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+SmartWaveAPI.configitems.spidriver module
+-----------------------------------------
+
+.. automodule:: SmartWaveAPI.configitems.spidriver
    :members:
    :undoc-members:
    :show-inheritance:

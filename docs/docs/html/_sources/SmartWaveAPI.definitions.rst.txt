@@ -1,14 +1,10 @@
 SmartWaveAPI.definitions package
 ================================
 
-Module contents
----------------
-
 .. automodule:: SmartWaveAPI.definitions
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 SmartWaveAPI.definitions.command module
 ---------------------------------------
@@ -30,6 +26,22 @@ SmartWaveAPI.definitions.i2ctransaction module
 ----------------------------------------------
 
 .. automodule:: SmartWaveAPI.definitions.i2ctransaction
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+SmartWaveAPI.definitions.pinoutputtype module
+---------------------------------------------
+
+.. automodule:: SmartWaveAPI.definitions.pinoutputtype
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+SmartWaveAPI.definitions.rgb565 module
+-----------------------------------------
+
+.. automodule:: SmartWaveAPI.definitions.rgb565
    :members:
    :undoc-members:
    :show-inheritance:
