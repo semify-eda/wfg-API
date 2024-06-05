@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "SmartWaveAPI"
-version = "2.1.0"
+version = "2.1.1"
 authors = [
   { name="Christoph Royer", email="mail@christophroyer.com" },
   { name="Erwin Peterlin", email="erwin.peterlin@semify-eda.com" },
