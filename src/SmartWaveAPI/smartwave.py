@@ -869,7 +869,8 @@ class SmartWave(object):
         # size check
         f.seek(0, os.SEEK_END)
         fileSize = f.tell()
-        if fileSize != 0x21728c:
+        #if fileSize != 0x21728c:
+        if fileSize != 0x3a607c:
             raise Exception(
                 "The bitstream seems to be of the wrong size: 0x%x. Please check for correctness." % fileSize)
 
