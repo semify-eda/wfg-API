@@ -140,7 +140,8 @@ class SmartWave(object):
             try:
                 if self.isConnected() and self._serialPort.in_waiting > 0:
                     statusbit = int.from_bytes(self._serialPort.read(1), byteorder='big')
-
+                    print("status bit received")
+                    print(statusbit)
                     if statusbit == Statusbit.Idle.value:
                         self._deviceRunning = False
                         if self.idleCallback is not None:
@@ -214,7 +215,10 @@ class SmartWave(object):
                             self._allPins[pinId].inputLevel = 1 if (allPins & (1 << pinId)) else 0
 
                     elif statusbit == Statusbit.FirmwareUpdateStatus.value:
+                        print("firmware update status bit received")
                         byte = int.from_bytes(self._serialPort.read(1), 'big')
+                        print("byte 2:")
+                        print(byte)
                         isMicrocontroller: bool = (byte & 8) == 1
                         status: int = byte & 0x7f
 
@@ -291,7 +295,7 @@ class SmartWave(object):
         # scans all ports and autoconnects to matching id
         ports = serial.tools.list_ports.comports()
         for port in ports:
-            if port.vid == SmartWave.VID and port.pid == SmartWave.PID:
+            if (port.vid == SmartWave.VID and port.pid == SmartWave.PID) or (port.vid == 9025 and port.pid == 32847):
                 try:
                     self._connectToSpecifiedPort(port.device, reset, request_info, configure_general)
                     return self
@@ -679,7 +683,7 @@ class SmartWave(object):
         self.configEntries.append(config)
 
         return config
-    
+
     def createGPIO(self,
                    pin_name: Optional[str] = None,
                    name: Optional[str] = None,
@@ -869,8 +873,7 @@ class SmartWave(object):
         # size check
         f.seek(0, os.SEEK_END)
         fileSize = f.tell()
-        #if fileSize != 0x21728c:
-        if fileSize != 0x3a607c:
+        if fileSize != 0x21728c and fileSize != 0x3a607c:
             raise Exception(
                 "The bitstream seems to be of the wrong size: 0x%x. Please check for correctness." % fileSize)
 
