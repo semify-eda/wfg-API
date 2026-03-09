@@ -140,8 +140,6 @@ class SmartWave(object):
             try:
                 if self.isConnected() and self._serialPort.in_waiting > 0:
                     statusbit = int.from_bytes(self._serialPort.read(1), byteorder='big')
-                    print("status bit received")
-                    print(statusbit)
                     if statusbit == Statusbit.Idle.value:
                         self._deviceRunning = False
                         if self.idleCallback is not None:
@@ -215,10 +213,7 @@ class SmartWave(object):
                             self._allPins[pinId].inputLevel = 1 if (allPins & (1 << pinId)) else 0
 
                     elif statusbit == Statusbit.FirmwareUpdateStatus.value:
-                        print("firmware update status bit received")
                         byte = int.from_bytes(self._serialPort.read(1), 'big')
-                        print("byte 2:")
-                        print(byte)
                         isMicrocontroller: bool = (byte & 8) == 1
                         status: int = byte & 0x7f
 
