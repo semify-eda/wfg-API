@@ -123,9 +123,16 @@ class SmartWave(object):
 
             self._serialLock.acquire()
             if self.isConnected():
-                self.writeToDevice(bytes([
-                    Command.Heartbeat.value
-                ]), False)
+                try:
+                    self.writeToDevice(bytes([
+                        Command.Heartbeat.value
+                    ]), False)
+                except serial.SerialException:
+                    # The device dropped off the bus (e.g. self-restart after a
+                    # firmware update) — end the heartbeat quietly instead of
+                    # crashing the thread with a WriteFile traceback.
+                    self._serialLock.release()
+                    break
                 self._serialLock.release()
                 time.sleep(0.5)
             else:
