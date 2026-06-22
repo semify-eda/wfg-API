@@ -1,14 +1,15 @@
 #marker_template_start
-#multidata: globaldata:../../pkg/global_templating_data.json
-#multidata: wfg_core_top:../../wfg/wfg_core/data/wfg_core_reg.json
-#multidata: wfg_drive_i2c_top:../../wfg/wfg_drive_i2c/data/wfg_drive_i2c_reg.json
-#multidata: wfg_drive_i2ct_top:../../wfg/wfg_drive_i2ct/data/wfg_drive_i2ct_reg.json
-#multidata: wfg_drive_pat_top:../../wfg/wfg_drive_pat/data/wfg_drive_pat_reg.json
-#multidata: wfg_drive_spi_top:../../wfg/wfg_drive_spi/data/wfg_drive_spi_reg.json
-#multidata: wfg_drive_uart_top:../../wfg/wfg_drive_uart/data/wfg_drive_uart_reg.json
-#multidata: wfg_stim_mem_top:../../wfg/wfg_stim_mem/data/wfg_stim_mem_reg.json
-#multidata: wfg_record_mem_top:../../wfg/wfg_record_mem/data/wfg_record_mem_reg.json
-#multidata: wfg_pin_mux_top:../../wfg/wfg_pin_mux/data/wfg_pin_mux_reg.json
+#multidata: globaldata:../../design/pkg/global_templating_data.json
+#multidata: wfg_core_top:../../design/wfg/wfg_core/data/wfg_core_reg.json
+#multidata: wfg_drive_i2c_top:../../design/wfg/wfg_drive_i2c/data/wfg_drive_i2c_reg.json
+#multidata: wfg_drive_i2ct_top:../../design/wfg/wfg_drive_i2ct/data/wfg_drive_i2ct_reg.json
+#multidata: wfg_drive_pat_top:../../design/wfg/wfg_drive_pat/data/wfg_drive_pat_reg.json
+#multidata: wfg_drive_spi_top:../../design/wfg/wfg_drive_spi/data/wfg_drive_spi_reg.json
+#multidata: wfg_drive_uart_top:../../design/wfg/wfg_drive_uart/data/wfg_drive_uart_reg.json
+#multidata: wfg_stim_mem_top:../../design/wfg/wfg_stim_mem/data/wfg_stim_mem_reg.json
+#multidata: wfg_record_mem_top:../../design/wfg/wfg_record_mem/data/wfg_record_mem_reg.json
+#multidata: wfg_pin_mux_top:../../design/wfg/wfg_pin_mux/data/wfg_pin_mux_reg.json
+#multidata: wfg_sysctrl_reg:../../design/wfg/wfg_top/data/wfg_sysctrl_reg.json
 #template: python_registers/registers.template
 #marker_template_code
 
@@ -46,10 +47,10 @@ class FPGA_Reg:
     "wfg_drive_i2c_top_0_sda" : 9,
     "wfg_drive_i2c_top_1_scl" : 8,
     "wfg_drive_i2c_top_1_sda" : 7,
-    "wfg_drive_i2ct_top_0_scl" : 6,
-    "wfg_drive_i2ct_top_0_sda" : 5,
-    "wfg_drive_uart_top_0_tx" : 4,
-    "wfg_drive_uart_top_1_tx" : 3
+    "wfg_drive_uart_top_0_tx" : 6,
+    "wfg_drive_uart_top_1_tx" : 5,
+    "wfg_drive_i2ct_top_0_scl" : 4,
+    "wfg_drive_i2ct_top_0_sda" : 3
   };
 
 
@@ -61,10 +62,10 @@ class FPGA_Reg:
     "wfg_drive_i2c_top_0_sda" : 6,
     "wfg_drive_i2c_top_1_scl" : 5,
     "wfg_drive_i2c_top_1_sda" : 4,
-    "wfg_drive_i2ct_top_0_scl" : 3,
-    "wfg_drive_i2ct_top_0_sda" : 2,
-    "wfg_drive_uart_top_0_rx" : 1,
-    "wfg_drive_uart_top_1_rx" : 0
+    "wfg_drive_uart_top_0_rx" : 3,
+    "wfg_drive_uart_top_1_rx" : 2,
+    "wfg_drive_i2ct_top_0_scl" : 1,
+    "wfg_drive_i2ct_top_0_sda" : 0
   };
 
 
@@ -123,7 +124,6 @@ class FPGA_Reg:
         "MSB" : 7,
         "LSB" : 0
       },
-
       "wfg_drive_uart_top_0_select_0" : {
         "addr" : 0x44030,
         "disconnect" : 0x00,
@@ -144,6 +144,7 @@ class FPGA_Reg:
         "MSB" : 7,
         "LSB" : 0
       },
+
       "wfg_record_mem_top_0_select_0" : {
         "addr" : 0x440f0,
         "disconnect" : 0x00,
@@ -152,9 +153,9 @@ class FPGA_Reg:
         "wfg_drive_pat_top_0" : 0x11,
         "wfg_drive_i2c_top_0" : 0x21,
         "wfg_drive_i2c_top_1" : 0x22,
-        "wfg_drive_i2ct_top_0" : 0x21,
         "wfg_drive_uart_top_0" : 0x31,
         "wfg_drive_uart_top_1" : 0x32,
+        "wfg_drive_i2ct_top_0" : 0x21,
         "MSB" : 7,
         "LSB" : 0
       },
@@ -166,9 +167,9 @@ class FPGA_Reg:
         "wfg_drive_pat_top_0" : 0x11,
         "wfg_drive_i2c_top_0" : 0x21,
         "wfg_drive_i2c_top_1" : 0x22,
-        "wfg_drive_i2ct_top_0" : 0x21,
         "wfg_drive_uart_top_0" : 0x31,
         "wfg_drive_uart_top_1" : 0x32,
+        "wfg_drive_i2ct_top_0" : 0x21,
         "MSB" : 7,
         "LSB" : 0
       },
@@ -180,9 +181,9 @@ class FPGA_Reg:
         "wfg_drive_pat_top_0" : 0x11,
         "wfg_drive_i2c_top_0" : 0x21,
         "wfg_drive_i2c_top_1" : 0x22,
-        "wfg_drive_i2ct_top_0" : 0x21,
         "wfg_drive_uart_top_0" : 0x31,
         "wfg_drive_uart_top_1" : 0x32,
+        "wfg_drive_i2ct_top_0" : 0x21,
         "MSB" : 7,
         "LSB" : 0
       },
@@ -194,9 +195,9 @@ class FPGA_Reg:
         "wfg_drive_pat_top_0" : 0x11,
         "wfg_drive_i2c_top_0" : 0x21,
         "wfg_drive_i2c_top_1" : 0x22,
-        "wfg_drive_i2ct_top_0" : 0x21,
         "wfg_drive_uart_top_0" : 0x31,
         "wfg_drive_uart_top_1" : 0x32,
+        "wfg_drive_i2ct_top_0" : 0x21,
         "MSB" : 7,
         "LSB" : 0
       }
@@ -478,21 +479,21 @@ class FPGA_Reg:
         },
         "MIRROR_OUTPUT" : {
           "addr" : 0x46030,
-          "" : {
+          "VAL" : {
             "MSB" : 15,
             "LSB" : 0
           }
         },
         "MIRROR_PULLUP" : {
           "addr" : 0x46034,
-          "" : {
+          "VAL" : {
             "MSB" : 15,
             "LSB" : 0
           }
         },
         "MIRROR_INPUT" : {
           "addr" : 0x46038,
-          "" : {
+          "VAL" : {
             "MSB" : 15,
             "LSB" : 0
           }
@@ -555,6 +556,246 @@ class FPGA_Reg:
             "LSB" : 28
           }
         }
+      },
+      "wfg_sysctrl_reg" : {
+        "PRODUCT" : {
+          "addr" : 0x48000,
+          "ID" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "FPGA_VERSION" : {
+          "addr" : 0x48004,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "DEV" : {
+            "MSB" : 24,
+            "LSB" : 24
+          }
+        },
+        "GENDATE" : {
+          "addr" : 0x48008,
+          "YEAR" : {
+            "MSB" : 10,
+            "LSB" : 0
+          },
+          "MONTH" : {
+            "MSB" : 14,
+            "LSB" : 11
+          },
+          "DAY" : {
+            "MSB" : 19,
+            "LSB" : 15
+          },
+          "HOUR" : {
+            "MSB" : 23,
+            "LSB" : 20
+          },
+          "MINUTE" : {
+            "MSB" : 29,
+            "LSB" : 24
+          }
+        },
+        "CLK_SPEED" : {
+          "addr" : 0x4800c,
+          "VAL" : {
+            "MSB" : 7,
+            "LSB" : 0
+          }
+        },
+        "SOC_CTRL" : {
+          "addr" : 0x48010,
+          "FETCH_ENABLE" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "CORE_RESET_N" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+        },
+        "SOC_STATUS" : {
+          "addr" : 0x48014,
+          "CORE_SLEEP" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_1" : {
+          "addr" : 0x48018,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_2" : {
+          "addr" : 0x4801c,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "RESET_FLAGS" : {
+          "addr" : 0x48020,
+          "WFG" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "SOC" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+        },
+        "RESET_CLEARS" : {
+          "addr" : 0x48024,
+          "WFG" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "SOC" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+        },
+        "SW_RESET" : {
+          "addr" : 0x48028,
+          "RESET" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+        },
+        "STATUS" : {
+          "addr" : 0x48030,
+          "VCC_IO_PG" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_3" : {
+          "addr" : 0x48034,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_4" : {
+          "addr" : 0x48038,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_5" : {
+          "addr" : 0x4803c,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_6" : {
+          "addr" : 0x48040,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_7" : {
+          "addr" : 0x48044,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_8" : {
+          "addr" : 0x48048,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_9" : {
+          "addr" : 0x4804c,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "SOC_SCRATCH_10" : {
+          "addr" : 0x48050,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "FIRMWARE_OFFSET" : {
+          "addr" : 0x48054,
+          "DATA" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "ISR" : {
+          "addr" : 0x480a0,
+          "WISHBONE_INVALID_ADDRESS" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+        },
+        "IER" : {
+          "addr" : 0x480a4,
+          "WISHBONE_INVALID_ADDRESS" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+        },
+        "ICR" : {
+          "addr" : 0x480a8,
+          "WISHBONE_INVALID_ADDRESS" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+        },
+        "INTERRUPT_MIRROR" : {
+          "addr" : 0x480b0,
+          "VECTOR" : {
+            "MSB" : 31,
+            "LSB" : 0
+          }
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x480fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 24
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+        }
       }
       ,
 
@@ -572,6 +813,10 @@ class FPGA_Reg:
           "CNT" : {
             "MSB" : 7,
             "LSB" : 0
+          },
+          "MODE" : {
+            "MSB" : 8,
+            "LSB" : 8
           }
 
         },
@@ -619,6 +864,22 @@ class FPGA_Reg:
           "addr" : 0x6001c,
           "VAL" : {
             "MSB" : 31,
+            "LSB" : 0
+          }
+
+        },
+        "DB_START" : {
+          "addr" : 0x60020,
+          "VAL" : {
+            "MSB" : 12,
+            "LSB" : 0
+          }
+
+        },
+        "DB_STOP" : {
+          "addr" : 0x60024,
+          "VAL" : {
+            "MSB" : 13,
             "LSB" : 0
           }
 
@@ -698,6 +959,10 @@ class FPGA_Reg:
           "CNT" : {
             "MSB" : 7,
             "LSB" : 0
+          },
+          "MODE" : {
+            "MSB" : 8,
+            "LSB" : 8
           }
 
         },
@@ -745,6 +1010,22 @@ class FPGA_Reg:
           "addr" : 0x6011c,
           "VAL" : {
             "MSB" : 31,
+            "LSB" : 0
+          }
+
+        },
+        "DB_START" : {
+          "addr" : 0x60120,
+          "VAL" : {
+            "MSB" : 12,
+            "LSB" : 0
+          }
+
+        },
+        "DB_STOP" : {
+          "addr" : 0x60124,
+          "VAL" : {
+            "MSB" : 13,
             "LSB" : 0
           }
 
@@ -824,6 +1105,10 @@ class FPGA_Reg:
           "CNT" : {
             "MSB" : 7,
             "LSB" : 0
+          },
+          "MODE" : {
+            "MSB" : 8,
+            "LSB" : 8
           }
 
         },
@@ -871,6 +1156,22 @@ class FPGA_Reg:
           "addr" : 0x6021c,
           "VAL" : {
             "MSB" : 31,
+            "LSB" : 0
+          }
+
+        },
+        "DB_START" : {
+          "addr" : 0x60220,
+          "VAL" : {
+            "MSB" : 12,
+            "LSB" : 0
+          }
+
+        },
+        "DB_STOP" : {
+          "addr" : 0x60224,
+          "VAL" : {
+            "MSB" : 13,
             "LSB" : 0
           }
 
@@ -950,6 +1251,10 @@ class FPGA_Reg:
           "CNT" : {
             "MSB" : 7,
             "LSB" : 0
+          },
+          "MODE" : {
+            "MSB" : 8,
+            "LSB" : 8
           }
 
         },
@@ -997,6 +1302,22 @@ class FPGA_Reg:
           "addr" : 0x6031c,
           "VAL" : {
             "MSB" : 31,
+            "LSB" : 0
+          }
+
+        },
+        "DB_START" : {
+          "addr" : 0x60320,
+          "VAL" : {
+            "MSB" : 12,
+            "LSB" : 0
+          }
+
+        },
+        "DB_STOP" : {
+          "addr" : 0x60324,
+          "VAL" : {
+            "MSB" : 13,
             "LSB" : 0
           }
 
@@ -1342,6 +1663,14 @@ class FPGA_Reg:
           "WAIT_STATE_ENABLED" : {
             "MSB" : 8,
             "LSB" : 8
+          },
+          "CORE_SEL" : {
+            "MSB" : 16,
+            "LSB" : 16
+          },
+          "CORE_DEPENDENT" : {
+            "MSB" : 17,
+            "LSB" : 17
           }
 
         },
@@ -1432,6 +1761,14 @@ class FPGA_Reg:
           "WAIT_STATE_ENABLED" : {
             "MSB" : 8,
             "LSB" : 8
+          },
+          "CORE_SEL" : {
+            "MSB" : 16,
+            "LSB" : 16
+          },
+          "CORE_DEPENDENT" : {
+            "MSB" : 17,
+            "LSB" : 17
           }
 
         },
@@ -1504,6 +1841,242 @@ class FPGA_Reg:
 
         }
       },
+      "wfg_drive_uart_top_0" : {
+        "CTRL" : {
+          "addr" : 0x86000,
+          "EN" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+
+        },
+        "CFG" : {
+          "addr" : 0x86004,
+          "CORE_SEL" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "TXSIZE" : {
+            "MSB" : 4,
+            "LSB" : 1
+          },
+          "CORE_DEPENDENT" : {
+            "MSB" : 7,
+            "LSB" : 7
+          },
+          "CDIV" : {
+            "MSB" : 31,
+            "LSB" : 8
+          }
+
+        },
+        "CFG2" : {
+          "addr" : 0x86008,
+          "PARITY_SEL" : {
+            "MSB" : 1,
+            "LSB" : 0
+          },
+          "STOP_SEL" : {
+            "MSB" : 3,
+            "LSB" : 2
+          },
+          "TX_DELAY" : {
+            "MSB" : 19,
+            "LSB" : 4
+          },
+          "SHIFT_DIR" : {
+            "MSB" : 20,
+            "LSB" : 20
+          }
+
+        },
+        "RX_CFG" : {
+          "addr" : 0x8600c,
+          "TIMEOUT" : {
+            "MSB" : 9,
+            "LSB" : 0
+          }
+
+        },
+        "ISR" : {
+          "addr" : 0x860a0,
+          "TIMEOUT_REACHED" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "FRAME_ERROR" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+
+        },
+        "IER" : {
+          "addr" : 0x860a4,
+          "TIMEOUT_REACHED" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "FRAME_ERROR" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+
+        },
+        "ICR" : {
+          "addr" : 0x860a8,
+          "TIMEOUT_REACHED" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "FRAME_ERROR" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x860fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
+        }
+      },
+      "wfg_drive_uart_top_1" : {
+        "CTRL" : {
+          "addr" : 0x86100,
+          "EN" : {
+            "MSB" : 0,
+            "LSB" : 0
+          }
+
+        },
+        "CFG" : {
+          "addr" : 0x86104,
+          "CORE_SEL" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "TXSIZE" : {
+            "MSB" : 4,
+            "LSB" : 1
+          },
+          "CORE_DEPENDENT" : {
+            "MSB" : 7,
+            "LSB" : 7
+          },
+          "CDIV" : {
+            "MSB" : 31,
+            "LSB" : 8
+          }
+
+        },
+        "CFG2" : {
+          "addr" : 0x86108,
+          "PARITY_SEL" : {
+            "MSB" : 1,
+            "LSB" : 0
+          },
+          "STOP_SEL" : {
+            "MSB" : 3,
+            "LSB" : 2
+          },
+          "TX_DELAY" : {
+            "MSB" : 19,
+            "LSB" : 4
+          },
+          "SHIFT_DIR" : {
+            "MSB" : 20,
+            "LSB" : 20
+          }
+
+        },
+        "RX_CFG" : {
+          "addr" : 0x8610c,
+          "TIMEOUT" : {
+            "MSB" : 9,
+            "LSB" : 0
+          }
+
+        },
+        "ISR" : {
+          "addr" : 0x861a0,
+          "TIMEOUT_REACHED" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "FRAME_ERROR" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+
+        },
+        "IER" : {
+          "addr" : 0x861a4,
+          "TIMEOUT_REACHED" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "FRAME_ERROR" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+
+        },
+        "ICR" : {
+          "addr" : 0x861a8,
+          "TIMEOUT_REACHED" : {
+            "MSB" : 0,
+            "LSB" : 0
+          },
+          "FRAME_ERROR" : {
+            "MSB" : 1,
+            "LSB" : 1
+          }
+
+        },
+        "MODULE_INFO" : {
+          "addr" : 0x861fc,
+          "PATCH" : {
+            "MSB" : 7,
+            "LSB" : 0
+          },
+          "MINOR" : {
+            "MSB" : 15,
+            "LSB" : 8
+          },
+          "MAJOR" : {
+            "MSB" : 23,
+            "LSB" : 16
+          },
+          "TYPE" : {
+            "MSB" : 27,
+            "LSB" : 27
+          },
+          "BLOCK" : {
+            "MSB" : 31,
+            "LSB" : 28
+          }
+
+        }
+      },
       "wfg_drive_i2ct_top_0" : {
         "CTRL" : {
           "addr" : 0x88000,
@@ -1524,8 +2097,8 @@ class FPGA_Reg:
             "LSB" : 8
           },
           "DATASIZE" : {
-            "MSB" : 16,
-            "LSB" : 15
+            "MSB" : 17,
+            "LSB" : 16
           }
 
         },
@@ -1574,146 +2147,6 @@ class FPGA_Reg:
           "MASK" : {
             "MSB" : 31,
             "LSB" : 0
-          }
-
-        }
-      },
-      "wfg_drive_uart_top_0" : {
-        "CTRL" : {
-          "addr" : 0x86000,
-          "EN" : {
-            "MSB" : 0,
-            "LSB" : 0
-          }
-
-        },
-        "CFG" : {
-          "addr" : 0x86004,
-          "CORE_SEL" : {
-            "MSB" : 0,
-            "LSB" : 0
-          },
-          "TXSIZE" : {
-            "MSB" : 7,
-            "LSB" : 1
-          },
-          "CDIV" : {
-            "MSB" : 31,
-            "LSB" : 8
-          }
-
-        },
-        "CFG2" : {
-          "addr" : 0x86008,
-          "PARITY_SEL" : {
-            "MSB" : 1,
-            "LSB" : 0
-          },
-          "STOP_SEL" : {
-            "MSB" : 3,
-            "LSB" : 2
-          },
-          "TX_DELAY" : {
-            "MSB" : 19,
-            "LSB" : 4
-          },
-          "SHIFT_DIR" : {
-            "MSB" : 20,
-            "LSB" : 20
-          }
-
-        },
-        "MODULE_INFO" : {
-          "addr" : 0x860fc,
-          "PATCH" : {
-            "MSB" : 7,
-            "LSB" : 0
-          },
-          "MINOR" : {
-            "MSB" : 15,
-            "LSB" : 8
-          },
-          "MAJOR" : {
-            "MSB" : 23,
-            "LSB" : 16
-          },
-          "TYPE" : {
-            "MSB" : 27,
-            "LSB" : 27
-          },
-          "BLOCK" : {
-            "MSB" : 31,
-            "LSB" : 28
-          }
-
-        }
-      },
-      "wfg_drive_uart_top_1" : {
-        "CTRL" : {
-          "addr" : 0x86100,
-          "EN" : {
-            "MSB" : 0,
-            "LSB" : 0
-          }
-
-        },
-        "CFG" : {
-          "addr" : 0x86104,
-          "CORE_SEL" : {
-            "MSB" : 0,
-            "LSB" : 0
-          },
-          "TXSIZE" : {
-            "MSB" : 7,
-            "LSB" : 1
-          },
-          "CDIV" : {
-            "MSB" : 31,
-            "LSB" : 8
-          }
-
-        },
-        "CFG2" : {
-          "addr" : 0x86108,
-          "PARITY_SEL" : {
-            "MSB" : 1,
-            "LSB" : 0
-          },
-          "STOP_SEL" : {
-            "MSB" : 3,
-            "LSB" : 2
-          },
-          "TX_DELAY" : {
-            "MSB" : 19,
-            "LSB" : 4
-          },
-          "SHIFT_DIR" : {
-            "MSB" : 20,
-            "LSB" : 20
-          }
-
-        },
-        "MODULE_INFO" : {
-          "addr" : 0x861fc,
-          "PATCH" : {
-            "MSB" : 7,
-            "LSB" : 0
-          },
-          "MINOR" : {
-            "MSB" : 15,
-            "LSB" : 8
-          },
-          "MAJOR" : {
-            "MSB" : 23,
-            "LSB" : 16
-          },
-          "TYPE" : {
-            "MSB" : 27,
-            "LSB" : 27
-          },
-          "BLOCK" : {
-            "MSB" : 31,
-            "LSB" : 28
           }
 
         }
