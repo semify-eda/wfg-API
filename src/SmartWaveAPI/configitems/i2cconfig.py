@@ -298,7 +298,9 @@ class I2CConfig(Config):
                         or (not res_part.read and False in res_part.acks_data)):  # no ack in write data
                     raise ConnectionError("The target device did not acknowledge the read operation.")
 
-            return res[1].data
+            # the read is the LAST result; the register-address write is a
+            # repeated-START and produces no record (so res may hold only the read)
+            return res[-1].data
 
     def _getReadNumber(self) -> int:
         """Get the number of samples to read back from the device.
@@ -307,7 +309,15 @@ class I2CConfig(Config):
         :rtype: int"""
         readNumber = 0
 
-        for transaction in self._lastTransactions:
+        txns = self._lastTransactions
+        for i, transaction in enumerate(txns):
+            # A write immediately followed by another transaction to the SAME
+            # device is a repeated-START (e.g. the register-address write before a
+            # register read): the hardware issues no STOP, so it produces no
+            # record word. Don't wait for words it will never send.
+            if (type(transaction) is I2CWrite and i + 1 < len(txns)
+                    and getattr(txns[i + 1], "deviceId", None) == transaction.deviceId):
+                continue
             readNumber += 1  # info word
             datalength = len(transaction.data) if type(transaction) is I2CWrite else transaction.length
             readNumber += math.ceil(datalength / 2.0)

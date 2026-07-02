@@ -237,6 +237,13 @@ class SmartWave(object):
             except serial.SerialException:
                 pass
 
+            except OSError:
+                # The device dropped the USB serial link — expected when it
+                # resets during a firmware update. Stop the readback thread
+                # quietly instead of surfacing a traceback.
+                self._serialLock.release()
+                return
+
             except Exception as e:
                 self._serialLock.release()
                 raise e
@@ -382,8 +389,13 @@ class SmartWave(object):
         """Disconnect from the connected device."""
         self._serialLock.acquire()
         if self.isConnected():
-            self._serialPort.flush()
-            self._serialPort.close()
+            try:
+                self._serialPort.flush()
+                self._serialPort.close()
+            except Exception:
+                # The port may already be gone (e.g. the device reset during a
+                # firmware update); we are tearing down anyway.
+                pass
 
             self._serialLock.release()
             self._heartbeatThread.join()
