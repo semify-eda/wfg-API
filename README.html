@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Description &mdash; SmartWave API  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>SmartWave Python API &mdash; SmartWave API  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
 
   
@@ -43,13 +43,11 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Description</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartWave Python API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#basic-i2c-script">Basic I2C script</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#basic-spi-script">Basic SPI script</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#concepts">Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quickstart-i2c">Quickstart (I2C)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-reference">API reference</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">SmartWaveAPI</a></li>
@@ -69,7 +67,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Description</li>
+      <li class="breadcrumb-item active">SmartWave Python API</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -79,51 +77,50 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="description">
-<h1>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h1>
-<p>A python API for the SmartWave interface.</p>
+  <div class="section" id="smartwave-python-api">
+<h1>SmartWave Python API<a class="headerlink" href="#smartwave-python-api" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">SmartWaveAPI</span></code> is the Python interface to the <strong>SmartWave</strong> device. It configures the device’s
+on-board FPGA protocol engines — I2C, SPI, UART and GPIO — and runs transactions through them over a
+USB serial link, so you can drive and observe a target chip from a plain Python script.</p>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>This package requires python version 3.</p></li>
-<li><p>To install this package, run the following command:</p></li>
-</ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install SmartWaveAPI
 </pre></div>
 </div>
+<p>Requires Python 3.8 or newer.</p>
 </div>
-<div class="section" id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>It is recommended to use the <code class="docutils literal notranslate"><span class="pre">with..as</span></code> pattern to implicitly call cleanup functions
-when resources of the SmartWave device are no longer needed.</p>
-<div class="section" id="basic-i2c-script">
-<h3>Basic I2C script<a class="headerlink" href="#basic-i2c-script" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="concepts">
+<h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">SmartWave</span></code></strong> — the device connection. <code class="docutils literal notranslate"><span class="pre">SmartWave().connect()</span></code> finds and opens the board.</p></li>
+<li><p><strong>Driver configs</strong> — <code class="docutils literal notranslate"><span class="pre">createI2CConfig(...)</span></code>, <code class="docutils literal notranslate"><span class="pre">createSPIConfig(...)</span></code>, <code class="docutils literal notranslate"><span class="pre">createGPIO(...)</span></code> set up one of
+the FPGA’s protocol engines on the chosen pins and return an object you run transactions on.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">…</span> <span class="pre">as</span></code></strong> — the recommended pattern; it frees the device’s resources automatically on exit.</p></li>
+</ul>
+</div>
+<div class="section" id="quickstart-i2c">
+<h2>Quickstart (I2C)<a class="headerlink" href="#quickstart-i2c" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SmartWaveAPI</span> <span class="kn">import</span> <span class="n">SmartWave</span>
 
-<span class="k">with</span> <span class="n">SmartWave</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">sw</span><span class="p">:</span>
-    <span class="k">with</span> <span class="n">sw</span><span class="o">.</span><span class="n">createI2CConfig</span><span class="p">()</span> <span class="k">as</span> <span class="n">i2c</span><span class="p">:</span>
-        <span class="c1"># write 0xaa, 0x55 to device with address 0x20</span>
-        <span class="n">i2c</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0xaa</span><span class="p">,</span> <span class="mh">0x55</span><span class="p">]))</span>
-        <span class="c1"># read 2 bytes from device with address 0x20</span>
-        <span class="n">i2c</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="c1"># write value 0x0f to register 0xaa of device at 0x20</span>
-        <span class="n">i2c</span><span class="o">.</span><span class="n">writeRegister</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0xaa</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">),</span> <span class="mh">0x0f</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">))</span>
-        <span class="c1"># read value of 1-byte register 0xaa of device at 0x20</span>
-        <span class="n">i2c</span><span class="o">.</span><span class="n">readRegister</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0xaa</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">SmartWave</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">sw</span><span class="p">:</span>                 <span class="c1"># find + open the device</span>
+    <span class="k">with</span> <span class="n">sw</span><span class="o">.</span><span class="n">createI2CConfig</span><span class="p">(</span><span class="s2">&quot;A1&quot;</span><span class="p">,</span> <span class="s2">&quot;A2&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i2c</span><span class="p">:</span>   <span class="c1"># SDA = A1, SCL = A2</span>
+        <span class="n">i2c</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0xaa</span><span class="p">,</span> <span class="mh">0x55</span><span class="p">]))</span>                       <span class="c1"># write two bytes to device 0x20</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">i2c</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>                                   <span class="c1"># read two bytes back</span>
+        <span class="n">i2c</span><span class="o">.</span><span class="n">writeRegister</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x0a</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">),</span>           <span class="c1"># write reg 0x0a = 0x0f</span>
+                          <span class="mh">0x0f</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">))</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">i2c</span><span class="o">.</span><span class="n">readRegister</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x0a</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>   <span class="c1"># read 1-byte reg 0x0a</span>
 </pre></div>
 </div>
+<p>SPI and GPIO follow the same shape via <code class="docutils literal notranslate"><span class="pre">createSPIConfig(...)</span></code> / <code class="docutils literal notranslate"><span class="pre">createGPIO(...)</span></code>.</p>
 </div>
-<div class="section" id="basic-spi-script">
-<h3>Basic SPI script<a class="headerlink" href="#basic-spi-script" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SmartWaveAPI</span> <span class="kn">import</span> <span class="n">SmartWave</span>
-
-<span class="k">with</span> <span class="n">SmartWave</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">sw</span><span class="p">:</span>
-    <span class="k">with</span> <span class="n">sw</span><span class="o">.</span><span class="n">createSPIConfig</span><span class="p">()</span> <span class="k">as</span> <span class="n">spi</span><span class="p">:</span>
-        <span class="c1"># write 0xaa, 0x55 via SPI and read simultaneously</span>
-        <span class="n">spi</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="mh">0xaa</span><span class="p">,</span> <span class="mh">0x55</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
+<div class="section" id="api-reference">
+<h2>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<p>The full class and method documentation is in the module reference (see the navigation):</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">SmartWaveAPI.smartwave</span></code></strong> — the <code class="docutils literal notranslate"><span class="pre">SmartWave</span></code> connection object</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">SmartWaveAPI.configitems</span></code></strong> — the driver/config classes (I2C, SPI, GPIO, stimulus, pins)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">SmartWaveAPI.definitions</span></code></strong> — enums and data types (commands, transactions, …)</p></li>
+</ul>
 </div>
 </div>
 
