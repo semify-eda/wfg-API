@@ -1,17 +1,21 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SmartWave Python API &mdash; SmartWave API  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
-      <script src="_static/jquery.js"></script>
-      <script src="_static/underscore.js"></script>
-      <script src="_static/doctools.js"></script>
-      <script src="_static/language_data.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -38,7 +42,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">SmartWave Python API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
@@ -74,30 +78,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="smartwave-python-api">
-<h1>SmartWave Python API<a class="headerlink" href="#smartwave-python-api" title="Permalink to this headline">¶</a></h1>
+  <section id="smartwave-python-api">
+<h1>SmartWave Python API<a class="headerlink" href="#smartwave-python-api" title="Link to this heading"></a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">SmartWaveAPI</span></code> is the Python interface to the <strong>SmartWave</strong> device. It configures the device’s
 on-board FPGA protocol engines — I2C, SPI, UART and GPIO — and runs transactions through them over a
 USB serial link, so you can drive and observe a target chip from a plain Python script.</p>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install SmartWaveAPI
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>SmartWaveAPI
 </pre></div>
 </div>
 <p>Requires Python 3.8 or newer.</p>
-</div>
-<div class="section" id="concepts">
-<h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="concepts">
+<h2>Concepts<a class="headerlink" href="#concepts" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">SmartWave</span></code></strong> — the device connection. <code class="docutils literal notranslate"><span class="pre">SmartWave().connect()</span></code> finds and opens the board.</p></li>
 <li><p><strong>Driver configs</strong> — <code class="docutils literal notranslate"><span class="pre">createI2CConfig(...)</span></code>, <code class="docutils literal notranslate"><span class="pre">createSPIConfig(...)</span></code>, <code class="docutils literal notranslate"><span class="pre">createGPIO(...)</span></code> set up one of
 the FPGA’s protocol engines on the chosen pins and return an object you run transactions on.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">…</span> <span class="pre">as</span></code></strong> — the recommended pattern; it frees the device’s resources automatically on exit.</p></li>
 </ul>
-</div>
-<div class="section" id="quickstart-i2c">
-<h2>Quickstart (I2C)<a class="headerlink" href="#quickstart-i2c" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SmartWaveAPI</span> <span class="kn">import</span> <span class="n">SmartWave</span>
+</section>
+<section id="quickstart-i2c">
+<h2>Quickstart (I2C)<a class="headerlink" href="#quickstart-i2c" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SmartWaveAPI</span><span class="w"> </span><span class="kn">import</span> <span class="n">SmartWave</span>
 
 <span class="k">with</span> <span class="n">SmartWave</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">sw</span><span class="p">:</span>                 <span class="c1"># find + open the device</span>
     <span class="k">with</span> <span class="n">sw</span><span class="o">.</span><span class="n">createI2CConfig</span><span class="p">(</span><span class="s2">&quot;A1&quot;</span><span class="p">,</span> <span class="s2">&quot;A2&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i2c</span><span class="p">:</span>   <span class="c1"># SDA = A1, SCL = A2</span>
@@ -109,17 +113,17 @@ the FPGA’s protocol engines on the chosen pins and return an object you run tr
 </pre></div>
 </div>
 <p>SPI and GPIO follow the same shape via <code class="docutils literal notranslate"><span class="pre">createSPIConfig(...)</span></code> / <code class="docutils literal notranslate"><span class="pre">createGPIO(...)</span></code>.</p>
-</div>
-<div class="section" id="api-reference">
-<h2>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="api-reference">
+<h2>API reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h2>
 <p>The full class and method documentation is in the module reference (see the navigation):</p>
 <ul class="simple">
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">SmartWaveAPI.smartwave</span></code></strong> — the <code class="docutils literal notranslate"><span class="pre">SmartWave</span></code> connection object</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">SmartWaveAPI.configitems</span></code></strong> — the driver/config classes (I2C, SPI, GPIO, stimulus, pins)</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">SmartWaveAPI.definitions</span></code></strong> — enums and data types (commands, transactions, …)</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
