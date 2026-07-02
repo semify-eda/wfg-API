@@ -38,4 +38,4 @@ with SmartWave().connect() as sw:
 ```
 
 ## Documentation
-Further documentation can be found in our [documentation page](https://semify-eda.github.io/wfg-API/docs/html/index.html).
+Further documentation can be found on our [documentation page](https://semify-eda.github.io/wfg-API/).

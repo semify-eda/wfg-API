@@ -123,9 +123,16 @@ class SmartWave(object):
 
             self._serialLock.acquire()
             if self.isConnected():
-                self.writeToDevice(bytes([
-                    Command.Heartbeat.value
-                ]), False)
+                try:
+                    self.writeToDevice(bytes([
+                        Command.Heartbeat.value
+                    ]), False)
+                except serial.SerialException:
+                    # The device dropped off the bus (e.g. self-restart after a
+                    # firmware update) — end the heartbeat quietly instead of
+                    # crashing the thread with a WriteFile traceback.
+                    self._serialLock.release()
+                    break
                 self._serialLock.release()
                 time.sleep(0.5)
             else:
@@ -229,6 +236,13 @@ class SmartWave(object):
 
             except serial.SerialException:
                 pass
+
+            except OSError:
+                # The device dropped the USB serial link — expected when it
+                # resets during a firmware update. Stop the readback thread
+                # quietly instead of surfacing a traceback.
+                self._serialLock.release()
+                return
 
             except Exception as e:
                 self._serialLock.release()
@@ -375,8 +389,13 @@ class SmartWave(object):
         """Disconnect from the connected device."""
         self._serialLock.acquire()
         if self.isConnected():
-            self._serialPort.flush()
-            self._serialPort.close()
+            try:
+                self._serialPort.flush()
+                self._serialPort.close()
+            except Exception:
+                # The port may already be gone (e.g. the device reset during a
+                # firmware update); we are tearing down anyway.
+                pass
 
             self._serialLock.release()
             self._heartbeatThread.join()
@@ -392,6 +411,40 @@ class SmartWave(object):
         self.writeToDevice(bytes([
             Command.Trigger.value
         ]))
+
+    def onButtonPress(self, callback: Optional[Callable[[], None]]) -> None:
+        """Register a callback that fires once on every onboard-button press.
+
+        The SmartWave has no dedicated button-press status byte. With the
+        matching ``wfg-arduino`` patch (branch ``tristan-demo``) the device's
+        ``buttonPress()`` handler emits exactly one ``Statusbit.Running`` byte
+        per physical press, without touching ``wfg_core.CTRL.EN`` — so the
+        press is a pure host-side notification that does not disturb the
+        WFG pipeline. This helper just hooks ``callback`` to both
+        ``runningCallback`` and ``idleCallback`` (idle kept for symmetry;
+        with the patched firmware only running fires on button events).
+
+        **Without the patch** the onboard button is one-shot per session in
+        stock firmware (the ``stop()`` call in ``trigger()``'s else branch is
+        commented out), so only the first press is observable; everything
+        else this helper does is still valid but you will see at most one
+        callback until the device is reset.
+
+        Pass ``None`` to unregister (clears both running/idle callbacks).
+
+        .. note::
+            The callback is invoked from the readback thread. Do not block or
+            issue long serial transactions inside it — queue the event and
+            handle it on your main thread. See ``examples/`` for a pattern.
+
+        :param Optional[Callable[[], None]] callback: Function to call on each
+            button press, or ``None`` to unregister."""
+        if callback is None:
+            self.runningCallback = None
+            self.idleCallback = None
+            return
+        self.runningCallback = callback
+        self.idleCallback = callback
 
     def reset(self):
         """Reset the configuration of the connected device."""

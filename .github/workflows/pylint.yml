@@ -20,4 +20,6 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        # Lint only the shipped package, not examples/ or the generated
+        # examples/fpga_reg.py (which would otherwise fail the run).
+        pylint $(git ls-files 'src/*.py')
