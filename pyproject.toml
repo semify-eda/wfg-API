@@ -23,5 +23,5 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://semify-eda.github.io/wfg-API/docs/html/index.html"
+Homepage = "https://semify-eda.github.io/wfg-API/"
 # Issues = "https://github.com/pypa/sampleproject/issues"
